@@ -1,11 +1,11 @@
-import { takeEvery, take } from 'redux-saga/effects'
+import { takeEvery } from 'redux-saga/effects';
 
 // example saga that logs an action
+// eslint-disable-next-line
 function* logAction(action) {
-    global.console.log('New action', action);
+  global.console.log('New action', action);
 }
 
 export default function* rootSaga() {
-  yield take('TEST_ACTION');
-  global.console.log('New action arrived!');
+  yield takeEvery('*', logAction);
 }
