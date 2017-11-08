@@ -1,7 +1,6 @@
 const initialState = {};
 
 export default function mainReducer(state, action) {
-  console.log('new action', action);
   if (typeof state === 'undefined') {
     return initialState;
   }
