@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
-
 import Board from './board/board.view';
+import UserConnect from './users/connect.container'
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
@@ -16,6 +16,7 @@ class App extends Component {
     return (
       <Board>
         <button onClick={this.props.onClick}>CLICK ME DUDE!</button>
+        <UserConnect />
       </Board>
     );
   }
