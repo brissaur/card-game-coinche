@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import Board from './board/board.view';
 import Hand from './hand/hand.view';
+import UserConnect from './users/connect.container'
 
 const mapDispatchToProps = dispatch => ({
     onClick: () => {
@@ -42,9 +43,11 @@ const toto = () => {
 
 function App() {
     return (
-        <Board>
-            <Hand cards={toto()} />
-        </Board>
+      <Board>
+        <button onClick={this.props.onClick}>CLICK ME DUDE!</button>
+        <UserConnect />
+        <Hand cards={toto()} />
+      </Board>
     );
 }
 

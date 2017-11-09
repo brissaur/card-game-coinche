@@ -3,7 +3,6 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-
 import firebase from 'firebase';
 import 'firebase/firestore';
 
@@ -11,6 +10,7 @@ import * as config from './build.properties';
 
 import reducer from './reducers';
 import rootSaga from './root-saga';
+import usersSaga from './users/sagas'
 
 import App from './App';
 import './index.css';
@@ -25,7 +25,8 @@ const store = createStore(
 );
 
 // applying sagas
-sagaMiddleware.run(rootSaga);
+sagaMiddleware.run(rootSaga)
+sagaMiddleware.run(usersSaga)
 
 render(
   <Provider store={store}>
@@ -33,8 +34,6 @@ render(
   </Provider>,
   document.getElementById('root'),
 );
-
-registerServiceWorker();
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -49,3 +48,4 @@ const firebaseConfig = {
 // const app =
 firebase.initializeApp(firebaseConfig);
 // const db = firebase.firestore();
+registerServiceWorker();
