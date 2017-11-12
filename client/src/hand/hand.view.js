@@ -6,9 +6,11 @@ export default function Hand({ cards }) {
     return (
         <ul>
             {
-                cards.map((card) => {
-                    return <li key={card.id}><Card cardValue={card.cardValue} suit={card.suit} /></li>;
-                })
+                cards.map(card =>
+                    (<li key={card.id}>
+                        <Card cardValue={card.cardValue} suit={card.suit} />
+                     </li>
+                    ))
             }
         </ul>
     );

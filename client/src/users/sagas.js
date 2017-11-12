@@ -1,28 +1,31 @@
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
-import db from '../api/init'
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 import * as duck from './duck';
 
-// worker Saga: will be fired on USER_FETCH_REQUESTED actions
-// function* fetchUser(action) {
-//     try {
-//         const user = yield call(Api.fetchUser, action.payload.userId);
-//         yield put({type: "USER_FETCH_SUCCEEDED", user: user});
-//     } catch (e) {
-//         yield put({type: "USER_FETCH_FAILED", message: e.message});
-//     }
-// }
+function* connectUser() {
+    try {
+        const username = yield select(duck.getUserName);
+        yield call(duck.userConnect, username);
+        yield put({
+            type: duck.USER_CONNECT_ACTION_SUCCEED,
+        });
+    } catch (e) {
+        yield put({
+            type: duck.USER_CONNECT_ACTION_FAIL,
+        });
+    }
+}
 
-function* saveUser () {
-
-    try{
-        const result = yield db.collection("users").doc("toto_arnaud_test").set({
-            firstname: "toto_arnaud_test"
-        })
-        console.log('success !!!')
-        // yield put({type: "USER_CONNECT_SUCCEEDED", user: user})
-    }catch (e){
-        console.error('error !!!', e)
-        // yield put({type: "USER_CONNECT_FAILED", message: e.message})
+function* setUserName(action) {
+    try {
+        yield put({
+            type: duck.SET_USERNAME_ACTION_SUCCEED,
+            username: action.payload.username,
+        });
+    } catch (e) {
+        yield put({
+            type: duck.SET_USERNAME_ACTION_FAIL,
+            message: e.message,
+        });
     }
 }
 
@@ -31,7 +34,8 @@ function* saveUser () {
  Allows concurrent fetches of user.
  */
 function* usersSaga() {
-    yield takeEvery(duck.USER_CONNECT_ACTION, saveUser);
+    yield takeEvery(duck.SET_USERNAME_ACTION, setUserName);
+    yield takeEvery(duck.USER_CONNECT_ACTION, connectUser);
 }
 
 export default usersSaga;
