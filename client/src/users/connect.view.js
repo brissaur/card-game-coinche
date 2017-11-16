@@ -1,21 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-class UserConnect extends Component {
-    render() {
-        const { onUserConnect, onChangeValue } = this.props;
-
-        return (
-            <div>
-                <label htmlFor="user_connect">Quel est votre nom</label>
+export default function UserConnect({ onChangeValue, onUserConnect }) {
+    return (
+        <div>
+            <label htmlFor="user_connect">
+                Quel est votre nom
                 <input type="text" id="user_connect" onChange={onChangeValue} />
-                <input type="submit" value="Valider" onClick={onUserConnect} />
-            </div>
-        );
-    }
+            </label>
+            <input type="submit" value="Valider" onClick={onUserConnect} />
+        </div>
+    );
 }
-
-export default UserConnect;
 
 UserConnect.propTypes = {
     onUserConnect: PropTypes.func.isRequired,
