@@ -30,7 +30,7 @@ J > 9 > 1 > 10 > K > Q > 8 > 7
 |10|10|10t]|
 |1|11|11|
 
-### Colors
+### Suits
 |french|english
 |---|---|
 |spades|pique|

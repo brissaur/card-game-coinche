@@ -7,5 +7,9 @@ module.exports = {
         "newline-before-return": 2,
         "react/jsx-filename-extension": 0,
         "react/require-default-props": 0,
+		"indent": ["error", 4],
+        "react/jsx-indent": [1, '4'],
+        "react/jsx-indent-props": [1, '4'],
+        "no-underscore-dangle": [2, {'allow' : ['__REDUX_DEVTOOLS_EXTENSION__']}]
     }
 };
