@@ -5,7 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 **/build.properties.js
-.idea/*
+.idea/
 
 # Runtime data
 pids
