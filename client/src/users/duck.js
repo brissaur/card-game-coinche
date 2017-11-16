@@ -26,21 +26,17 @@ export const setUserName = username => ({
 });
 // actions
 export function* userConnect(username) {
-    try {
-        const result = yield db.collection('users').add({
-            firstname: username,
-        });
+    const result = yield db.collection('users').add({
+        firstname: username,
+    });
 
-        return result;
-    } catch (e) {
-        return e.getMessage();
-    }
+    return result;
 }
 
 export const getUserName = state => get(state, 'user.username');
 
 // reducer
-export function reducer(state = initialState, action = {}) {
+export function reducer(state = initialState, action) {
     switch (action.type) {
     case SET_USERNAME_ACTION_SUCCEED:
         return {

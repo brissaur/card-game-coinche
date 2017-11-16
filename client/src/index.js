@@ -14,7 +14,6 @@ import './index.css';
 
 const sagaMiddleware = createSagaMiddleware();
 
-/* eslint-disable */
 const store = createStore(
     reducer,
     compose(

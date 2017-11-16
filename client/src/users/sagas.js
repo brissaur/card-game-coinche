@@ -1,16 +1,25 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
-import * as duck from './duck';
+import {
+    getUserName,
+    userConnect,
+    SET_USERNAME_ACTION_SUCCEED,
+    USER_CONNECT_ACTION_SUCCEED,
+    USER_CONNECT_ACTION_FAIL,
+    SET_USERNAME_ACTION_FAIL,
+    SET_USERNAME_ACTION,
+    USER_CONNECT_ACTION,
+} from './duck';
 
 function* connectUser() {
     try {
-        const username = yield select(duck.getUserName);
-        yield call(duck.userConnect, username);
+        const username = yield select(getUserName);
+        yield call(userConnect, username);
         yield put({
-            type: duck.USER_CONNECT_ACTION_SUCCEED,
+            type: USER_CONNECT_ACTION_SUCCEED,
         });
     } catch (e) {
         yield put({
-            type: duck.USER_CONNECT_ACTION_FAIL,
+            type: USER_CONNECT_ACTION_FAIL,
         });
     }
 }
@@ -18,12 +27,12 @@ function* connectUser() {
 function* setUserName(action) {
     try {
         yield put({
-            type: duck.SET_USERNAME_ACTION_SUCCEED,
+            type: SET_USERNAME_ACTION_SUCCEED,
             username: action.payload.username,
         });
     } catch (e) {
         yield put({
-            type: duck.SET_USERNAME_ACTION_FAIL,
+            type: SET_USERNAME_ACTION_FAIL,
             message: e.message,
         });
     }
@@ -34,8 +43,8 @@ function* setUserName(action) {
  Allows concurrent fetches of user.
  */
 function* usersSaga() {
-    yield takeEvery(duck.SET_USERNAME_ACTION, setUserName);
-    yield takeEvery(duck.USER_CONNECT_ACTION, connectUser);
+    yield takeEvery(SET_USERNAME_ACTION, setUserName);
+    yield takeEvery(USER_CONNECT_ACTION, connectUser);
 }
 
 export default usersSaga;
