@@ -1,7 +1,5 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
 import {
-    getUserName,
-    userConnect,
     SET_USERNAME_ACTION_SUCCEED,
     USER_CONNECT_ACTION_SUCCEED,
     USER_CONNECT_ACTION_FAIL,
@@ -9,6 +7,13 @@ import {
     SET_USERNAME_ACTION,
     USER_CONNECT_ACTION,
 } from './duck';
+
+import { getUserName } from './selectors';
+
+// DEPRECATED
+export function* userConnect(username) {
+    global.console.log('DELETE THIS PLEASE')
+}
 
 function* connectUser() {
     try {

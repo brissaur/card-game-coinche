@@ -3,8 +3,6 @@
  *
  * @type {string}
  */
-import get from 'lodash/get';
-import db from '../api/init';
 
 // actionsType
 export const USER_CONNECT_ACTION = 'USER_CONNECT_ACTION';
@@ -16,32 +14,25 @@ export const SET_USERNAME_ACTION_FAIL = 'SET_USERNAME_ACTION_FAIL';
 
 const initialState = {
     username: null,
+    id: null,
 };
 
-export const setUserName = username => ({
-    type: SET_USERNAME_ACTION,
-    payload: {
+export function setUserName(username, id) {
+    return {
+        type: SET_USERNAME_ACTION,
         username,
-    },
-});
-// actions
-export function* userConnect(username) {
-    const result = yield db.collection('users').add({
-        firstname: username,
-    });
-
-    return result;
+        id,
+    };
 }
-
-export const getUserName = state => get(state, 'user.username');
 
 // reducer
 export function reducer(state = initialState, action) {
     switch (action.type) {
-    case SET_USERNAME_ACTION_SUCCEED:
+    case SET_USERNAME_ACTION:
         return {
             ...state,
             username: action.username,
+            id: action.id,
         };
     default:
         return state;
