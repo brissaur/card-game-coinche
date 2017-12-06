@@ -4,12 +4,6 @@ import { connect } from 'react-redux';
 import Board from './board/board.view';
 import UserConnect from './users/connect.container';
 
-const mapDispatchToProps = dispatch => ({
-    onClick: () => {
-        dispatch({ type: 'TEST_ACTION', payload: {} });
-    },
-});
-
 function App() {
     return (
         <div>
@@ -19,7 +13,4 @@ function App() {
     );
 }
 
-export default connect(
-    null,
-    mapDispatchToProps,
-)(App);
+export default connect()(App);
