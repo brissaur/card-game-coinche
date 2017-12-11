@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Board from './board/board.view';
-import UserConnect from './users/connect.container';
 
 import { getAppLoadedStatus } from './bootstrap/selectors';
 import { getUserName, getUserId } from './users/selectors';
@@ -36,7 +35,6 @@ function App({ isLoaded, error, username, id }) {
         <div>
             <div>Hello {username} with id {id}</div>
             <Board />
-            <UserConnect />
         </div>
     );
 }
