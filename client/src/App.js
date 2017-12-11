@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Board from './board/board.view';
 
 import { getAppLoadedStatus } from './bootstrap/selectors';
-import { getUserName, getUserId } from './users/selectors';
+import { getUserName, getUserId } from './user/selectors';
 
 function mapStateToProps(state) {
     const { isLoaded, error } = getAppLoadedStatus(state);
