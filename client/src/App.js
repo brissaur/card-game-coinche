@@ -36,7 +36,6 @@ function App({ isLoaded, error, username, id }) {
         <div>
             <div>Hello {username} with id {id}</div>
             <Board />
-            <UserConnect />
         </div>
     );
 }
