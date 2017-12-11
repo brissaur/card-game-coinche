@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import Board from './board/board.view';
@@ -32,10 +32,10 @@ function App({ isLoaded, error, username, id }) {
     }
 
     return (
-        <div>
+        <Fragment>
             <div>Hello {username} with id {id}</div>
             <Board />
-        </div>
+        </Fragment>
     );
 }
 
