@@ -13,4 +13,3 @@ export default function* initAppSagas() {
         yield put(setAppLoaded(e.message));
     }
 }
-
