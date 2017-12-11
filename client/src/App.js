@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import Board from './board/board.view';
-import UserConnect from './user/connect.container';
 
 import { getAppLoadedStatus } from './bootstrap/selectors';
 import { getUserName, getUserId } from './user/selectors';
@@ -33,11 +32,10 @@ function App({ isLoaded, error, username, id }) {
     }
 
     return (
-        <div>
+        <Fragment>
             <div>Hello {username} with id {id}</div>
             <Board />
-            <UserConnect />
-        </div>
+        </Fragment>
     );
 }
 
