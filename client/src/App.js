@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Board from './board/board.view';
 
 import { getAppLoadedStatus } from './bootstrap/selectors';
-import { getUserName, getUserId } from './user/selectors';
+import { getPlayerName, getPlayerId } from './player/selectors';
 
 function mapStateToProps(state) {
     const { isLoaded, error } = getAppLoadedStatus(state);
@@ -12,8 +12,8 @@ function mapStateToProps(state) {
     return {
         isLoaded,
         error,
-        username: getUserName(state),
-        id: getUserId(state),
+        playerName: getPlayerName(state),
+        id: getPlayerId(state),
     };
 }
 const mapDispatchToProps = dispatch => ({
@@ -22,7 +22,7 @@ const mapDispatchToProps = dispatch => ({
     },
 });
 
-function App({ isLoaded, error, username, id }) {
+function App({ isLoaded, error, playerName, id }) {
     if (!isLoaded) {
         return <div>Loading...</div>;
     }
@@ -33,7 +33,7 @@ function App({ isLoaded, error, username, id }) {
 
     return (
         <Fragment>
-            <div>Hello {username} with id {id}</div>
+            <div>Hello {playerName} with id {id}</div>
             <Board />
         </Fragment>
     );

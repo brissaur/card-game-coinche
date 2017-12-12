@@ -6,7 +6,7 @@ import createSagaMiddleware from 'redux-saga';
 
 import reducer from './reducers';
 import rootSaga from './root-saga';
-import usersSaga from './user/sagas';
+import playerSaga from './player/sagas';
 
 import App from './App';
 import './index.css';
@@ -24,7 +24,7 @@ const store = createStore(
 
 // applying sagas
 sagaMiddleware.run(rootSaga);
-sagaMiddleware.run(usersSaga);
+sagaMiddleware.run(playerSaga);
 
 render(
     <Provider store={store}>

@@ -1,7 +1,7 @@
 import db from '../api/init';
 import { call, select } from 'redux-saga/effects';
-import { createFakeUsers, joinUsersToTable } from '../user/sagas';
-import { getUserId } from '../user/selectors';
+import { createFakePlayers, joinPlayersToTable } from '../player/sagas';
+import { getPlayerId } from '../player/selectors';
 
 /**
  * Create a new "table" document (empty)
@@ -21,11 +21,11 @@ export function* getTable(tableId) {
     return yield db.collection('tables').doc(tableId);
 }
 
-export function* createTableAndAddUserToTable() {
+export function* createTableAndAddPlayerToTable() {
     const tableDocument = yield call(createTable);
-    const usersId = yield call(createFakeUsers);
-    // // Add current user Id to other ID
-    usersId.push(yield select(getUserId));
-    // // Join users to table. This should trigger an event on function side to deal card
-    yield call(joinUsersToTable, usersId, tableDocument);
+    const playersId = yield call(createFakePlayers);
+    // Add current player Id to other ID
+    playersId.push(yield select(getPlayerId));
+    // // Join players to table. This should trigger an event on function side to deal card
+    yield call(joinPlayersToTable, playersId, tableDocument);
 }

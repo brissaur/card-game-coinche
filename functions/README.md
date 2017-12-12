@@ -2,7 +2,13 @@ deploy firebase function :
 
 $ firebase deploy
 
+$ firebase experimental:functions:shell
 
+Documentation : 
+
+- https://firebase.google.com/docs/functions/
+
+- https://firebase.googleblog.com/2017/09/testing-functions-locally-with-cloud.html
 
 Démarrage de la partie :
 
