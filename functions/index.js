@@ -2,13 +2,13 @@ const shuffle = require('lodash/shuffle');
 const functions = require('firebase-functions');
 
 /**
- * dataProvider { players: [ { id: 'IEOCmi6TkPJ2G0LEUInH' }, { id: 'Qc9YMPbs9qY9a6NbzofK' }, { id: 'XbPRUknEfzeVCpOuTrRA' }, { id: 'totateiu' }]}
+ * dataProvider { players: [ { id: 'IEOCmi6TkPJ2G0LEUInH' }, { id: 'Qc9YMPbs9qY9a6NbzofK' }, { id: 'XbPRUknEfzeVCpOuTrRA' }, { id: '3MdqHPfrUOlLK38XZKR1' }]}
  * @type {CloudFunction<DeltaDocumentSnapshot>|*}
  */
 exports.dealCards = functions.firestore.document('tables/{tableId}').onWrite(event => {
     const original = event.data.data();
     console.log('original', original);
-    if(original.players){
+    if(original.players && original.players.length == 4){
         const players = original.players;
         console.log('players', players);
         const cards = shuffle([
@@ -19,8 +19,14 @@ exports.dealCards = functions.firestore.document('tables/{tableId}').onWrite(eve
         ]);
 
         for(let playerNumber = 0; playerNumber < 4; playerNumber++){
-            players[playerNumber] = assignCardsToPlayer(cards.slice(playerNumber * 8, (playerNumber * 8) + 8), players[playerNumber]);
+            console.log('toto ',players[playerNumber]);
+            players[playerNumber] = assignCardsToPlayer(
+                cards.slice(playerNumber * 8, (playerNumber * 8) + 8),
+                players[playerNumber]
+            );
         }
+
+        console.log('players', players);
 
         return event.data.ref.set({players: players});
     }
@@ -28,8 +34,10 @@ exports.dealCards = functions.firestore.document('tables/{tableId}').onWrite(eve
 })
 
 const assignCardsToPlayer = (cards, player) => {
+    console.log('cards', cards);
+    console.log('player', player);
     return {
-        player: player.player,
-        cards : cards
+        ...player,
+        cards
     }
 }

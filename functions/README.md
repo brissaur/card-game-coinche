@@ -1,14 +1,35 @@
-deploy firebase function : 
+## Command line 
 
+_Deploy your functions to the cloud_
 $ firebase deploy
 
+_Run the shell to test locally - and manually - the functions_
 $ firebase experimental:functions:shell
 
-Documentation : 
+
+_Uglify ES7 code to ES5_
+babel firebaseFunctions --out-dir functions --copy-files --ignore firebaseFunctions/node_modules
+
+## Troubleshooting 
+
+Cannot find module '/Users/busson-arnaud/Sites/card-game-coinche/functions/node_modules/grpc/src/node/extension_binary/node-v48-darwin-x64-unknown/grpc_node.node' :
+``` rm -rf node_modules && nvm use && yarn install ```
+
+
+## Documentation : 
 
 - https://firebase.google.com/docs/functions/
 
 - https://firebase.googleblog.com/2017/09/testing-functions-locally-with-cloud.html
+
+_Some notes on Babel_
+- https://codeburst.io/babel-preset-env-cbc0bbf06b8f
+
+_Use ES7 with cloud functions_
+- https://codeburst.io/es6-in-cloud-functions-for-firebase-2-415d15205468
+
+
+
 
 Démarrage de la partie :
 
