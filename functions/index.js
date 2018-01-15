@@ -1,4 +1,4 @@
-const shuffle = require('lodash/shuffle');
+import shuffle from 'lodash/shuffle';
 const functions = require('firebase-functions');
 
 /**

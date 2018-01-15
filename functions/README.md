@@ -7,8 +7,8 @@ _Run the shell to test locally - and manually - the functions_
 $ firebase experimental:functions:shell
 
 
-_Uglify ES7 code to ES5_
-babel firebaseFunctions --out-dir functions --copy-files --ignore firebaseFunctions/node_modules
+_Uglify ES7 code to ES5_ /!\ Please change path since it will create a redundant recursive folder /!\ 
+node ./node_modules/\@babel/cli/bin/babel ./ --out-dir functions --copy-files --ignore firebaseFunctions/node_modules
 
 ## Troubleshooting 
 
