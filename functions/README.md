@@ -33,3 +33,10 @@ _Some notes on Babel_
 
 _Use ES7 with cloud functions_
 - https://codeburst.io/es6-in-cloud-functions-for-firebase-2-415d15205468
+
+
+## Todo 
+
+- Create lint rule (use the same as client/ module)
+- Babelify 
+- Create some unit test
