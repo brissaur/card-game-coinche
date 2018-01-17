@@ -68,23 +68,6 @@ export function* createFakePlayers(){
     return playersId;
 }
 
-/**
- * @todo For now we create systematically a new table with players
- * @returns {*}
- * @param {array} playersId
- * @param {Object} tableDocument
- */
-export function* joinPlayersToTable(playersId, tableDocument){
-    const players = playersId.map((playerId) => {
-        return {
-            id: playerId
-        }
-    });
-    return yield db.collection('tables').doc(tableDocument.id).update({
-        players: players,
-    });
-}
-
 /*
  Starts fetchPlayer on each dispatched `PLAYER_FETCH_REQUESTED` action.
  Allows concurrent fetches of player.

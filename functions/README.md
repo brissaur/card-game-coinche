@@ -1,22 +1,28 @@
 ## Command line 
 
 _Deploy your functions to the cloud_
-$ firebase deploy
+$ firebase deploy   
 
 _Run the shell to test locally - and manually - the functions_
 $ firebase experimental:functions:shell
 
 
 _Uglify ES7 code to ES5_ /!\ Please change path since it will create a redundant recursive folder /!\ 
-node ./node_modules/\@babel/cli/bin/babel ./ --out-dir functions --copy-files --ignore firebaseFunctions/node_modules
+node ./node_modules/\@babel/cli/bin/babel ./ --out-dir minify --copy-files --ignore node_modules
 
 ## Troubleshooting 
 
 Cannot find module '/Users/busson-arnaud/Sites/card-game-coinche/functions/node_modules/grpc/src/node/extension_binary/node-v48-darwin-x64-unknown/grpc_node.node' :
 ``` rm -rf node_modules && nvm use && yarn install ```
 
+command not found: firebase
+``` npm get prefix ```
+puis éditez votre fichier .profile (ou bash_profile) et ajouter le path. Faire un source ~/.profile, ça doit marcher
+
 
 ## Documentation : 
+
+- https://firebase.google.com/docs/functions/local-emulator (Run function locally)
 
 - https://firebase.google.com/docs/functions/
 
