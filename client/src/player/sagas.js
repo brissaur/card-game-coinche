@@ -68,10 +68,6 @@ export function* createFakePlayers(){
     return playersId;
 }
 
-/*
- Starts fetchPlayer on each dispatched `PLAYER_FETCH_REQUESTED` action.
- Allows concurrent fetches of player.
- */
 function* playerSaga() {
     yield takeEvery(SET_PLAYERNAME_ACTION, setPlayerName);
     yield takeEvery(PLAYER_CONNECT_ACTION, connectPlayer);
