@@ -2,11 +2,10 @@
 
 Warning: There MUST have an package.json in the "functions source directory" (required by firebase)
 
-- public : Contain babelified code that will be deploy
 - .nvmrc : Contain the node version that works with the projects. Use ```nvm use``` to automatically select the correct node version
-- babelify.sh : Contain code that babelify the source code
-- firebase.json : Contain some settings for firebase, especially the folder that would deployed
-- index.js : Contain the source code. You dev on this one
+- bin/predeploy.sh : Script that is running before deploy (babelify code)
+- src/ : Contain the source code
+- dist/ : Contain the deploy code (do not manually modify code in here)
 
 ## Firebase.json sample
 
@@ -26,11 +25,8 @@ functions:source => Is where your package.json for "functions" reside
 _Deploy your functions to the cloud (this will automatically call predeploy hook from firebase.json)_
 $ yarn deploy
 
-_Run the shell to test locally - and manually - the functions_
+_Run the shell to test locally - and manually - the functions_ (Warning, the code being testing is the one from dist/ directory)
 $ yarn shell
-
-_Uglify ES7 code to ES5_ (already included in yarn deploy and yarn shell ) 
-node ./node_modules/\@babel/cli/bin/babel ./index.js --out-dir public --copy-files --ignore node_modules
 
 ## Troubleshooting 
 
