@@ -4,12 +4,9 @@ import * as duck from './duck';
 
 const mapDispatchToProps = dispatch => ({
     onChangeValue: (evt) => {
-        dispatch(duck.setUserName(evt.target.value));
+        dispatch(duck.setPlayerName(evt.target.value));
     },
-    onUserConnect: () => dispatch({ type: duck.PLAYER_CONNECT_ACTION }),
+    onPlayerConnect: () => dispatch({ type: duck.PLAYER_CONNECT_ACTION }),
 });
 
-export default connect(
-    null,
-    mapDispatchToProps,
-)(PlayerConnect);
+export default connect(null, mapDispatchToProps)(PlayerConnect);

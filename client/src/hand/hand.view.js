@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Card from '../card/card.container';
+import Card from '../card/clickableCard.container';
 import style from './styles';
 
 export default function Hand({ cards }) {
@@ -9,7 +9,7 @@ export default function Hand({ cards }) {
             {
                 cards.map(card => (
                     <li key={card.id} style={style.cardInHand}>
-                        <Card cardValue={card.cardValue} suit={card.suit} />
+                        <Card {...card} />
                     </li>
                 ))
             }

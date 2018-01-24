@@ -10,7 +10,7 @@ export default function* initAppSagas() {
 
         yield put(setAppLoaded());
     } catch (e) {
+        global.console.error(e);
         yield put(setAppLoaded(e.message));
     }
 }
-

@@ -14,6 +14,6 @@ export default function PlayerConnect({ onChangeValue, onPlayerConnect }) {
 }
 
 PlayerConnect.propTypes = {
-    onUserConnect: PropTypes.func.isRequired,
+    onPlayerConnect: PropTypes.func.isRequired,
     onChangeValue: PropTypes.func.isRequired,
 };
