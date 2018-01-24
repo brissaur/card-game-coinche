@@ -1,7 +1,8 @@
-import { call, select } from 'redux-saga/effects';
+import { call, select, put } from 'redux-saga/effects';
 import db from '../api/init';
 import { createFakePlayers } from '../player/sagas';
 import { getPlayerId } from '../player/selectors';
+import { setTableId } from '../table/ducks';
 
 /**
  * Return a "table" document
@@ -21,7 +22,10 @@ export function* createTableAndAddPlayerToTable() {
         id: playerId,
     }));
 
-    yield db.collection('tables').add({
+    const document = yield db.collection('tables').add({
         players,
+        trick: [],
     });
+
+    yield put(setTableId(document.id));
 }
