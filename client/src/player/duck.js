@@ -25,13 +25,13 @@ export function setPlayerName(playername, id) {
 // reducer
 export function reducer(state = initialState, action) {
     switch (action.type) {
-        case SET_PLAYERNAME_ACTION:
-            return {
-                ...state,
-                playername: action.playername,
-                id: action.id,
-            };
-        default:
-            return state;
+    case SET_PLAYERNAME_ACTION:
+        return {
+            ...state,
+            playername: action.playername,
+            id: action.id,
+        };
+    default:
+        return state;
     }
 }

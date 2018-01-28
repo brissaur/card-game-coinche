@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-import Board from './board/board.view';
+import Board from './board/board.container';
 
 import { getAppLoadedStatus } from './bootstrap/selectors';
 import { getPlayerName, getPlayerId } from './player/selectors';
@@ -44,5 +45,13 @@ function App({
         </Fragment>
     );
 }
+
+App.propTypes = {
+    isLoaded: PropTypes.bool.isRequired,
+    error: PropTypes.string,
+    playerName: PropTypes.string,
+    id: PropTypes.string,
+    tableId: PropTypes.string,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

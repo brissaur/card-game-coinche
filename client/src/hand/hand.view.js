@@ -8,8 +8,8 @@ export default function Hand({ cards }) {
         <ul style={style.hand}>
             {
                 cards.map(card => (
-                    <li key={card.id} style={style.cardInHand}>
-                        <Card {...card} />
+                    <li key={card} style={style.cardInHand}>
+                        <Card id={card} />
                     </li>
                 ))
             }
@@ -18,9 +18,5 @@ export default function Hand({ cards }) {
 }
 
 Hand.propTypes = {
-    cards: PropTypes.arrayOf(PropTypes.shape({
-        suit: PropTypes.string,
-        cardValue: PropTypes.string,
-        id: PropTypes.number,
-    })),
+    cards: PropTypes.arrayOf(PropTypes.string),
 };

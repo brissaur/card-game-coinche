@@ -4,54 +4,11 @@ import Hand from '../hand/hand.view';
 
 import styles from './styles';
 
-const fakeHand = [
-    {
-        id: 1,
-        suit: 'spades',
-        cardValue: 'A',
-    },
-    {
-        id: 2,
-        suit: 'heart',
-        cardValue: 'A',
-    },
-    {
-        id: 3,
-        suit: 'diamonds',
-        cardValue: 'J',
-    },
-    {
-        id: 4,
-        suit: 'clubs',
-        cardValue: 'Q',
-    },
-    {
-        id: 5,
-        suit: 'spades',
-        cardValue: '9',
-    },
-    {
-        id: 6,
-        suit: 'spades',
-        cardValue: '9',
-    },
-    {
-        id: 7,
-        suit: 'spades',
-        cardValue: '9',
-    },
-    {
-        id: 8,
-        suit: 'spades',
-        cardValue: '9',
-    },
-];
-
-export default function Board({ children }) {
+export default function Board({ children, handCards = [] }) {
     return (
         <div style={styles.board}>
             <h1 style={styles.mainTitle}> Welcome to this app coinche! </h1>
-            <Hand cards={fakeHand} />
+            <Hand cards={handCards} />
             { children }
         </div>
     );
@@ -59,4 +16,5 @@ export default function Board({ children }) {
 
 Board.propTypes = {
     children: PropTypes.node,
+    handCards: PropTypes.arrayOf(PropTypes.string),
 };

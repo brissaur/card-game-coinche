@@ -11,11 +11,11 @@ function* cardPlayed({ card }) {
 
     const snap = yield document.get();
     yield document.update({
-        trick: [...snap.data().trick, card.id],
+        trick: [...snap.data().trick, card],
         // TODO: add an object with card.id && player.id
     });
 }
 
-export function* watchers() {
+export default function* watchers() {
     yield takeEvery(CARD_PLAYED, cardPlayed);
 }

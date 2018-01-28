@@ -1,3 +1,3 @@
-export function getAppLoadedStatus(state) {
-   return state.bootstrap;
+export default function getAppLoadedStatus(state) {
+    return state.bootstrap;
 }

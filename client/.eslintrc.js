@@ -1,6 +1,6 @@
 module.exports = {
     "extends": "airbnb",
-    "env": { "browser": true },
+    "env": { "browser": true, "jest": true },
     "rules": {
         "no-console": 1,
         "no-multiple-empty-lines": [2, { "max": 1, "maxEOF": 1, "maxBOF": 0 }],
