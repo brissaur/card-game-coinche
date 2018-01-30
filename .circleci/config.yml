@@ -9,10 +9,7 @@ jobs:
       - image: circleci/node:7.10
     steps:
       - checkout
-      - run: cd client
-      - run: ls -al
-      #- run: yarn install
-      #- run: yarn test
+      - run: cd client && yarn install && yarn test
 workflows:
   version: 2
   all_test:
