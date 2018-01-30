@@ -10,8 +10,9 @@ jobs:
     steps:
       - checkout
       - run: cd client
-      - run: yarn install
-      - run: yarn test
+      - run: ls -al
+      #- run: yarn install
+      #- run: yarn test
 workflows:
   version: 2
   all_test:
