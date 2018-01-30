@@ -11,3 +11,9 @@ jobs:
       - checkout
       - run: pwd
       - run: ls -al
+workflows:
+  version: 2
+  all_test:
+    jobs:
+      - client_test
+      #- function_test
