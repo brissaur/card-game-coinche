@@ -20,5 +20,15 @@ export function getTableDocument(state) {
 // @ROBIN: @TODO: table WILL change
 export const getPlayers = createSelector(
     getTableDocument,
-    table => (table ? table.players.map(({ id }) => ({ id })) : []),
+    table =>
+        (table
+            ? table.players.map(({ id }) => {
+                const targetCard = table.trick.find(card => card.playerId === id);
+
+                return {
+                    id,
+                    cardId: targetCard ? targetCard.cardId : null,
+                };
+            })
+            : []),
 );
