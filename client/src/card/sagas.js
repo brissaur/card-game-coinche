@@ -12,12 +12,23 @@ function* cardPlayed({ card }) {
 
     const myPlayerId = yield select(getPlayerId);
     const snap = yield document.get();
+    const data = snap.data();
+    const me = data.players.find(player => player.id === myPlayerId);
+    const newHand = me.cards.filter(id => id !== card.id);
+
     yield document.update({
         trick: [
-            ...snap.data().trick,
+            ...data.trick,
             {
                 playerId: myPlayerId,
                 cardId: card.id,
+            },
+        ],
+        players: [
+            ...data.players.filter(({ id }) => id !== myPlayerId),
+            {
+                id: myPlayerId,
+                cards: newHand,
             },
         ],
     });
