@@ -7,3 +7,7 @@ export function getTableId(state) {
 export function getPlayerCards(state) {
     return get(state, 'table.playerCards');
 }
+
+export function getTrick(state) {
+    return get(state, 'table.trick');
+}

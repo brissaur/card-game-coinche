@@ -3,7 +3,7 @@ import { eventChannel } from 'redux-saga';
 import db from '../api/init';
 import { createFakePlayers } from '../player/sagas';
 import { getPlayerId } from '../player/selectors';
-import { setTableId, updatePlayerCard } from '../table/ducks';
+import { setTableId, updatePlayerCard, updateTrick } from './ducks';
 import { getTableId } from '../table/selectors';
 import { filterPlayer } from './helpers';
 
@@ -31,11 +31,15 @@ export function* getTable(tableId) {
  * @param payload
  */
 function* updateDocumentTableHandler(payload) {
+    // update player hand
     const playerId = yield select(getPlayerId);
     const player = payload.players.find(filterPlayer(playerId));
     if (player.cards) {
         yield put(updatePlayerCard(player.cards));
     }
+
+    // update tricks
+    yield put(updateTrick(payload.trick));
 }
 
 function createSnapshotChannel(document) {
