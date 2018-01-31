@@ -6,13 +6,11 @@ import style from './styles';
 export default function Hand({ cardsId }) {
     return (
         <ul style={style.hand}>
-            {
-                cardsId.map(cardId => (
-                    <li key={cardId} style={style.cardInHand}>
-                        <Card id={cardId} />
-                    </li>
-                ))
-            }
+            {cardsId.map(cardId => (
+                <li key={cardId} style={style.cardInHand}>
+                    <Card id={cardId} />
+                </li>
+            ))}
         </ul>
     );
 }
