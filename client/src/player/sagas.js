@@ -32,9 +32,8 @@ function* connectPlayer() {
         const playerDocument = yield call(registerPlayer);
         yield put({
             type: PLAYER_CONNECT_ACTION_SUCCEED,
-            id: playerDocument.id
+            id: playerDocument.id,
         });
-
     } catch (e) {
         yield put({
             type: PLAYER_CONNECT_ACTION_FAIL,
@@ -47,7 +46,7 @@ function* connectPlayer() {
  * @todo Remove that function once multiplayer feature is available
  * @return {array} of player's ID created
  */
-export function* createFakePlayers(){
+export function* createFakePlayers() {
     const playersId = [];
     let result;
     result = yield db.collection('players').add({

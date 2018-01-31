@@ -1,30 +1,20 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import styles from './styles';
 
-const getCardName = (suit, value) => {
-    const cardSuit = suit.substring(0, 1).toUpperCase();
-
-    return value + cardSuit;
-};
-
-const getCardSrc = (suit, value) => {
-    const cardName = getCardName(suit, value);
+const getCardSrc = cardId =>
     // eslint-disable-next-line
-    return require(`../../public/images/cards/${cardName}.png`);
-};
-
-export default function Card({ suit, cardValue }) {
+     require(`../../public/images/cards/${cardId}.png`);
+export default function Card({ id }) {
     return (
         <img
-            src={getCardSrc(suit, cardValue)}
-            alt={getCardName(suit, cardValue)}
+            src={getCardSrc(id)}
+            alt={id}
             style={styles.card}
         />
     );
 }
 
 Card.propTypes = {
-    suit: PropTypes.string.isRequired,
-    cardValue: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
 };

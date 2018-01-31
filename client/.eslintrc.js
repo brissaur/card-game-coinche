@@ -1,6 +1,6 @@
 module.exports = {
     "extends": "airbnb",
-    "env": { "browser": true },
+    "env": { "browser": true, "jest": true },
     "rules": {
         "no-console": 1,
         "no-multiple-empty-lines": [2, { "max": 1, "maxEOF": 1, "maxBOF": 0 }],
@@ -10,6 +10,8 @@ module.exports = {
 		"indent": ["error", 4],
         "react/jsx-indent": [1, 4],
         "react/jsx-indent-props": [1, 4],
-        "no-underscore-dangle": [2, {'allow' : ['__REDUX_DEVTOOLS_EXTENSION__']}]
+        "no-underscore-dangle": [2, {'allow' : ['__REDUX_DEVTOOLS_EXTENSION__']}],
+        "jsx-a11y/click-events-have-key-events": 0,
+        "jsx-a11y/no-static-element-interactions": 0
     }
 };
