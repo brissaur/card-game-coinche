@@ -70,13 +70,24 @@ export function* watchUpdateOnDocumentTable() {
 }
 
 export function* createTableAndAddPlayerToTable() {
-    const playersId = yield call(createFakePlayers);
+    const players = [];
+    const meId = yield select(getPlayerId);
     // Add current player Id to other ID
-    playersId.push(yield select(getPlayerId));
+    players.push({
+        id: meId,
+        isFakePlayer: false,
+        pos: 0,
+    });
+    // Create fake player
+    const fakePlayers = yield call(createFakePlayers);
 
-    const players = playersId.map(playerId => ({
-        id: playerId,
+    // for each player, add a position and add them into the list
+    fakePlayers.forEach((player, pos) => players.push({
+        ...player,
+        pos: pos + 1,
     }));
+
+    console.log('players ', players);
 
     const document = yield db.collection(COLLECTION_NAME).add({
         players,

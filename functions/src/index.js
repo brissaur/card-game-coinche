@@ -21,9 +21,11 @@ exports.dealCards = functions.firestore.document('tables/{tableId}').onCreate(ev
         );
     }
 
-    return event.data.ref.update({players: players});
-})
+    return event.data.ref.update({players: players, state: {currentPlayerId : players[0]}});
+});
+
+exports.giveHandNextPlayer
 
 const assignCardsToPlayer = (cards, player) => {
     return {...player, cards}
-}
+};
