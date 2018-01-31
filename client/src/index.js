@@ -13,13 +13,11 @@ import './index.css';
 
 const sagaMiddleware = createSagaMiddleware();
 
-const store = createStore(
-    reducer,
-    compose(
-        applyMiddleware(sagaMiddleware),
-        window && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-    ),
-);
+const middlewares = [applyMiddleware(sagaMiddleware)];
+if (window && window.__REDUX_DEVTOOLS_EXTENSION__) {
+    middlewares.push(window.__REDUX_DEVTOOLS_EXTENSION__());
+}
+const store = createStore(reducer, compose(...middlewares));
 /* eslint-enable */
 
 // applying sagas
