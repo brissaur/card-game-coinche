@@ -8,7 +8,7 @@ export default function Board({ children, handCards = [] }) {
     return (
         <div style={styles.board}>
             <h1 style={styles.mainTitle}> Welcome to this app coinche! </h1>
-            <Hand cards={handCards} />
+            <Hand cardsId={handCards} />
             { children }
         </div>
     );

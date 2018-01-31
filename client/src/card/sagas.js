@@ -16,6 +16,7 @@ function* cardPlayed({ card }) {
     });
 }
 
-export default function* watchers() {
+// eslint-disable-next-line import/prefer-default-export
+export function* watchers() {
     yield takeEvery(CARD_PLAYED, cardPlayed);
 }

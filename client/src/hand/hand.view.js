@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import Card from '../card/clickableCard.container';
 import style from './styles';
 
-export default function Hand({ cards }) {
+export default function Hand({ cardsId }) {
     return (
         <ul style={style.hand}>
             {
-                cards.map(card => (
-                    <li key={card} style={style.cardInHand}>
-                        <Card id={card} />
+                cardsId.map(cardId => (
+                    <li key={cardId} style={style.cardInHand}>
+                        <Card id={cardId} />
                     </li>
                 ))
             }
@@ -18,5 +18,5 @@ export default function Hand({ cards }) {
 }
 
 Hand.propTypes = {
-    cards: PropTypes.arrayOf(PropTypes.string),
+    cardsId: PropTypes.arrayOf(PropTypes.string),
 };

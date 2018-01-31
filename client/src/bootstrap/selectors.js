@@ -1,3 +1,2 @@
-export default function getAppLoadedStatus(state) {
-    return state.bootstrap;
-}
+// eslint-disable-next-line import/prefer-default-export
+export const getAppLoadedStatus = state => state.bootstrap;

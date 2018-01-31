@@ -1,5 +1,5 @@
 const SET_TABLE_ID = 'table:set-current-table-id';
-const DEAL_CARDS_TO_PLAYER = 'table:DEAL_CARDS_TO_PLAYER';
+const UPDATE_PLAYER_CARD = 'table:UPDATE_PLAYER_CARD';
 
 const initialState = {
     id: null,
@@ -13,9 +13,9 @@ export function setTableId(id) {
     };
 }
 
-export function dealCardsToPlayer(cards) {
+export function updatePlayerCard(cards) {
     return {
-        type: DEAL_CARDS_TO_PLAYER,
+        type: UPDATE_PLAYER_CARD,
         cards,
     };
 }
@@ -27,7 +27,7 @@ export function reducer(state = initialState, action) {
             ...state,
             id: action.id,
         };
-    case DEAL_CARDS_TO_PLAYER:
+    case UPDATE_PLAYER_CARD:
         return {
             ...state,
             playerCards: action.cards,
