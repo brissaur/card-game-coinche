@@ -21,10 +21,19 @@ exports.dealCards = functions.firestore.document('tables/{tableId}').onCreate(ev
         );
     }
 
-    return event.data.ref.update({players: players, state: {currentPlayerId : players[0]}});
+    return event.data.ref.update({players: players, state: {currentPlayerId : players[0].id}});
 });
 
-exports.giveHandNextPlayer
+exports.giveHandNextPlayer = functions.firestore.document('tables/{tableId}').onUpdate(event => {
+    let currentData = event.data.data();
+    let previousData = event.data.previous.data();
+    let currentTrick = currentData.trick;
+    let previousTrick = previousData.trick;
+
+    if(currentTrick.length > previousTrick.length){
+        currentData.state.currentPlayerId =
+    }
+});
 
 const assignCardsToPlayer = (cards, player) => {
     return {...player, cards}

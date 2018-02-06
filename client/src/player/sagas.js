@@ -52,7 +52,7 @@ function* createFakePlayer(name){
     const fakePlayer = {
         firstname: name,
         isFakePlayer: true,
-    }
+    };
     const result = yield db.collection('players').add(fakePlayer);
 
     return {

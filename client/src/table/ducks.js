@@ -1,11 +1,13 @@
 const SET_TABLE_ID = 'table:set-current-table-id';
 const UPDATE_PLAYER_CARD = 'table:UPDATE_PLAYER_CARD';
 const UPDATE_TRICK = 'table:UPDATE_TRICK';
+const UPDATE_CURRENT_PLAYER = 'table:UPDATE_CURRENT_PLAYER';
 
 const initialState = {
     id: null,
     playerCards: [],
     trick: [],
+    state: {}
 };
 
 export function updateTrick(trick) {
@@ -13,6 +15,13 @@ export function updateTrick(trick) {
         type: UPDATE_TRICK,
         trick,
     };
+}
+
+export function updateCurrentPlayer(currentPlayerId){
+    return {
+        type: UPDATE_CURRENT_PLAYER,
+        currentPlayerId
+    }
 }
 
 export function setTableId(id) {
@@ -44,6 +53,14 @@ export function reducer(state = initialState, action) {
         return {
             ...state,
             trick: action.trick,
+        };
+    case UPDATE_CURRENT_PLAYER:
+        return {
+            ...state,
+            state: {
+                ...state.state,
+                currentPlayerId: action.currentPlayerId
+            }
         };
     default:
         return state;
