@@ -25,5 +25,19 @@ exports.dealCards = functions.firestore.document('tables/{tableId}').onCreate(ev
 })
 
 const assignCardsToPlayer = (cards, player) => {
-    return {...player, cards}
-}
+    return { ...player, cards };
+};
+
+/**
+ * endTrick({ after: { trick: []}})
+ */
+exports.endTrick = functions.firestore
+    .document("tables/{tableId}")
+    .onUpdate(event => {
+        const trick = event.data.data().trick;
+        if (trick.length === 4) {
+            return event.data.ref.update({ trick: [] });
+        }
+
+        return event;
+    });
