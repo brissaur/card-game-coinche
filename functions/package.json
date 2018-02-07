@@ -7,7 +7,8 @@
     "start": "npm run shell",
     "build": "./bin/predeploy.sh",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "test": "jest --env=node"
   },
   "dependencies": {
     "@google-cloud/functions-emulator": "^1.0.0-alpha.29",
@@ -21,7 +22,10 @@
     "@babel/cli": "^7.0.0-beta.37",
     "@babel/core": "^7.0.0-beta.37",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.37",
-    "@babel/preset-env": "^7.0.0-beta.37"
+    "@babel/preset-env": "^7.0.0-beta.37",
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.2.0",
+    "jest": "^22.2.1"
   },
   "main": "dist/index.js"
 }

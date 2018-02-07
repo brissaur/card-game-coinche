@@ -9,7 +9,7 @@ const initialState = {
     document: null,
     trick: [],
     playerCards: [],
-    state: {}
+    state: {},
 };
 
 export function updateTableDocument(table) {

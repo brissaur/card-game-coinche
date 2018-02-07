@@ -94,7 +94,7 @@ export function* createTableAndAddPlayerToTable() {
     const document = yield db.collection(COLLECTION_NAME).add({
         players,
         trick: [],
-        state: {}
+        state: {},
     });
 
     yield put(setTableId(document.id));

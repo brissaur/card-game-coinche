@@ -1,11 +1,12 @@
 import shuffle from 'lodash/shuffle';
-const functions = require('firebase-functions');
+import sortBy from 'lodash/sortBy';
+import { firestore } from 'firebase-functions';
 
 /**
  * dataProvider { players: [ { id: 'IEOCmi6TkPJ2G0LEUInH' }, { id: 'Qc9YMPbs9qY9a6NbzofK' }, { id: 'XbPRUknEfzeVCpOuTrRA' }, { id: '3MdqHPfrUOlLK38XZKR1' }]}
  * @type {CloudFunction<DeltaDocumentSnapshot>|*}
  */
-exports.dealCards = functions.firestore.document('tables/{tableId}').onCreate(event => {
+exports.dealCards = firestore.document('tables/{tableId}').onCreate(event => {
     const players = event.data.data().players;
     const cards = shuffle([
         '7S', '8S', '9S', '10S', 'AS', 'JS', 'QS', 'KS',
@@ -24,15 +25,28 @@ exports.dealCards = functions.firestore.document('tables/{tableId}').onCreate(ev
     return event.data.ref.update({players: players, state: {currentPlayerId : players[0].id}});
 });
 
-exports.giveHandNextPlayer = functions.firestore.document('tables/{tableId}').onUpdate(event => {
-    let currentData = event.data.data();
-    let previousData = event.data.previous.data();
-    let currentTrick = currentData.trick;
-    let previousTrick = previousData.trick;
+exports.giveHandNextPlayer = firestore.document('tables/{tableId}').onUpdate(event => {
+    const currentData = event.data.data();
+    const previousData = event.data.previous.data();
+    const currentTrick = currentData.trick;
+    const previousTrick = previousData.trick;
+    let currentPlayerId = null;
+    const previousPlayers = sortBy(previousData.players, ['pos']);
 
+    // Trick has changed, we need to select the next player
     if(currentTrick.length > previousTrick.length){
-        currentData.state.currentPlayerId =
+        const previousPlayerId = previousData.state.currentPlayerId;
+        const previousPlayerIdx = previousPlayers.findIndex((player) => previousPlayerId === player.id);
+        // if previousPlayer was the last one, take the first one
+        currentPlayerId = (previousPlayerIdx === 3) ? previousPlayers[0].id : previousPlayers[previousPlayerIdx + 1].id;
+        return event.data.ref.set({
+            state: {
+                ...currentData.state,
+                currentPlayerId
+            }
+        }, {merge:true});
     }
+    return event;
 });
 
 const assignCardsToPlayer = (cards, player) => {
