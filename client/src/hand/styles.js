@@ -1,12 +1,12 @@
 export default {
     cardInHand: {
-        height: 150,
         display: 'flex',
     },
     hand: {
         flexDirection: 'row',
         listStyle: 'none',
+        height: 150,
         display: 'flex',
-        padding: 0,
+        justifyContent: 'center',
     },
 };
