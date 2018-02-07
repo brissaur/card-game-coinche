@@ -43,10 +43,9 @@ function* updateDocumentTableHandler(payload) {
 
     // update table
     yield put(updateTableDocument(payload));
-    console.log('payload', payload);
-    //if(payload.state.currentPlayerId) {
-        yield put(updateCurrentPlayer(payload.state.currentPlayerId));
-    //}
+
+    // udpate currentPlayer
+    yield put(updateCurrentPlayer(payload.state.currentPlayerId));
 }
 
 function createSnapshotChannel(document) {

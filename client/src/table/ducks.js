@@ -25,11 +25,11 @@ export function updateTrick(trick) {
     };
 }
 
-export function updateCurrentPlayer(currentPlayerId){
+export function updateCurrentPlayer(currentPlayerId) {
     return {
         type: UPDATE_CURRENT_PLAYER,
-        currentPlayerId
-    }
+        currentPlayerId,
+    };
 }
 
 export function setTableId(id) {
@@ -65,15 +65,15 @@ export function reducer(state = initialState, action) {
     case UPDATE_TABLE_DOCUMENT:
         return {
             ...state,
-            document: action.document
+            document: action.document,
         };
     case UPDATE_CURRENT_PLAYER:
         return {
             ...state,
             state: {
                 ...state.state,
-                currentPlayerId: action.currentPlayerId
-            }
+                currentPlayerId: action.currentPlayerId,
+            },
         };
     default:
         return state;
