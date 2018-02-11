@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Card from '../../card/card.container';
-import styles from './styles';
+import styles from './player.styles';
 
 export default function Player({ id, cardId }) {
     return (
