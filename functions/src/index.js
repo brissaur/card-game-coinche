@@ -48,7 +48,8 @@ exports.giveHandNextPlayer = documentAllTable.onUpdate((event) => {
         // eslint-disable-next-line max-len
         const previousPlayerIdx = previousPlayers.findIndex(player => previousPlayerId === player.id);
         // if previousPlayer was the last one, take the first one
-        currentPlayerId = (previousPlayerIdx === previousData.players.length - 1)
+        const lastPlayerIdx = previousData.players.length - 1;
+        currentPlayerId = (previousPlayerIdx === lastPlayerIdx)
             ? previousPlayers[0].id
             : previousPlayers[previousPlayerIdx + 1].id;
 
