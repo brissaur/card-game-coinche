@@ -8,13 +8,14 @@ describe('test functions', () => {
 
         // eslint-disable-next-line prefer-destructuring, global-require
         firestore = require('firebase-functions').firestore;
-        // eslint-disable-next-line global-require
-        module = require('./index');
 
         firestore.document.mockImplementation(() => ({
             onCreate: fn => fn,
             onUpdate: fn => fn,
         }));
+
+        // eslint-disable-next-line global-require
+        module = require('./index');
 
         event = {
             data: {
