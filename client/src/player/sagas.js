@@ -21,7 +21,7 @@ export function* registerPlayer() {
 
     const document = yield db.collection('players').add({
         firstname: name,
-        isFakePlayer: false
+        isFakePlayer: false,
     });
 
     yield put(setPlayerName(name, document.id));
@@ -48,7 +48,7 @@ function* connectPlayer() {
  * @param name
  * @return {{firstname: *, isFakePlayer: boolean, id}}
  */
-function* createFakePlayer(name){
+function* createFakePlayer(name) {
     const fakePlayer = {
         firstname: name,
         isFakePlayer: true,

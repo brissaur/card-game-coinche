@@ -9,7 +9,7 @@ const initialState = {
     document: null,
     trick: [],
     playerCards: [],
-    state: {},
+    general: {},
 };
 
 export function updateTableDocument(table) {
@@ -70,8 +70,8 @@ export function reducer(state = initialState, action) {
     case UPDATE_CURRENT_PLAYER:
         return {
             ...state,
-            state: {
-                ...state.state,
+            general: {
+                ...state.general,
                 currentPlayerId: action.currentPlayerId,
             },
         };
