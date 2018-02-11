@@ -9,7 +9,7 @@ jobs:
       - image: circleci/node:7.10
     steps:
       - checkout
-      - run: cd client && yarn install && yarn lint
+      - run: cd client && yarn install && ./bin/ci_copy_build_properties.sh && yarn lint
       - run: cd client && yarn install && yarn test
   functions_test:
     docker:
