@@ -85,6 +85,10 @@ exports.giveHandNextPlayer = firestore.document('tables/{tableId}').onUpdate((ev
     return event;
 });
 
+/**
+ * fakePlayerTurn({before: { trick: [], general: { currentPlayerId: 1 }, players: [{ id: 1}, { id: 2, isFakePlayer: true, cards: [{ id: 'AH' }, { id: '7H' }]}]},after: { trick: [], general: { currentPlayerId: 2 }, players: [{ id: 1}, { id: 2, isFakePlayer: true, cards: [{ id: 'AH' }, { id: '7H' }]}]}})
+ *
+ */
 exports.fakePlayerTurn = firestore.document('tables/{tableId}').onUpdate((event) => {
     const data = event.data.data();
     const previousData = event.data.previous.data();
