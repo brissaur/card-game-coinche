@@ -3,7 +3,13 @@ import { eventChannel } from 'redux-saga';
 import db from '../api/init';
 import { createFakePlayers } from '../player/sagas';
 import { getPlayerId } from '../player/selectors';
-import { setTableId, updatePlayerCard, updateTrick, updateTableDocument, updateCurrentPlayer } from './ducks';
+import {
+    setTableId,
+    updatePlayerCard,
+    updateTrick,
+    updateTableDocument,
+    updateCurrentPlayer,
+} from './ducks';
 import { getTableId } from '../table/selectors';
 import { filterPlayer } from './helpers';
 
@@ -51,7 +57,7 @@ function* updateDocumentTableHandler(payload) {
     yield put(updateTableDocument(payload));
 
     // udpate currentPlayer
-    yield put(updateCurrentPlayer(payload.state.currentPlayerId));
+    yield put(updateCurrentPlayer(payload.general.currentPlayerId));
 }
 
 function createSnapshotChannel(document) {
@@ -81,7 +87,7 @@ export function* watchUpdateOnDocumentTable() {
 export function* createTableAndAddPlayerToTable() {
     const meId = yield select(getPlayerId);
     // create fake player and add a position (start at 1) for each of them
-    const players = yield call(createFakePlayers).map((player, idx) => ({
+    const players = (yield call(createFakePlayers)).map((player, idx) => ({
         ...player,
         pos: idx + 1,
     }));
