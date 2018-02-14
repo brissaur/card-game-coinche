@@ -9,6 +9,12 @@ import { filterPlayer } from './helpers';
 
 const COLLECTION_NAME = 'tables';
 
+const INITIAL_DOCUMENT = {
+    players: {},
+    trick: [],
+    general: {},
+};
+
 /**
  * Return a "table" document
  * @param tableId
@@ -73,27 +79,22 @@ export function* watchUpdateOnDocumentTable() {
 }
 
 export function* createTableAndAddPlayerToTable() {
-    const players = [];
     const meId = yield select(getPlayerId);
+    // create fake player and add a position (start at 1) for each of them
+    const players = yield call(createFakePlayers).map((player, idx) => ({
+        ...player,
+        pos: idx + 1,
+    }));
     // Add current player Id to other ID
     players.push({
         id: meId,
         isFakePlayer: false,
         pos: 0,
     });
-    // Create fake player
-    const fakePlayers = yield call(createFakePlayers);
-
-    // for each player, add a position and add them into the list
-    fakePlayers.forEach((player, pos) => players.push({
-        ...player,
-        pos: pos + 1,
-    }));
 
     const document = yield db.collection(COLLECTION_NAME).add({
+        ...INITIAL_DOCUMENT,
         players,
-        trick: [],
-        state: {},
     });
 
     yield put(setTableId(document.id));
