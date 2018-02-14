@@ -4,11 +4,7 @@ import { firestore } from 'firebase-functions';
 
 const assignCardsToPlayer = (cards, player) => ({ ...player, cards });
 
-/**
- * dataProvider { players: [ { id: 'IEOCmi6TkPJ2G0LEUInH' }, { id: 'Qc9YMPbs9qY9a6NbzofK' }, { id: 'XbPRUknEfzeVCpOuTrRA' }, { id: '3MdqHPfrUOlLK38XZKR1' }]}
- * @type {CloudFunction<DeltaDocumentSnapshot>|*}
- */
-exports.dealCards = firestore.document('tables/{tableId}').onCreate((event) => {
+function onDealCards(event) {
     const { players } = event.data.data();
     const cards = shuffle([
         '7S',
@@ -55,43 +51,11 @@ exports.dealCards = firestore.document('tables/{tableId}').onCreate((event) => {
             currentPlayerId: players[0].id,
         },
     });
-});
+}
 
-exports.giveHandNextPlayer = firestore.document('tables/{tableId}').onUpdate((event) => {
-    const currentData = event.data.data();
-    const previousData = event.data.previous.data();
-    const currentTrick = currentData.trick;
-    const previousTrick = previousData.trick;
-    const previousPlayers = sortBy(previousData.players, ['pos']);
-
-    // Trick has changed, we need to select the next player
-    if (currentTrick.length > previousTrick.length) {
-        const previousPlayerId = previousData.general.currentPlayerId;
-        const previousPlayerIdx = previousPlayers.findIndex(player => previousPlayerId === player.id);
-        // if previousPlayer was the last one, take the first one
-        const currentPlayerId = previousPlayers[(previousPlayerIdx + 1) % 4].id;
-
-        return event.data.ref.set(
-            {
-                general: {
-                    ...currentData.general,
-                    currentPlayerId,
-                },
-            },
-            { merge: true },
-        );
-    }
-
-    return event;
-});
-
-/**
- * fakePlayerTurn({before: { trick: [], general: { currentPlayerId: 1 }, players: [{ id: 1}, { id: 2, isFakePlayer: true, cards: [{ id: 'AH' }, { id: '7H' }]}]},after: { trick: [], general: { currentPlayerId: 2 }, players: [{ id: 1}, { id: 2, isFakePlayer: true, cards: [{ id: 'AH' }, { id: '7H' }]}]}})
- *
- */
-exports.fakePlayerTurn = firestore.document('tables/{tableId}').onUpdate((event) => {
-    const data = event.data.data();
-    const previousData = event.data.previous.data();
+function onFakePlayerTurn(eventData) {
+    const data = eventData.data();
+    const previousData = eventData.previous.data();
     const targetPlayerId = data.general.currentPlayerId;
 
     const hasCurrentPlayerIdChanged = targetPlayerId !== previousData.general.currentPlayerId;
@@ -103,26 +67,67 @@ exports.fakePlayerTurn = firestore.document('tables/{tableId}').onUpdate((event)
         const card = targetPlayer.cards[0];
         const newHand = targetPlayer.cards.slice(1);
 
-        return event.data.ref.set(
-            {
-                trick: [
-                    ...data.trick,
-                    {
-                        playerId: targetPlayerId,
-                        cardId: card.id,
-                    },
-                ],
-                players: [
-                    ...data.players.filter(({ id }) => id !== targetPlayerId),
-                    {
-                        id: targetPlayerId,
-                        cards: newHand,
-                    },
-                ],
-            },
-            { merge: true },
-        );
+        return {
+            trick: [
+                ...data.trick,
+                {
+                    playerId: targetPlayerId,
+                    cardId: card.id,
+                },
+            ],
+            players: [
+                ...data.players.filter(({ id }) => id !== targetPlayerId),
+                {
+                    id: targetPlayerId,
+                    cards: newHand,
+                },
+            ],
+        };
     }
 
-    return event;
+    return null;
+}
+
+function onCardPlayed(eventData) {
+    const currentData = eventData.data();
+    const previousData = eventData.previous.data();
+    const currentTrick = currentData.trick;
+    const previousTrick = previousData.trick;
+    const previousPlayers = sortBy(previousData.players, ['pos']);
+
+    // Trick has changed, we need to select the next player
+    if (currentTrick.length > previousTrick.length) {
+        const previousPlayerId = previousData.general.currentPlayerId;
+        const previousPlayerIdx = previousPlayers.findIndex(player => previousPlayerId === player.id);
+        // if previousPlayer was the last one, take the first one
+        const currentPlayerId = previousPlayers[(previousPlayerIdx + 1) % 4].id;
+
+        return {
+            general: {
+                ...currentData.general,
+                currentPlayerId,
+            },
+        };
+    }
+
+    return null;
+}
+
+/**
+ * dataProvider { players: [ { id: 'IEOCmi6TkPJ2G0LEUInH' }, { id: 'Qc9YMPbs9qY9a6NbzofK' }, { id: 'XbPRUknEfzeVCpOuTrRA' }, { id: '3MdqHPfrUOlLK38XZKR1' }]}
+ * @type {CloudFunction<DeltaDocumentSnapshot>|*}
+ */
+exports.dealCards = firestore.document('tables/{tableId}').onCreate(onDealCards);
+
+/**
+ * onUpdate({before: { trick: [], general: { currentPlayerId: 1 }, players: [{ id: 1}, { id: 2, isFakePlayer: true, cards: [{ id: 'AH' }, { id: '7H' }]}]},after: { trick: [{}], general: { currentPlayerId: 2 }, players: [{ id: 1}, { id: 2, isFakePlayer: true, cards: [{ id: 'AH' }, { id: '7H' }]}]}})
+ *
+ */
+exports.onUpdate = firestore.document('tables/{tableId}').onUpdate((event) => {
+    const mutations = [onFakePlayerTurn, onCardPlayed].map(f => f(event.data)).reduce((mutation, res) => ({
+        ...res,
+        ...mutation,
+    }));
+
+    return event.data.ref.set(mutations, { merge: true });
 });
