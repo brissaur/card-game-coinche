@@ -3,11 +3,14 @@
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "serve": "firebase serve --only functions",
-    "shell": "firebase experimental:functions:shell",
+    "shell": "./bin/predeploy.sh && firebase experimental:functions:shell",
     "start": "npm run shell",
     "build": "./bin/predeploy.sh",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "test": "jest --env=node",
+    "lint": "eslint .",
+    "lint.fix": "eslint --fix ."
   },
   "dependencies": {
     "@google-cloud/functions-emulator": "^1.0.0-alpha.29",
@@ -18,10 +21,17 @@
   },
   "private": true,
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.37",
-    "@babel/core": "^7.0.0-beta.37",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.37",
-    "@babel/preset-env": "^7.0.0-beta.37"
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.2.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.17.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.6.1",
+    "jest": "^22.2.2"
   },
   "main": "dist/index.js"
 }

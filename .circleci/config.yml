@@ -9,10 +9,18 @@ jobs:
       - image: circleci/node:7.10
     steps:
       - checkout
-      - run: cd client && yarn install && yarn test
+      - run: cd client && ./bin/ci_running.sh && yarn lint
+      - run: cd client && ./bin/ci_running.sh && yarn test
+  functions_test:
+    docker:
+      - image: circleci/node:6.11.5
+    steps:
+      - checkout
+      - run: cd functions && yarn install && yarn lint
+      - run: cd functions && yarn install && yarn test
 workflows:
   version: 2
   all_test:
     jobs:
       - client_test
-      #- function_test
+      - functions_test

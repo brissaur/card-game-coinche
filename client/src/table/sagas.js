@@ -3,11 +3,17 @@ import { eventChannel } from 'redux-saga';
 import db from '../api/init';
 import { createFakePlayers } from '../player/sagas';
 import { getPlayerId } from '../player/selectors';
-import { setTableId, updatePlayerCard, updateTrick, updateTableDocument } from './ducks';
+import { setTableId, updatePlayerCard, updateTrick, updateTableDocument, updateCurrentPlayer } from './ducks';
 import { getTableId } from '../table/selectors';
 import { filterPlayer } from './helpers';
 
 const COLLECTION_NAME = 'tables';
+
+const INITIAL_DOCUMENT = {
+    players: {},
+    trick: [],
+    general: {},
+};
 
 /**
  * Return a "table" document
@@ -43,6 +49,9 @@ function* updateDocumentTableHandler(payload) {
 
     // update table
     yield put(updateTableDocument(payload));
+
+    // udpate currentPlayer
+    yield put(updateCurrentPlayer(payload.state.currentPlayerId));
 }
 
 function createSnapshotChannel(document) {
@@ -70,17 +79,22 @@ export function* watchUpdateOnDocumentTable() {
 }
 
 export function* createTableAndAddPlayerToTable() {
-    const playersId = yield call(createFakePlayers);
-    // Add current player Id to other ID
-    playersId.push(yield select(getPlayerId));
-
-    const players = playersId.map(playerId => ({
-        id: playerId,
+    const meId = yield select(getPlayerId);
+    // create fake player and add a position (start at 1) for each of them
+    const players = yield call(createFakePlayers).map((player, idx) => ({
+        ...player,
+        pos: idx + 1,
     }));
+    // Add current player Id to other ID
+    players.push({
+        id: meId,
+        isFakePlayer: false,
+        pos: 0,
+    });
 
     const document = yield db.collection(COLLECTION_NAME).add({
+        ...INITIAL_DOCUMENT,
         players,
-        trick: [],
     });
 
     yield put(setTableId(document.id));

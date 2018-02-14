@@ -21,6 +21,7 @@ export function* registerPlayer() {
 
     const document = yield db.collection('players').add({
         firstname: name,
+        isFakePlayer: false,
     });
 
     yield put(setPlayerName(name, document.id));
@@ -43,28 +44,35 @@ function* connectPlayer() {
 }
 
 /**
+ * Create one fakePlayer
+ * @param name
+ * @return {{firstname: *, isFakePlayer: boolean, id}}
+ */
+function* createFakePlayer(name) {
+    const fakePlayer = {
+        firstname: name,
+        isFakePlayer: true,
+    };
+    const result = yield db.collection('players').add(fakePlayer);
+
+    return {
+        ...fakePlayer,
+        id: result.id,
+    };
+}
+
+/**
  * @todo Remove that function once multiplayer feature is available
- * @return {array} of player's ID created
+ * @return {array} of player's
  */
 export function* createFakePlayers() {
-    const playersId = [];
-    let result;
-    result = yield db.collection('players').add({
-        firstname: 'robot1',
-    });
-    playersId.push(result.id);
+    const players = [];
+    for (let i = 0; i < 3; i += 1) {
+        const fakePlayer = yield createFakePlayer(`robot${i + 1}`);
+        players.push(fakePlayer);
+    }
 
-    result = yield db.collection('players').add({
-        firstname: 'robot2',
-    });
-    playersId.push(result.id);
-
-    result = yield db.collection('players').add({
-        firstname: 'robot3',
-    });
-    playersId.push(result.id);
-
-    return playersId;
+    return players;
 }
 
 function* playerSaga() {

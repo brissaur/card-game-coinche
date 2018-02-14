@@ -3,7 +3,7 @@
 Warning: There MUST have an package.json in the "functions source directory" (required by firebase)
 
 - .nvmrc : Contain the node version that works with the projects. Use ```nvm use``` to automatically select the correct node version
-- bin/predeploy.sh : Script that is running before deploy (babelify code)
+- bin/predeploy.sh : Script that is running before deploy (babelify code)
 - src/ : Contain the source code
 - dist/ : Contain the deploy code (do not manually modify code in here)
 
