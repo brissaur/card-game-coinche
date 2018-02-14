@@ -50,7 +50,7 @@ exports.giveHandNextPlayer = firestore
                 .findIndex(player => previousPlayerId === player.id);
             // if previousPlayer was the last one, take the first one
             const currentPlayerId =
-                previousPlayers[((previousPlayerIdx + 1) % 4)];
+                previousPlayers[((previousPlayerIdx + 1) % 4)].id;
 
             return event.data.ref.set({
                 general: {
