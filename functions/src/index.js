@@ -45,47 +45,50 @@ const cards = shuffle([
     'KC',
 ]);
 
-async function onDealCards(event) {
+async function onAddPlayer(event) {
 
-    var playersRef = admin.firestore().collection('tables').doc('test').collection('players');
-    let allPlayers = [];
+    const tableId = event.params.tableId;
+
+    const playersRef = admin.firestore().collection('tables').doc(tableId).collection('players');
+
+    let players = [];
     await playersRef.get()
     .then(snapshot => {
-        snapshot.forEach(doc => {
-            allPlayers.push(doc.id);
-            //console.log(doc.id, '=>', doc.data());
+        snapshot.forEach(player => {
+            players.push(player.data());
         });
     })
     .catch(err => {
         console.log('Error getting documents', err);
     });
 
-    console.log(allPlayers);
+    if(players.length === 4){
+        dealCards(tableId, players);
+    }
 
     return event;
+}
 
-    console.log(admin);
-
-    const result = await admin.collection('tables').doc('test').getCollections().then(collections => {
-        collections.forEach(collection => {
-            console.log('Found subcollection with id:', collection.id);
-        });
-    });
-
-    return result;
-
-    const { players } = event.data.data();
-
+function dealCards(tableId, players){
     for (let playerNumber = 0; playerNumber < 4; playerNumber += 1) {
         players[playerNumber] = assignCardsToPlayer(cards.slice(playerNumber * 8, playerNumber * 8 + 8), players[playerNumber]);
     }
 
-    return event.data.ref.update({
-        players,
+    const tableRef = admin.firestore().collection('tables').doc(tableId);
+
+    const playersRef = tableRef.collection('players');
+
+    for(const player of players){
+        playersRef.doc(player.id).update({cards: player.cards});
+    }
+
+    tableRef.update({
         general: {
-            currentPlayerId: players[0].id,
-        },
+            currentPlayerId: players[0].id
+        }
     });
+
+    return players;
 }
 
 function onFakePlayerTurn(eventData) {
@@ -123,47 +126,87 @@ function onFakePlayerTurn(eventData) {
     return null;
 }
 
-function onCardPlayed(eventData) {
-    const currentData = eventData.data();
-    const previousData = eventData.previous.data();
-    const currentTrick = currentData.trick;
-    const previousTrick = previousData.trick;
-    const previousPlayers = sortBy(previousData.players, ['pos']);
-
-    // Trick has changed, we need to select the next player
-    if (currentTrick.length > previousTrick.length) {
-        const previousPlayerId = previousData.general.currentPlayerId;
-        const previousPlayerIdx = previousPlayers.findIndex(player => previousPlayerId === player.id);
-        // if previousPlayer was the last one, take the first one
-        const currentPlayerId = previousPlayers[(previousPlayerIdx + 1) % 4].id;
-
-        return {
-            general: {
-                ...currentData.general,
-                currentPlayerId,
-            },
-        };
-    }
-
-    return null;
-}
-
 /**
- * dataprovider { id: 'IEOCmi6TkPJ2G0LEUInH' }
- * dataProvider { players: [ { id: 'IEOCmi6TkPJ2G0LEUInH' }, { id: 'Qc9YMPbs9qY9a6NbzofK' }, { id: 'XbPRUknEfzeVCpOuTrRA' }, { id: '3MdqHPfrUOlLK38XZKR1' }]}
+ * dataprovider addPlayer({ id: 'IEOCmi6TkPJ2G0LEUInH' })
  * @type {CloudFunction<DeltaDocumentSnapshot>|*}
  */
-exports.dealCards = functions.firestore.document('tables/{tableId}/players').onCreate(onDealCards);
+exports.addPlayer = functions.firestore.document('tables/{tableId}/players/{playerId}').onCreate(onAddPlayer);
+
+exports.updateTable = functions.firestore.document('tables/{tableId}').onUpdate(async (event) => {
+    const tableId = event.params.tableId;
+
+    const currentPlayerId = event.data.data().general.currentPlayerId;
+
+    const tableRef = admin.firestore().collection('tables').doc(tableId);
+
+    const playersRef = tableRef.collection('players');
+    const tricksRef = tableRef.collection('tricks');
+
+    const players = [];
+
+    await playersRef.get()
+    .then((snapshot) => {
+        snapshot.forEach((player) => {
+            players.push(player.data());
+        });
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });
+
+    const currentPlayer = players.find((player) => player.id === currentPlayerId);
+
+    if(currentPlayer.isFakePlayer){
+        tricksRef.add({
+            playerId: currentPlayerId,
+            cardId: currentPlayer.cards[0],
+        });
+        playersRef.doc(currentPlayerId).update({ cards: currentPlayer.cards.slice(1) });
+    }
+});
 
 /**
  * onUpdate({before: { trick: [], general: { currentPlayerId: 1 }, players: [{ id: 1}, { id: 2, isFakePlayer: true, cards: [{ id: 'AH' }, { id: '7H' }]}]},after: { trick: [{}], general: { currentPlayerId: 2 }, players: [{ id: 1}, { id: 2, isFakePlayer: true, cards: [{ id: 'AH' }, { id: '7H' }]}]}})
  *
  */
-exports.onUpdate = functions.firestore.document('tables/{tableId}').onUpdate((event) => {
-    const mutations = [onFakePlayerTurn, onCardPlayed].map(f => f(event.data)).reduce((mutation, res) => ({
-        ...res,
-        ...mutation,
-    }));
+exports.addTrick = functions.firestore.document('tables/{tableId}/tricks/{trickId}').onCreate(async (event) => {
 
-    return event.data.ref.set(mutations, { merge: true });
+    const tableId = event.params.tableId;
+
+    const tableRef = admin.firestore().collection('tables').doc(tableId);
+
+    const playersRef = tableRef.collection('players');
+
+    const players = [];
+
+    await playersRef.get()
+    .then((snapshot) => {
+        snapshot.forEach(player => {
+            players.push(player.data());
+        });
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });
+
+    const previousPlayerId = event.data.data().playerId;
+    const previousPlayer = players.find(player => previousPlayerId === player.id);
+    const previousPlayerPos = previousPlayer.pos;
+    // if previousPlayer was the last one, take the first one
+    const currentPlayer = players.find((player) => player.pos === (previousPlayerPos + 1) % 4);
+
+    tableRef.update({
+        general: {
+            currentPlayerId: currentPlayer.id
+        }
+    });
+
+    return event;
+    //
+    // const mutations = [onFakePlayerTurn, onCardPlayed].map(f => f(event.data)).reduce((mutation, res) => ({
+    //     ...res,
+    //     ...mutation,
+    // }));
+    //
+    // return event.data.ref.set(mutations, { merge: true });
 });
