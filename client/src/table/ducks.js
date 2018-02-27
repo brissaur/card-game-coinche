@@ -1,15 +1,13 @@
 const SET_TABLE_ID = 'table:set-current-table-id';
-const UPDATE_PLAYER_CARD = 'table:UPDATE_PLAYER_CARD';
+const UPDATE_PLAYERS = 'table:UPDATE_PLAYERS';
 const UPDATE_TRICK = 'table:UPDATE_TRICK';
 const UPDATE_TABLE_DOCUMENT = 'table:UPDATE_TABLE';
-const UPDATE_CURRENT_PLAYER = 'table:UPDATE_CURRENT_PLAYER';
 
 const initialState = {
     id: null,
-    document: null,
     trick: [],
-    playerCards: [],
     general: {},
+    players: [],
 };
 
 export function updateTableDocument(table) {
@@ -18,17 +16,11 @@ export function updateTableDocument(table) {
         document: table,
     };
 }
+
 export function updateTrick(trick) {
     return {
         type: UPDATE_TRICK,
         trick,
-    };
-}
-
-export function updateCurrentPlayer(currentPlayerId) {
-    return {
-        type: UPDATE_CURRENT_PLAYER,
-        currentPlayerId,
     };
 }
 
@@ -38,10 +30,11 @@ export function setTableId(id) {
         id,
     };
 }
-export function updatePlayerCard(cards) {
+
+export function updatePlayers(players) {
     return {
-        type: UPDATE_PLAYER_CARD,
-        cards,
+        type: UPDATE_PLAYERS,
+        players,
     };
 }
 
@@ -52,10 +45,10 @@ export function reducer(state = initialState, action) {
             ...state,
             id: action.id,
         };
-    case UPDATE_PLAYER_CARD:
+    case UPDATE_PLAYERS:
         return {
             ...state,
-            playerCards: action.cards,
+            players: action.players,
         };
     case UPDATE_TRICK:
         return {
@@ -65,15 +58,7 @@ export function reducer(state = initialState, action) {
     case UPDATE_TABLE_DOCUMENT:
         return {
             ...state,
-            document: action.document,
-        };
-    case UPDATE_CURRENT_PLAYER:
-        return {
-            ...state,
-            general: {
-                ...state.general,
-                currentPlayerId: action.currentPlayerId,
-            },
+            ...action.document,
         };
     default:
         return state;

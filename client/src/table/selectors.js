@@ -1,34 +1,27 @@
 import get from 'lodash/get';
 import { createSelector } from 'reselect';
 
+import { getPlayerId } from '../player/selectors';
+
 export function getTableId(state) {
     return get(state, 'table.id');
-}
-
-export function getPlayerCards(state) {
-    return get(state, 'table.playerCards');
 }
 
 export function getTrick(state) {
     return get(state, 'table.trick');
 }
 
-export function getTableDocument(state) {
+export function getPlayers(state) {
+    return get(state, 'table.players');
+}
+
+export const getMyPlayer = createSelector(getPlayers, getPlayerId, (players, myPlayerId) =>
+    players.find(({ id }) => id === myPlayerId));
+
+export const getPlayerCards = createSelector(getMyPlayer, me => (me && me.cards ? me.cards : []));
+
+export function getGeneral(state) {
     return get(state, 'table.document');
 }
 
-// @ROBIN: @TODO: table WILL change
-export const getPlayers = createSelector(
-    getTableDocument,
-    table =>
-        (table
-            ? table.players.map(({ id }) => {
-                const targetCard = table.trick.find(card => card.playerId === id);
-
-                return {
-                    id,
-                    cardId: targetCard ? targetCard.cardId : null,
-                };
-            })
-            : []),
-);
+export const getCurrentPlayerId = createSelector(getGeneral, general => general.currentPlayerId);
