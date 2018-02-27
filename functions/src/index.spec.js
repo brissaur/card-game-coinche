@@ -1,16 +1,23 @@
 describe('test functions', () => {
     let module;
-    let firestore;
+    let functions;
+    let admin;
     let event = {};
 
     beforeEach(() => {
         jest.mock('firebase-functions');
+        jest.mock('firebase-admin');
 
         // eslint-disable-next-line prefer-destructuring, global-require
-        firestore = require('firebase-functions').firestore;
+        functions = require('firebase-functions');
+        admin = require('firebase-admin');
 
-        firestore.document.mockImplementation(() => ({
-            onCreate: fn => fn,
+        admin.initializeApp.mockImplementation(() => ({}));
+
+        functions.mockImplementation(() => ({
+            config: () => {
+                firebase: {}
+            },
             onUpdate: fn => fn,
         }));
 
@@ -24,6 +31,15 @@ describe('test functions', () => {
                 },
             },
         };
+    });
+
+    test.only('dealCards', () => {
+        const players = [];
+        players.push({id:1});
+        // console.log(players);
+        console.log(module);
+        const toto = module.dealCards(players);
+        // console.log(toto);
     });
 
     test('test giveHandNextPlayer', () => {
