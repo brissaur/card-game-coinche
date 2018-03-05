@@ -3,7 +3,6 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import api from './api/init';
 
 import reducer from './reducers';
 import rootSaga from './root-saga';
@@ -25,18 +24,9 @@ const store = createStore(reducer, compose(...middlewares));
 sagaMiddleware.run(rootSaga);
 sagaMiddleware.run(playerSaga);
 
-//const fieldPath = new api.FieldPath();
-
-console.log(api);
-console.log(api.FieldPath);
-
-
-
-api.collection("tables").doc('tableId8').collection('players').get();
-
-// render(
-//     <Provider store={store}>
-//         <App />
-//     </Provider>,
-//     document.getElementById('root'),
-// );
+render(
+    <Provider store={store}>
+        <App />
+    </Provider>,
+    document.getElementById('root'),
+);

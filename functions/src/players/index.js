@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions/lib/index';
 import * as admin from 'firebase-admin/lib/index';
-import { dealCards } from './business';
+import { dealCards, searchStartPlayer } from './business';
 
 admin.initializeApp(functions.config().firebase);
 
@@ -35,13 +35,9 @@ async function onAddPlayer(event) {
             playersRef.doc(player.id).update({ cards: player.cards });
         });
 
-        // for (const player of playersWithCards) {
-        //     playersRef.doc(player.id).update({ cards: player.cards });
-        // }
-
         tableRef.update({
             general: {
-                currentPlayerId: playersWithCards[0].id,
+                currentPlayerId: players.filter(searchStartPlayer).id
             },
         });
     }

@@ -63,3 +63,7 @@ exports.dealCards = function dealCards(players) {
 
     return playerWithCards;
 };
+
+exports.searchStartPlayer = function searchStartPlayer(player){
+    return player.pos === 0;
+};

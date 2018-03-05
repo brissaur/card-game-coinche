@@ -1,4 +1,4 @@
-import { dealCards } from './business';
+import { dealCards, searchStartPlayer } from './business';
 
 /** http://luetkemj.github.io/170421/mocking-modules-in-jest/ * */
 jest.unmock('lodash');
@@ -20,5 +20,18 @@ describe('test players function', () => {
         ];
         lodash.shuffle = jest.fn(cards => cards);
         expect(dealCards(players)).toEqual(expected);
+    });
+
+    test('searchStartPlayer', () => {
+        const players = [
+            { id: 1, pos:1 },
+            { id: 2, pos:2 },
+            { id: 3, pos:3 },
+            { id: 4, pos:0 },
+        ];
+        const expected = [
+            { id: 4, pos: 0 },
+        ];
+        expect(players.filter(searchStartPlayer)).toEqual(expected);
     });
 });
