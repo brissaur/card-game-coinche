@@ -1,14 +1,12 @@
 import { call, select, put, take, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import db from '../api/init';
+import { TABLE_COLLECTION, TRICK_COLLECTION, PLAYERS_COLLECTION } from '../api/constants';
+
 import { createFakePlayers } from '../player/sagas';
 import { getPlayerId } from '../player/selectors';
 import { setTableId, updateTrick, updateTableDocument, updatePlayers } from './ducks';
 import { getTableId } from '../table/selectors';
-
-const TABLE_COLLECTION = 'tables';
-const PLAYERS_COLLECTION = 'players';
-const TRICKS_COLLECTION = 'tricks';
 
 const INITIAL_DOCUMENT = {
     general: {},
@@ -69,7 +67,7 @@ export function* watchUpdateOnCollectionTrick() {
     const coll = yield db
         .collection(TABLE_COLLECTION)
         .doc(tableId)
-        .collection(TRICKS_COLLECTION);
+        .collection(TRICK_COLLECTION);
     const snapshotChannel = yield call(createSnapshotChannel, coll);
 
     while (true) {

@@ -5,6 +5,8 @@ import { CARD_PLAYED } from './ducks';
 import { getTableId, getPlayerCards } from '../table/selectors';
 import { getPlayerId } from '../player/selectors';
 
+import { TABLE_COLLECTION, TRICK_COLLECTION, PLAYERS_COLLECTION } from '../api/constants';
+
 function* cardPlayed({ card }) {
     global.console.log('New card played', card);
     const tableId = yield select(getTableId);
@@ -12,18 +14,18 @@ function* cardPlayed({ card }) {
     const myHand = yield select(getPlayerCards);
 
     yield db
-        .collection('tables')
+        .collection(TABLE_COLLECTION)
         .doc(tableId)
-        .collection('tricks')
+        .collection(TRICK_COLLECTION)
         .add({
             playerId: myPlayerId,
             cardId: card.id,
         });
 
     yield db
-        .collection('tables')
+        .collection(TABLE_COLLECTION)
         .doc(tableId)
-        .collection('players')
+        .collection(PLAYERS_COLLECTION)
         .doc(myPlayerId)
         .update({ cards: myHand.filter(cardId => cardId !== card.id) });
 }

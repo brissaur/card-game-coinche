@@ -9,6 +9,7 @@ import {
 } from './duck';
 
 import db from '../api/init';
+import { PLAYERS_COLLECTION } from '../api/constants';
 import { setAppLoaded } from '../bootstrap/duck';
 
 export function* registerPlayer() {
@@ -19,7 +20,7 @@ export function* registerPlayer() {
         throw new Error('You need to be logged in to access coinche games.');
     }
 
-    const document = yield db.collection('players').add({
+    const document = yield db.collection(PLAYERS_COLLECTION).add({
         firstname: name,
         isFakePlayer: false,
     });
@@ -53,7 +54,7 @@ function* createFakePlayer(name) {
         firstname: name,
         isFakePlayer: true,
     };
-    const result = yield db.collection('players').add(fakePlayer);
+    const result = yield db.collection(PLAYERS_COLLECTION).add(fakePlayer);
 
     return {
         ...fakePlayer,
