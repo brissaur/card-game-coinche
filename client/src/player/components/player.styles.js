@@ -7,4 +7,12 @@ export default {
         display: 'flex',
         alignItems: 'center',
     },
+    description: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    active: {
+        backgroundColor: 'red',
+        color: 'purple',
+    },
 };
