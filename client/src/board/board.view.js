@@ -13,20 +13,20 @@ export default function Board({
     return (
         <div style={styles.board}>
             <div style={styles.players}>
-                <div style={styles.northDiv}>{players[1] ? <Player {...players[1]} /> : null}</div>
+                <div style={styles.northDiv}>{players[2] ? <Player {...players[2]} /> : null}</div>
                 <div style={styles.middleDiv}>
-                    {players[0] ? (
+                    {players[1] ? (
                         <div style={styles.westDiv}>
-                            <Player {...players[0]} />
+                            <Player {...players[1]} />
                         </div>
                     ) : null}
-                    {players[2] ? (
+                    {players[3] ? (
                         <div style={styles.eastDiv}>
-                            <Player {...players[2]} />
+                            <Player {...players[3]} />
                         </div>
                     ) : null}
                 </div>
-                <div style={styles.southDiv}>{players[3] ? <Player {...players[3]} /> : null}</div>
+                <div style={styles.southDiv}>{players[0] ? <Player {...players[0]} /> : null}</div>
             </div>
             <h1 style={styles.mainTitle}> Welcome to this app coinche! </h1>
             <Hand cardsId={handCards} />

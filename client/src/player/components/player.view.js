@@ -3,13 +3,16 @@ import PropTypes from 'prop-types';
 import Card from '../../card/card.container';
 import styles from './player.styles';
 
-export default function Player({ id, cardId }) {
+export default function Player(props) {
+    const { id, cardPlayed, pos } = props;
+
     return (
         <div style={styles.container}>
             <span>{`${id}=> `} </span>
-            {cardId ? (
-                <div key={cardId} style={styles.card}>
-                    <Card id={cardId} />
+            <span>`pos = ${pos}`</span>
+            {cardPlayed ? (
+                <div key={cardPlayed} style={styles.card}>
+                    <Card id={cardPlayed} />
                 </div>
             ) : null}
         </div>
@@ -18,5 +21,6 @@ export default function Player({ id, cardId }) {
 
 Player.propTypes = {
     id: PropTypes.string.isRequired,
-    cardId: PropTypes.string,
+    pos: PropTypes.number.isRequired,
+    cardPlayed: PropTypes.string,
 };
