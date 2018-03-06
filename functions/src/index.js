@@ -58,9 +58,10 @@ const cards = [
  */
 function dealCards(players) {
     const playerWithCards = [];
+    const shuffleCards = shuffle(cards);
     for (let playerNumber = 0; playerNumber < 4; playerNumber += 1) {
         playerWithCards[playerNumber] = assignCardsToPlayer(
-            shuffle(cards).slice(playerNumber * 8, playerNumber * 8 + 8),
+            shuffleCards.slice(playerNumber * 8, playerNumber * 8 + 8),
             players[playerNumber],
         );
     }
