@@ -2,14 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Hand from '../hand/hand.view';
 import Player from '../player/components/player.view';
+import AnnounceBoard from '../announce-board/announce-board.container';
 
 import styles from './styles';
 
 export default function Board({
-    children, handCards, trick, players = [],
+    children, handCards, players = [], mode,
 }) {
-    global.console.log('trick', trick);
-
     return (
         <div style={styles.board}>
             <div style={styles.players}>
@@ -20,6 +19,7 @@ export default function Board({
                             <Player {...players[1]} />
                         </div>
                     ) : null}
+                    {mode === 'announce' ? <AnnounceBoard /> : null}
                     {players[3] ? (
                         <div style={styles.eastDiv}>
                             <Player {...players[3]} />
@@ -38,11 +38,8 @@ export default function Board({
 Board.propTypes = {
     children: PropTypes.node,
     handCards: PropTypes.arrayOf(PropTypes.string),
-    trick: PropTypes.arrayOf(PropTypes.shape({
-        playerId: PropTypes.string,
-        cardId: PropTypes.string,
-    })).isRequired,
     players: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.string.isRequided,
     })),
+    mode: PropTypes.oneOf(['announce', 'play']).isRequired,
 };

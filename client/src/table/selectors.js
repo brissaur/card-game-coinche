@@ -26,6 +26,14 @@ export function getGeneral(state) {
 
 export const getCurrentPlayerId = createSelector(getGeneral, general => general.currentPlayerId);
 
+export const isMyTurn = createSelector(
+    getPlayerId,
+    getCurrentPlayerId,
+    (myPlayerId, currentPlayerId) => myPlayerId === currentPlayerId,
+);
+
+export const gameMode = createSelector(getGeneral, general => general.mode || 'announce');
+
 // eslint-disable-next-line no-nested-ternary
 const byPos = (a, b) => (a.pos === b.pos ? 0 : a.pos > b.pos ? 1 : -1);
 

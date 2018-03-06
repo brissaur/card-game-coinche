@@ -60,10 +60,7 @@ function dealCards(players) {
     const playerWithCards = [];
     const shuffleCards = shuffle(cards);
     for (let playerNumber = 0; playerNumber < 4; playerNumber += 1) {
-        playerWithCards[playerNumber] = assignCardsToPlayer(
-            shuffleCards.slice(playerNumber * 8, playerNumber * 8 + 8),
-            players[playerNumber],
-        );
+        playerWithCards[playerNumber] = assignCardsToPlayer(shuffleCards.slice(playerNumber * 8, playerNumber * 8 + 8), players[playerNumber]);
     }
 
     return playerWithCards;
@@ -81,12 +78,16 @@ function searchStartPlayer(player) {
 async function onAddPlayer(event) {
     const tableId = event.params.tableId;
 
-    const tableRef = admin.firestore().collection('tables').doc(tableId);
+    const tableRef = admin
+        .firestore()
+        .collection('tables')
+        .doc(tableId);
 
     const playersRef = tableRef.collection('players');
 
     const players = [];
-    await playersRef.get()
+    await playersRef
+        .get()
         .then((snapshot) => {
             snapshot.forEach((player) => {
                 players.push(player.data());
@@ -107,6 +108,7 @@ async function onAddPlayer(event) {
         tableRef.update({
             general: {
                 currentPlayerId: players.filter(searchStartPlayer).id,
+                phase: 'announce',
             },
         });
     }
@@ -141,14 +143,18 @@ exports.updateTable = functions.firestore.document('tables/{tableId}').onUpdate(
 
     const currentPlayerId = event.data.data().general.currentPlayerId;
 
-    const tableRef = admin.firestore().collection('tables').doc(tableId);
+    const tableRef = admin
+        .firestore()
+        .collection('tables')
+        .doc(tableId);
 
     const playersRef = tableRef.collection('players');
     const tricksRef = tableRef.collection('tricks');
 
     const players = [];
 
-    await playersRef.get()
+    await playersRef
+        .get()
         .then((snapshot) => {
             snapshot.forEach((player) => {
                 players.push(player.data());
@@ -177,13 +183,17 @@ exports.updateTable = functions.firestore.document('tables/{tableId}').onUpdate(
 exports.addTrick = functions.firestore.document('tables/{tableId}/tricks/{trickId}').onCreate(async (event) => {
     const tableId = event.params.tableId;
 
-    const tableRef = admin.firestore().collection('tables').doc(tableId);
+    const tableRef = admin
+        .firestore()
+        .collection('tables')
+        .doc(tableId);
 
     const playersRef = tableRef.collection('players');
 
     const players = [];
 
-    await playersRef.get()
+    await playersRef
+        .get()
         .then((snapshot) => {
             snapshot.forEach((player) => {
                 players.push(player.data());
