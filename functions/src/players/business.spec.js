@@ -5,7 +5,6 @@
 // const lodash = require.requireActual('lodash');
 //
 describe('test players function', () => {
-
     test('toto', () => {
         expect(true).toBe(true);
     });

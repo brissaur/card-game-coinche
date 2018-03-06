@@ -1,7 +1,6 @@
 // import { computeNextPlayer } from './business';
 //
 describe('test tricks function', () => {
-
     test('toto', () => {
         expect(true).toBe(true);
     });

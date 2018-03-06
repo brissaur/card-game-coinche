@@ -1,5 +1,4 @@
 describe('test functions', () => {
-
     test('toto', () => {
         expect(true).toBe(true);
     });
