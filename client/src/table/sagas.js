@@ -1,7 +1,7 @@
 import { call, select, put, take, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import db from '../api/init';
-import { TABLE_COLLECTION, TRICK_COLLECTION, PLAYERS_COLLECTION } from '../api/constants';
+import { TABLE_COLLECTION, CARD_PLAYED_COLLECTION, PLAYERS_COLLECTION } from '../api/constants';
 
 import { createFakePlayers } from '../player/sagas';
 import { getPlayerId } from '../player/selectors';
@@ -67,7 +67,7 @@ export function* watchUpdateOnCollectionTrick() {
     const coll = yield db
         .collection(TABLE_COLLECTION)
         .doc(tableId)
-        .collection(TRICK_COLLECTION);
+        .collection(CARD_PLAYED_COLLECTION);
     const snapshotChannel = yield call(createSnapshotChannel, coll);
 
     while (true) {

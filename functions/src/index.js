@@ -75,6 +75,32 @@ function searchStartPlayer(player) {
 
 /**
  *
+ * @param players
+ * @param previousPlayerId
+ */
+function computeNextPlayerAfterCardPlayed(players, previousPlayerId) {
+    const previousPlayer = players.find(player => previousPlayerId === player.id);
+
+    // if previousPlayer was the last one, take the first one
+    return players.find(player => player.pos === (previousPlayer.pos + 1) % 4);
+}
+
+function computeNextPlayerAfterTrick(players, previousPlayerId) {
+    const previousPlayer = players.find(player => previousPlayerId === player.id);
+
+    // if previousPlayer was the last one, take the first one
+    return players.find(player => player.pos === (previousPlayer.pos + 1) % 4);
+}
+
+function computeNextPlayerAfterRound(players, previousPlayerId) {
+    const previousPlayer = players.find(player => previousPlayerId === player.id);
+
+    // if previousPlayer was the last one, take the first one
+    return players.find(player => player.pos === (previousPlayer.pos + 1) % 4);
+}
+
+/**
+ *
  * @param event
  * @returns {Promise<*>}
  */
@@ -116,18 +142,6 @@ async function onAddPlayer(event) {
 
 /**
  *
- * @param players
- * @param previousPlayerId
- */
-function computeNextPlayer(players, previousPlayerId) {
-    const previousPlayer = players.find(player => previousPlayerId === player.id);
-
-    // if previousPlayer was the last one, take the first one
-    return players.find(player => player.pos === (previousPlayer.pos + 1) % 4);
-}
-
-/**
- *
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
 exports.addPlayer = functions.firestore.document('tables/{tableId}/players/{playerId}').onCreate(onAddPlayer);
@@ -144,7 +158,7 @@ exports.updateTable = functions.firestore.document('tables/{tableId}').onUpdate(
     const tableRef = admin.firestore().collection('tables').doc(tableId);
 
     const playersRef = tableRef.collection('players');
-    const tricksRef = tableRef.collection('tricks');
+    const trickRef = tableRef.collection('trick');
 
     const players = [];
 
@@ -162,7 +176,7 @@ exports.updateTable = functions.firestore.document('tables/{tableId}').onUpdate(
     const currentPlayer = players.find(player => player.id === currentPlayerId);
 
     if (currentPlayer.isFakePlayer) {
-        tricksRef.add({
+        trickRef.add({
             playerId: currentPlayerId,
             cardId: currentPlayer.cards[0],
         });
@@ -170,15 +184,112 @@ exports.updateTable = functions.firestore.document('tables/{tableId}').onUpdate(
     }
 });
 
+exports.addCardPlayed = functions.firestore.document('tables/{tableId}/cardsPlayed/{cardPlayedId}').onCreate(async (event) => {
+    const tableId = event.params.tableId;
+    const tableRef = admin.firestore().collection('tables').doc(tableId);
+    const playersRef = tableRef.collection('players');
+    const cardsPlayedRef = tableRef.collection('cardsPlayed');
+
+    const players = [];
+
+    await playersRef.get()
+        .then((snapshot) => {
+            snapshot.forEach((player) => {
+                players.push(player.data());
+            });
+        })
+        .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.log('Error getting documents', err);
+        });
+
+    const cardsPlayed = [];
+
+    await cardsPlayedRef.get()
+        .then((snapshot) => {
+            snapshot.forEach((cardPlayed) => {
+                cardsPlayed.push(cardPlayed.data());
+            });
+        })
+        .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.log('Error getting documents', err);
+        });
+
+    if (cardsPlayed.length === 4) {
+        // add a trick with cardsPlayeda
+        const tricksRef = tableRef.collection('tricks');
+        tricksRef.add({ ...cardsPlayed });
+    } else {
+        const previousPlayerId = event.data.data().playerId;
+        const currentPlayer = computeNextPlayerAfterCardPlayed(players, previousPlayerId);
+        tableRef.update({
+            general: {
+                currentPlayerId: currentPlayer.id,
+            },
+        });
+    }
+
+    return event;
+});
 /**
- *
+ * @dataProvider addCardPlayed({playerId: 'XXXXXX', cardId: 'AH'})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
 exports.addTrick = functions.firestore.document('tables/{tableId}/tricks/{trickId}').onCreate(async (event) => {
     const tableId = event.params.tableId;
-
     const tableRef = admin.firestore().collection('tables').doc(tableId);
+    const playersRef = tableRef.collection('players');
+    const tricksRef = tableRef.collection('tricks');
 
+    const players = [];
+
+    await playersRef.get()
+        .then((snapshot) => {
+            snapshot.forEach((player) => {
+                players.push(player.data());
+            });
+        })
+        .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.log('Error getting documents', err);
+        });
+
+    const tricks = [];
+
+    await tricksRef.get()
+        .then((snapshot) => {
+            snapshot.forEach((trick) => {
+                tricks.push(trick.data());
+            });
+        })
+        .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.log('Error getting documents', err);
+        });
+
+    if (tricks.length === 8) {
+        // add new round
+        const roundsRef = tableRef.collection('rounds');
+        roundsRef.add({ ...tricks });
+    } else {
+        const cardsPlayed = event.data.data();
+        const lastPlayerId = cardsPlayed[3].playerId;
+        const currentPlayer = computeNextPlayerAfterTrick(players, lastPlayerId);
+
+        tableRef.update({
+            general: {
+                currentPlayerId: currentPlayer.id,
+            },
+        });
+    }
+
+    return event;
+});
+
+exports.addTrick = functions.firestore.document('tables/{tableId}/tricks/{trickId}').onCreate(async (event) => {
+    const tableId = event.params.tableId;
+    const tableRef = admin.firestore().collection('tables').doc(tableId);
     const playersRef = tableRef.collection('players');
 
     const players = [];
@@ -194,8 +305,9 @@ exports.addTrick = functions.firestore.document('tables/{tableId}/tricks/{trickI
             console.log('Error getting documents', err);
         });
 
-    const previousPlayerId = event.data.data().playerId;
-    const currentPlayer = computeNextPlayer(players, previousPlayerId);
+    const tricks = event.data.data();
+    const lastPlayerId = tricks[tricks.length - 1].playerId;
+    const currentPlayer = computeNextPlayerAfterRound(players, lastPlayerId);
 
     tableRef.update({
         general: {
@@ -204,4 +316,5 @@ exports.addTrick = functions.firestore.document('tables/{tableId}/tricks/{trickI
     });
 
     return event;
+
 });
