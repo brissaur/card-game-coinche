@@ -24,6 +24,7 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-jest": "^22.2.2",
+    "babel-loader": "^7.1.4",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "eslint": "^4.17.0",
@@ -31,7 +32,9 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.6.1",
-    "jest": "^22.2.2"
+    "jest": "^22.2.2",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.10"
   },
   "main": "dist/index.js"
 }
