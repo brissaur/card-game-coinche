@@ -29,4 +29,3 @@ exports.updateTable = functions.firestore.document(COLLECTION_NAME+'/{tableId}')
         playersRef.doc(currentPlayerId).update({ cards: currentPlayer.cards.slice(1) });
     }
 });
-
