@@ -3,10 +3,7 @@ const path = require('path');
 module.exports = {
     entry: [
         'babel-polyfill',
-        './src/players/index.js',
-        './src/tables/index.js',
-        //'./src/tricks/index.js',
-        './src/index.js',
+        './src/index.js'
     ],
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -14,7 +11,10 @@ module.exports = {
         libraryTarget: 'commonjs'
     },
     target: 'node',
-    externals: ['firebase-functions', 'firebase-admin'],
+    externals:[
+        'firebase-functions',
+        'firebase-admin'
+    ],
     module: {
         rules: [
             {

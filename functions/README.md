@@ -42,6 +42,8 @@ then edit your ~/.profile (or bash_profile) and add the path. Finally do ```sour
 
 ## Documentation : 
 
+- https://dev.to/mizchi/how-to-build-firebase-function-by-webpack-e
+
 - https://firebase.google.com/docs/functions/local-emulator (Run function locally)
 
 - https://firebase.google.com/docs/functions/
