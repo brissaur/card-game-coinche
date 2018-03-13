@@ -1,7 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getPlayersOnTable } from '../players/index';
 import { getTableById, COLLECTION_NAME as tableCollectionName } from '../tables/index';
-import { computeNextPlayerAfterTrick } from './business';
 import { getRoundsCollection } from '../rounds';
 
 const COLLECTION_NAME = 'tricks';
