@@ -10,7 +10,7 @@ const COLLECTION_NAME = 'tricks';
  *
  * @param tableId
  */
-const getTricksCollection = (tableId) => {
+export const getTricksCollection = (tableId) => {
     const table = getTableById(tableId);
 
     return table.collection(COLLECTION_NAME);
@@ -66,5 +66,3 @@ exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId
 
     return event;
 });
-
-export default getTricksCollection;

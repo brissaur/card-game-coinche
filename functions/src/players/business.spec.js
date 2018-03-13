@@ -22,16 +22,14 @@ describe('test players function', () => {
         expect(dealCards(players)).toEqual(expected);
     });
 
-    test('searchStartPlayer', () => {
+    test.only('searchStartPlayer', () => {
         const players = [
             { id: 1, pos: 1 },
             { id: 2, pos: 2 },
             { id: 3, pos: 3 },
             { id: 4, pos: 0 },
         ];
-        const expected = [
-            { id: 4, pos: 0 },
-        ];
-        expect(players.filter(searchStartPlayer)).toEqual(expected);
+        const expected = { id: 4, pos: 0 };
+        expect(players.find(searchStartPlayer)).toEqual(expected);
     });
 });

@@ -12,5 +12,3 @@ export const getRoundsCollection = (tableId) => {
 
     return table.collection(COLLECTION_NAME);
 };
-
-export default getRoundsCollection;

@@ -23,8 +23,8 @@ export const getPlayersOnTable = async (tableId) => {
     const players = [];
     const playersRef = getPlayersCollection(tableId);
     await playersRef.get().then((snapshot) => {
-        snapshot.forEach((trick) => {
-            players.push(trick.data());
+        snapshot.forEach((player) => {
+            players.push(player.data());
         });
     }).catch((err) => {
         // eslint-disable-next-line no-console
@@ -53,7 +53,7 @@ async function onAddPlayer(event) {
         const tableRef = getTableById(tableId);
         tableRef.update({
             general: {
-                currentPlayerId: players.filter(searchStartPlayer).id,
+                currentPlayerId: players.find(searchStartPlayer).id,
             },
         });
     }

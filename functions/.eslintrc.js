@@ -15,5 +15,6 @@ module.exports = {
         'jsx-a11y/no-static-element-interactions': 0,
         'no-mixed-operators': 0,
         'prefer-destructuring': 0,
+        'import/prefer-default-export': 0,
     },
 };

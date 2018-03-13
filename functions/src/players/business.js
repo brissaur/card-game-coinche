@@ -45,7 +45,7 @@ const cards = [
  * @param player
  * @returns {{cards: *}}
  */
-const assignCardsToPlayer = (cardsToAssign, player) => ({ ...player, cardsToAssign });
+const assignCardsToPlayer = (cardsToAssign, player) => ({ ...player, cards: cardsToAssign });
 
 /**
  *
