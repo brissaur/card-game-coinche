@@ -14,7 +14,7 @@ import { setAppLoaded } from '../bootstrap/duck';
 
 export function* registerPlayer() {
     // eslint-disable-next-line no-alert
-    const name = prompt('Hey! What is your name?');
+    const name = 'Michelle';
 
     if (!name) {
         throw new Error('You need to be logged in to access coinche games.');
