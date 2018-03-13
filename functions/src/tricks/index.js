@@ -45,24 +45,12 @@ const getTricksOnTable = async (tableId) => {
 exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{trickId}`).onCreate(async (event) => {
     const tableId = event.params.tableId;
 
-    const players = await getPlayersOnTable(tableId);
     const tricks = await getTricksOnTable(tableId);
 
     if (tricks.length === 8) {
         // add new round
         const roundsRef = getRoundsCollection(tableId);
         roundsRef.add({ ...tricks });
-    } else {
-        const tableRef = getTableById(tableId);
-
-        const lastPlayerId = tableRef.data().general.currentPlayerId;
-        const currentPlayer = computeNextPlayerAfterTrick(players, lastPlayerId);
-
-        tableRef.update({
-            general: {
-                currentPlayerId: currentPlayer.id,
-            },
-        });
     }
 
     return event;

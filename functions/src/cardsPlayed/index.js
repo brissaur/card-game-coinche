@@ -50,17 +50,16 @@ exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{ta
                 await cardsPlayedRef.doc(snapshot.id).delete();
             });
         });
-    } else {
-        const players = await getPlayersOnTable(tableId);
-        const previousPlayerId = event.data.data().playerId;
-        const currentPlayer = computeNextPlayerAfterCardPlayed(players, previousPlayerId);
-        const tableRef = getTableById(tableId);
-        tableRef.update({
-            general: {
-                currentPlayerId: currentPlayer.id,
-            },
-        });
     }
+    const players = await getPlayersOnTable(tableId);
+    const previousPlayerId = event.data.data().playerId;
+    const currentPlayer = computeNextPlayerAfterCardPlayed(players, previousPlayerId);
+    const tableRef = getTableById(tableId);
+    tableRef.update({
+        general: {
+            currentPlayerId: currentPlayer.id,
+        },
+    });
 
     return event;
 });
