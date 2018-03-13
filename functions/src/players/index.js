@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions';
 import { getTableById } from '../tables/index';
 import { dealCards, searchStartPlayer } from './business';
-import * as admin from "firebase-admin";
 
 const COLLECTION_NAME = 'players';
 
@@ -11,6 +10,7 @@ const COLLECTION_NAME = 'players';
  */
 export const getPlayersCollection = (tableId) => {
     const table = getTableById(tableId);
+
     return table.collection(COLLECTION_NAME);
 };
 
@@ -23,14 +23,14 @@ export const getPlayersOnTable = async (tableId) => {
     const players = [];
     const playersRef = getPlayersCollection(tableId);
     await playersRef.get().then((snapshot) => {
-            snapshot.forEach((trick) => {
-                players.push(trick.data());
-            });
-        })
-        .catch((err) => {
-            // eslint-disable-next-line no-console
-            console.log('Error getting documents', err);
+        snapshot.forEach((trick) => {
+            players.push(trick.data());
         });
+    }).catch((err) => {
+        // eslint-disable-next-line no-console
+        console.log('Error getting documents', err);
+    });
+
     return players;
 };
 

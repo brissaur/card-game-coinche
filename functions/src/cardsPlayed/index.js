@@ -12,6 +12,7 @@ const COLLECTION_NAME = 'cardsPlayed';
  */
 const getCardsPlayedOnTable = (tableId) => {
     const table = getTableById(tableId);
+
     return table.collection(COLLECTION_NAME);
 };
 
@@ -19,7 +20,7 @@ const getCardsPlayedOnTable = (tableId) => {
  * @dataProvider addCardPlayed({playerId: 'XXXXXX', card: {}})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
-exports.addCardPlayed = functions.firestore.document(tableCollectionName+'/{tableId}/'+COLLECTION_NAME+'/{cardPlayedId}').onCreate(async (event) => {
+exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{cardPlayedId}`).onCreate(async (event) => {
     const tableId = event.params.tableId;
     const cardsPlayed = await getCardsPlayedOnTable(tableId);
 

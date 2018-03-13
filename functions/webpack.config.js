@@ -3,25 +3,25 @@ const path = require('path');
 module.exports = {
     entry: [
         'babel-polyfill',
-        './src/index.js'
+        './src/index.js',
     ],
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'index.js',
-        libraryTarget: 'commonjs'
+        libraryTarget: 'commonjs',
     },
     target: 'node',
-    externals:[
+    externals: [
         'firebase-functions',
-        'firebase-admin'
+        'firebase-admin',
     ],
     module: {
         rules: [
             {
                 test: /^(?!.*\.spec\.js$).*\.js$/,
                 use: 'babel-loader',
-                exclude: /node_modules/
-            }
-        ]
-    }
+                exclude: /node_modules/,
+            },
+        ],
+    },
 };

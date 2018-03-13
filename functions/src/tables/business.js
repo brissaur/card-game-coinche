@@ -1,3 +1,3 @@
-exports.tableBusiness = function toto(){
+exports.tableBusiness = function toto() {
     return true;
 };

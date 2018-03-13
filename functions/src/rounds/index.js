@@ -1,4 +1,4 @@
-import { getTableById } from "../tables";
+import { getTableById } from '../tables';
 
 const COLLECTION_NAME = 'rounds';
 
@@ -9,5 +9,8 @@ const COLLECTION_NAME = 'rounds';
  */
 export const getRoundsCollection = (tableId) => {
     const table = getTableById(tableId);
+
     return table.collection(COLLECTION_NAME);
 };
+
+export default getRoundsCollection;

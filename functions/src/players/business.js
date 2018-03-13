@@ -41,20 +41,18 @@ const cards = [
 
 /**
  *
- * @param cards
+ * @param cardsToAssign
  * @param player
  * @returns {{cards: *}}
  */
-const assignCardsToPlayer = (cards, player) => ({ ...player, cards });
+const assignCardsToPlayer = (cardsToAssign, player) => ({ ...player, cardsToAssign });
 
 /**
  *
  * @param player
  * @returns {boolean}
  */
-export const searchStartPlayer = (player) => {
-    return player.pos === 0;
-};
+export const searchStartPlayer = player => player.pos === 0;
 
 /**
  *
