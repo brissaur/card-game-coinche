@@ -53,10 +53,11 @@ exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId
         const roundsRef = getRoundsCollection(tableId);
         roundsRef.add({ ...tricks });
     } else {
-        const cardsPlayed = event.data.data();
-        const lastPlayerId = cardsPlayed[3].playerId;
-        const currentPlayer = computeNextPlayerAfterTrick(players, lastPlayerId);
         const tableRef = getTableById(tableId);
+
+        const lastPlayerId = tableRef.data().general.currentPlayerId;
+        const currentPlayer = computeNextPlayerAfterTrick(players, lastPlayerId);
+
         tableRef.update({
             general: {
                 currentPlayerId: currentPlayer.id,
