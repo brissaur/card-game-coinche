@@ -5,7 +5,7 @@ import { CARD_PLAYED } from './ducks';
 import { getTableId, getPlayerCards } from '../table/selectors';
 import { getPlayerId } from '../player/selectors';
 
-import { TABLE_COLLECTION, TRICK_COLLECTION, PLAYERS_COLLECTION } from '../api/constants';
+import { TABLE_COLLECTION, CARD_PLAYED_COLLECTION, PLAYERS_COLLECTION } from '../api/constants';
 
 function* cardPlayed({ card }) {
     global.console.log('New card played', card);
@@ -16,7 +16,7 @@ function* cardPlayed({ card }) {
     yield db
         .collection(TABLE_COLLECTION)
         .doc(tableId)
-        .collection(TRICK_COLLECTION)
+        .collection(CARD_PLAYED_COLLECTION)
         .add({
             playerId: myPlayerId,
             cardId: card.id,

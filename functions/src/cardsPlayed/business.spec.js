@@ -1,13 +1,13 @@
-import { computeNextPlayerAfterTrick } from './business';
+import { computeNextPlayerAfterCardPlayed } from './business';
 
-describe('test tricks function', () => {
+describe('test cardsPlayed function', () => {
     [
         { currentPlayerId: 1, expectedNextPlayerId: 2 },
         { currentPlayerId: 2, expectedNextPlayerId: 3 },
         { currentPlayerId: 3, expectedNextPlayerId: 4 },
         { currentPlayerId: 4, expectedNextPlayerId: 1 },
     ].forEach((data) => {
-        test('computeNextPlayerAfterTrick', () => {
+        test('computeNextPlayerAfterCardPlayed', () => {
             const players = [
                 { id: 1, pos: 0 },
                 { id: 2, pos: 1 },
@@ -15,7 +15,7 @@ describe('test tricks function', () => {
                 { id: 4, pos: 3 },
             ];
 
-            const nextPlayer = computeNextPlayerAfterTrick(players, data.currentPlayerId);
+            const nextPlayer = computeNextPlayerAfterCardPlayed(players, data.currentPlayerId);
             expect(nextPlayer.id).toEqual(data.expectedNextPlayerId);
         });
     });
