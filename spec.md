@@ -13,10 +13,11 @@ A card is identified `color` and a `? number ?`: for instance the `8 of spades`.
 ### Card orders
 Card order when  `no-trumps`:
 1 > 10 > K > Q > J > 9 > 8 > 7
-1 > 10 > K > Q > J > 9 > 8 > 7
+11 / 10 / 4 / 3 / 2 / 0 / 0 / 0
 
 Card order in `trumps`:
 J > 9 > 1 > 10 > K > Q > 8 > 7
+20 / 14 / 11 / 10 / 4 / 3 / 0 / 0
 
 ### Card values
 |card value|no-trump|trump|
@@ -83,13 +84,14 @@ We repeat 8 `tricks`:
 - the winning team wins equal the amount defined during the announce.
 
 # Game rules
-- first player to play can choose whatever he wwants. This decides the `chosen color` for the current `trick`
+- first player to play can choose whatever he wants. This decides the `chosen color` for the current `trick`
 - at my turn, if i have cards of the `chosen color`, then i HAVE TO play `chosen color`.
 - If the `chosen color` is the `trump`, all players `HAVE TO` play a card of bigger value if they can.
 - if the `chosen color` is the trump, then, i HAVE TO play BIGGER card than the current biggest one if i have trump and can play bigger.
 - if a i have not the `chosen color` but i have trumps, i have to play trumps
 - if my partner is `currently winning` (= if the trick was to be finished now, who would win?)the trick, and that i do not have the `chosen color`, then i can play whatever card i want
 - if a color is played, one play trumps, and i have not the initial color, then i have to play trumps to
+
 ## Specifications of the "what can i play" part
 
 ## Specifications of the "who wins the trick" part
