@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import Card from './card.container';
 import { cardPlayed } from './ducks';
 
-function ClickableCard({ onCardPlayed, ...card }) {
+function ClickableCard({ onCardPlayed, playable, ...card }) {
     return (
-        <div onClick={() => onCardPlayed(card)}>
-            <Card {...card} />
+        <div onClick={() => (playable ? onCardPlayed(card) : null)}>
+            <Card active={playable} {...card} />
         </div>
     );
 }
@@ -21,11 +21,9 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(
-    null,
-    mapDispatchToProps,
-)(ClickableCard);
+export default connect(null, mapDispatchToProps)(ClickableCard);
 
 ClickableCard.propTypes = {
-    onCardPlayed: PropTypes.func,
+    onCardPlayed: PropTypes.func.isRequired,
+    playable: PropTypes.bool.isRequired,
 };

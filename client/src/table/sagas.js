@@ -1,15 +1,28 @@
 import { call, select, put, take, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 import db from '../api/init';
-import { TABLE_COLLECTION, CARD_PLAYED_COLLECTION, PLAYERS_COLLECTION } from '../api/constants';
+import {
+    TABLE_COLLECTION,
+    CARD_PLAYED_COLLECTION,
+    PLAYERS_COLLECTION,
+    ANNOUNCES_COLLECTION,
+} from '../api/constants';
 
 import { createFakePlayers } from '../player/sagas';
 import { getPlayerId } from '../player/selectors';
-import { setTableId, updateTrick, updateTableDocument, updatePlayers } from './ducks';
+import {
+    setTableId,
+    updateTrick,
+    updateTableDocument,
+    updatePlayers,
+    updateAnnounces,
+} from './ducks';
 import { getTableId } from '../table/selectors';
 
 const INITIAL_DOCUMENT = {
-    general: {},
+    general: {
+        mode: 'announce',
+    },
 };
 
 /**
@@ -47,34 +60,39 @@ export function* watchUpdateOnDocumentTable() {
     }
 }
 
-export function* watchUpdateOnCollectionPlayers() {
-    const tableId = yield select(getTableId);
-    const coll = yield db
-        .collection(TABLE_COLLECTION)
-        .doc(tableId)
-        .collection(PLAYERS_COLLECTION);
+function watchUpdateOnTableSubcollection(COLLECTION_NAME, action, snapshotTransform) {
+    return function* watchUpdate() {
+        const tableId = yield select(getTableId);
+        const coll = yield db
+            .collection(TABLE_COLLECTION)
+            .doc(tableId)
+            .collection(COLLECTION_NAME);
 
-    const snapshotChannel = yield call(createSnapshotChannel, coll);
+        const snapshotChannel = yield call(createSnapshotChannel, coll);
 
-    while (true) {
-        const snapshot = yield take(snapshotChannel);
-        yield put(updatePlayers(snapshot.docs.map(doc => doc.data())));
-    }
+        while (true) {
+            const snapshot = yield take(snapshotChannel);
+            yield put(action(snapshotTransform(snapshot)));
+        }
+    };
 }
+export const watchUpdateOnCollectionPlayers = watchUpdateOnTableSubcollection(
+    PLAYERS_COLLECTION,
+    updatePlayers,
+    snapshot => snapshot.docs.map(doc => doc.data()),
+);
 
-export function* watchUpdateOnCollectionTrick() {
-    const tableId = yield select(getTableId);
-    const coll = yield db
-        .collection(TABLE_COLLECTION)
-        .doc(tableId)
-        .collection(CARD_PLAYED_COLLECTION);
-    const snapshotChannel = yield call(createSnapshotChannel, coll);
+export const watchUpdateOnCollectionTrick = watchUpdateOnTableSubcollection(
+    CARD_PLAYED_COLLECTION,
+    updateTrick,
+    snapshot => snapshot.docs.map(doc => doc.data()),
+);
 
-    while (true) {
-        const snapshot = yield take(snapshotChannel);
-        yield put(updateTrick(snapshot.docs.map(doc => doc.data())));
-    }
-}
+export const watchUpdateOnCollectionAnnounce = watchUpdateOnTableSubcollection(
+    ANNOUNCES_COLLECTION,
+    updateAnnounces,
+    snapshot => snapshot.docs.map(doc => doc.data()),
+);
 
 export function* createTableAndAddPlayerToTable() {
     const meId = yield select(getPlayerId);
@@ -105,4 +123,5 @@ export function* createTableAndAddPlayerToTable() {
     yield fork(watchUpdateOnDocumentTable);
     yield fork(watchUpdateOnCollectionPlayers);
     yield fork(watchUpdateOnCollectionTrick);
+    yield fork(watchUpdateOnCollectionAnnounce);
 }
