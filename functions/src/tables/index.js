@@ -5,14 +5,18 @@ import { getCardsPlayedCollection } from '../cardsPlayed';
 
 export const COLLECTION_NAME = 'tables';
 
-export const getTableById = tableId => admin.firestore().collection(COLLECTION_NAME).doc(tableId);
+export const getTableById = tableId =>
+    admin
+        .firestore()
+        .collection(COLLECTION_NAME)
+        .doc(tableId);
 /**
- * @dataProvider updateTable({after: {general: {currentPlayerId: 'V32GHS3W8yCxvpepFbgF'}}, before: {}})
+ * @dataProvider updateTable({after: {currentPlayerId: 'V32GHS3W8yCxvpepFbgF'}, before: {}})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
 exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}`).onUpdate(async (event) => {
     const tableId = event.params.tableId;
-    const currentPlayerId = event.data.data().general.currentPlayerId;
+    const currentPlayerId = event.data.data().currentPlayerId;
 
     const players = await getPlayersOnTable(tableId);
     const currentPlayer = players.find(player => player.id === currentPlayerId);

@@ -5,14 +5,15 @@ import styles from './player.styles';
 
 export default function Player(props) {
     const {
-        id, cardPlayed, pos, active,
+        id, cardPlayed, pos, active, announce,
     } = props;
 
     return (
         <div style={styles.container}>
             <div style={styles.description}>
                 <span>{`${id}=> `} </span>
-                <span>`pos = ${pos} `</span>
+                <span>{`pos = ${pos} `}</span>
+                {announce ? <span>{`announce = ${announce} `}</span> : null}
                 {active ? <span style={styles.active}>ACTIVE PLAYER</span> : null}
             </div>
             {cardPlayed ? (
@@ -29,4 +30,5 @@ Player.propTypes = {
     pos: PropTypes.number.isRequired,
     cardPlayed: PropTypes.string,
     active: PropTypes.bool.isRequired,
+    announce: PropTypes.string,
 };

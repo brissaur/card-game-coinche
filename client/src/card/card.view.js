@@ -4,15 +4,13 @@ import styles from './styles';
 
 const getCardSrc = cardId =>
     // eslint-disable-next-line
-     require(`../../public/images/cards/${cardId}.png`);
-export default function Card({ id }) {
-    return (
-        <img
-            src={getCardSrc(id)}
-            alt={id}
-            style={styles.card}
-        />
-    );
+    require(`../../public/images/cards/${cardId}.png`);
+
+export default function Card({ active, id }) {
+    console.log('active', active);
+    const style = { ...styles.card, ...(active ? styles.active : null) };
+
+    return <img src={getCardSrc(id)} alt={id} style={style} />;
 }
 
 Card.propTypes = {

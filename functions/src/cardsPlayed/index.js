@@ -19,14 +19,17 @@ export const getCardsPlayedCollection = (tableId) => {
 export const getCardsPlayedOnTable = async (tableId) => {
     const cardsPlayed = [];
     const cardsPlayedRef = getCardsPlayedCollection(tableId);
-    await cardsPlayedRef.get().then((snapshot) => {
-        snapshot.forEach((cardPlayed) => {
-            cardsPlayed.push(cardPlayed.data());
+    await cardsPlayedRef
+        .get()
+        .then((snapshot) => {
+            snapshot.forEach((cardPlayed) => {
+                cardsPlayed.push(cardPlayed.data());
+            });
+        })
+        .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.log('Error getting documents', err);
         });
-    }).catch((err) => {
-        // eslint-disable-next-line no-console
-        console.log('Error getting documents', err);
-    });
 
     return cardsPlayed;
 };
@@ -55,11 +58,12 @@ exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{ta
     const previousPlayerId = event.data.data().playerId;
     const currentPlayer = computeNextPlayerAfterCardPlayed(players, previousPlayerId);
     const tableRef = getTableById(tableId);
-    tableRef.update({
-        general: {
+    tableRef.update(
+        {
             currentPlayerId: currentPlayer.id,
         },
-    });
+        { merge: true },
+    );
 
     return event;
 });
