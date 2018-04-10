@@ -1,9 +1,15 @@
 import * as functions from 'firebase-functions';
+<<<<<<< HEAD
 
 import { emptyCollection } from '../common/collection';
 
 import { getTableById, nextPlayerPlusPlus, COLLECTION_NAME as tableCollectionName } from '../tables';
 import { announceIA, shouldStopAnnounces, getBestAnnounce } from './business';
+=======
+import { getTableById, nextPlayerPlusPlus, COLLECTION_NAME as tableCollectionName } from '../tables';
+
+import { announceIA, shouldStopAnnounces } from './business';
+>>>>>>> Make computer announce on announce and switch mode
 
 const COLLECTION_NAME = 'announces';
 
@@ -48,6 +54,7 @@ exports.onAnnounce = functions.firestore
         const tableId = event.params.tableId;
         const playerId = event.data.data().playerId;
 
+<<<<<<< HEAD
         const announces = await getAnnounces(tableId);
         if (shouldStopAnnounces(announces)) {
             const fbTable = getTableById(tableId);
@@ -59,6 +66,15 @@ exports.onAnnounce = functions.firestore
                 {
                     currentPlayerId: firstPlayerId,
                     currentAnnounce: getBestAnnounce(announces),
+=======
+        if (shouldStopAnnounces(await getAnnounces(tableId))) {
+            const fbTable = getTableById(tableId);
+            const firstPlayerId = await fbTable.get().then(doc => doc.data().firstPlayerId);
+
+            fbTable.update(
+                {
+                    currentPlayerId: firstPlayerId,
+>>>>>>> Make computer announce on announce and switch mode
                     mode: 'play',
                 },
                 { merge: true },
