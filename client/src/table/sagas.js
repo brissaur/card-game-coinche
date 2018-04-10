@@ -20,7 +20,7 @@ import {
 import { getTableId } from '../table/selectors';
 
 const INITIAL_DOCUMENT = {
-    mode: 'play',
+    mode: 'announce',
 };
 
 /**
