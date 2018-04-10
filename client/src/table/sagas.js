@@ -20,9 +20,7 @@ import {
 import { getTableId } from '../table/selectors';
 
 const INITIAL_DOCUMENT = {
-    general: {
-        mode: 'announce',
-    },
+    mode: 'play',
 };
 
 /**
@@ -76,6 +74,7 @@ function watchUpdateOnTableSubcollection(COLLECTION_NAME, action, snapshotTransf
         }
     };
 }
+
 export const watchUpdateOnCollectionPlayers = watchUpdateOnTableSubcollection(
     PLAYERS_COLLECTION,
     updatePlayers,
