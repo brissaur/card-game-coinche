@@ -42,9 +42,7 @@ export default class AnnounceBoard extends React.Component {
                         defaultValue="80H"
                         type="text"
                         name="name"
-                        ref={(input) => {
-                            this.input = input;
-                        }}
+                        ref={input => (this.input = input)}
                     />
                 </label>
                 <input type="submit" value="Submit" />

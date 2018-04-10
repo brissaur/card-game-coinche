@@ -31,7 +31,6 @@ export function getGeneral(state) {
 }
 
 export const getGameMode = createSelector(getGeneral, general => general.mode);
-
 export const isGameModeAnnounce = createSelector(getGameMode, gameMode => gameMode === 'announce');
 export const getCurrentPlayerId = createSelector(getGeneral, general => general.currentPlayerId);
 export const isActivePlayer = createSelector(getPlayerId, getCurrentPlayerId, isEqual);
