@@ -72,6 +72,7 @@ function watchUpdateOnTableSubcollection(COLLECTION_NAME, action, snapshotTransf
         }
     };
 }
+
 export const watchUpdateOnCollectionPlayers = watchUpdateOnTableSubcollection(
     PLAYERS_COLLECTION,
     updatePlayers,
