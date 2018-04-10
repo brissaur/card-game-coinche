@@ -19,9 +19,7 @@ import {
 } from './ducks';
 import { getTableId } from '../table/selectors';
 
-const INITIAL_DOCUMENT = {
-    mode: 'play',
-};
+const INITIAL_DOCUMENT = {};
 
 /**
  * Return a "table" document

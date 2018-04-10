@@ -50,13 +50,16 @@ async function onAddPlayer(event) {
         const playersRef = getPlayersCollection(tableId);
         const playersWithCards = dealCards(players);
 
-        playersWithCards.forEach((player) => {
+        playersWithCards.forEach(async (player) => {
             playersRef.doc(player.id).update({ cards: player.cards });
         });
         const tableRef = getTableById(tableId);
+        const firstPlayerId = players.find(searchStartPlayer).id;
         tableRef.update(
             {
-                currentPlayerId: players.find(searchStartPlayer).id,
+                firstPlayerId,
+                currentPlayerId: firstPlayerId,
+                mode: 'announce',
             },
             { merge: true },
         );

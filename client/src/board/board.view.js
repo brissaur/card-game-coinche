@@ -6,9 +6,7 @@ import AnnounceBoard from '../announce-board/announce-board.container';
 
 import styles from './styles';
 
-export default function Board({
-    children, handCards, trick, players = [],
-}) {
+export default function Board({ children, trick, players = [] }) {
     global.console.log('trick', trick);
 
     return (

@@ -20,7 +20,6 @@ export default class AnnounceBoard extends React.Component {
     // <input initialValue="80H" onSubmit={onAnnounce} />
     onSubmit(event) {
         event.preventDefault();
-        console.log(this.input);
 
         if (!validate(this.input.value)) {
             return this.setState({ error: 'Invalid announce' });
@@ -37,13 +36,15 @@ export default class AnnounceBoard extends React.Component {
 
         const form = (
             <form onSubmit={this.onSubmit}>
-                <label>
+                <label htmlFor="announce">
                     Announce:
                     <input
                         defaultValue="80H"
                         type="text"
                         name="name"
-                        ref={input => (this.input = input)}
+                        ref={(input) => {
+                            this.input = input;
+                        }}
                     />
                 </label>
                 <input type="submit" value="Submit" />
@@ -56,5 +57,6 @@ export default class AnnounceBoard extends React.Component {
 }
 AnnounceBoard.propTypes = {
     isMyTurn: PropTypes.bool.isRequired,
+    isAnnounce: PropTypes.bool.isRequired,
     onAnnounce: PropTypes.func.isRequired,
 };

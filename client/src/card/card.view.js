@@ -7,7 +7,6 @@ const getCardSrc = cardId =>
     require(`../../public/images/cards/${cardId}.png`);
 
 export default function Card({ active, id }) {
-    console.log('active', active);
     const style = { ...styles.card, ...(active ? styles.active : null) };
 
     return <img src={getCardSrc(id)} alt={id} style={style} />;
@@ -15,4 +14,5 @@ export default function Card({ active, id }) {
 
 Card.propTypes = {
     id: PropTypes.string.isRequired,
+    active: PropTypes.bool.isRequired,
 };

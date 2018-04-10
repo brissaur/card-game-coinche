@@ -1,7 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getTableById, COLLECTION_NAME as tableCollectionName } from '../tables/index';
-import { getPlayersOnTable } from '../players/index';
-import { computeNextPlayerAfterCardPlayed } from './business';
+import { getTableById, COLLECTION_NAME as tableCollectionName, nextPlayerPlusPlus } from '../tables/index';
 import { getTricksCollection } from '../tricks/index';
 
 const COLLECTION_NAME = 'cardsPlayed';
@@ -54,16 +52,8 @@ exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{ta
             });
         });
     }
-    const players = await getPlayersOnTable(tableId);
-    const previousPlayerId = event.data.data().playerId;
-    const currentPlayer = computeNextPlayerAfterCardPlayed(players, previousPlayerId);
-    const tableRef = getTableById(tableId);
-    tableRef.update(
-        {
-            currentPlayerId: currentPlayer.id,
-        },
-        { merge: true },
-    );
+
+    await nextPlayerPlusPlus(tableId, event.data.data().playerId);
 
     return event;
 });
