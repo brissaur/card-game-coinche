@@ -12,11 +12,11 @@ A card is identified `color` and a `? number ?`: for instance the `8 of spades`.
 
 ### Card orders
 Card order when  `no-trumps`:
-1 > 10 > K > Q > J > 9 > 8 > 7
+A > 10 > K > Q > J > 9 > 8 > 7
 11 / 10 / 4 / 3 / 2 / 0 / 0 / 0
 
 Card order in `trumps`:
-J > 9 > 1 > 10 > K > Q > 8 > 7
+J > 9 > A > 10 > K > Q > 8 > 7
 20 / 14 / 11 / 10 / 4 / 3 / 0 / 0
 
 ### Card values

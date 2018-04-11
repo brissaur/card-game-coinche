@@ -36,19 +36,17 @@ const cards = [
 ];
 
 describe.only('test filterCardsByColor function', () => {
-
     [
-        {card: 'AH', expected:'H'},
-        {card: '10H', expected:'H'},
-        {card: 'AS', expected:'S'},
-        {card: 'JD', expected:'D'},
-        {card: '7C', expected:'C'},
+        { card: 'AH', expected: 'H' },
+        { card: '10H', expected: 'H' },
+        { card: 'AS', expected: 'S' },
+        { card: 'JD', expected: 'D' },
+        { card: '7C', expected: 'C' },
     ].forEach((data) => {
         test('getCardColor', () => {
             expect(getCardColor(data.card)).toEqual(data.expected);
         });
     });
-
 
     [
         {
@@ -63,7 +61,7 @@ describe.only('test filterCardsByColor function', () => {
                 'QH',
                 'KH',
             ],
-        }
+        },
     ].forEach((data) => {
         test.only('filterCardsByColor', () => {
             expect(cards.filter(filterCardsByColor(data.color))).toEqual(data.expected);
@@ -106,29 +104,29 @@ describe.only('test filterCardsByColor function', () => {
  * Color: Couleur définie par la carte désigné au début du trick
  * Obligé de couper (joué de l'atout - ou à défaut une autre carte) quand le joueur n'a pas la couleur ou que le partenaire n'est pas en train de gagner
  */
-// describe.only('test function', () => {
-//     [
-//         {
-//             data: {
-//                 trump: 'H',
-//                 players: [{ id: 1, pos: 0 }, { id: 2, pos: 1 }, { id: 3, pos: 2 }, { id: 4, pos: 3 }],
-//                 cardsPlayed: [{ cardId: 'AC', playerId: 1 }],
-//                 currentPlayerId: 2,
-//                 hand: ['7C', '8C', '9C']
-//             },
-//             expected: [],
-//         },
-//     ].forEach((data) => {
-//         test('computeNextPlayerAfterTrick', () => {
-//             const players = [
-//                 { id: 1, pos: 0 },
-//                 { id: 2, pos: 1 },
-//                 { id: 3, pos: 2 },
-//                 { id: 4, pos: 3 },
-//             ];
-//
-//             const nextPlayer = computeNextPlayerAfterTrick(players, data.currentPlayerId);
-//             expect(nextPlayer.id).toEqual(data.expectedNextPlayerId);
-//         });
-//     });
-// });
+describe.only('test function', () => {
+    [
+        {
+            data: {
+                trump: 'H',
+                players: [{ id: 1, pos: 0 }, { id: 2, pos: 1 }, { id: 3, pos: 2 }, { id: 4, pos: 3 }],
+                cardsPlayed: [{ cardId: 'AC', playerId: 1 }],
+                currentPlayerId: 2,
+                hand: ['7C', '8C', '9C'],
+            },
+            expected: [],
+        },
+    ].forEach((data) => {
+        test('computeNextPlayerAfterTrick', () => {
+            const players = [
+                { id: 1, pos: 0 },
+                { id: 2, pos: 1 },
+                { id: 3, pos: 2 },
+                { id: 4, pos: 3 },
+            ];
+
+            const nextPlayer = computeNextPlayerAfterTrick(players, data.currentPlayerId);
+            expect(nextPlayer.id).toEqual(data.expectedNextPlayerId);
+        });
+    });
+});
