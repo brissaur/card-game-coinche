@@ -1,4 +1,4 @@
-const cards = [
+const deckOfThirtyTwoCards = [
     {
         id: '7S',
         height: '7',
@@ -44,11 +44,11 @@ const cards = [
         color: 'S',
         order: {
             trump: 4,
-            notrump: 2
+            notrump: 2,
         },
         value: {
             trump: 10,
-            notrump: 10
+            notrump: 10,
         },
     },
     {
@@ -57,11 +57,11 @@ const cards = [
         color: 'S',
         order: {
             trump: 3,
-            notrump: 1
+            notrump: 1,
         },
         value: {
             trump: 11,
-            notrump: 11
+            notrump: 11,
         },
     },
     {
@@ -70,11 +70,11 @@ const cards = [
         color: 'S',
         order: {
             trump: 1,
-            notrump: 5
+            notrump: 5,
         },
         value: {
             trump: 20,
-            notrump: 2
+            notrump: 2,
         },
     },
     {
@@ -83,11 +83,11 @@ const cards = [
         color: 'S',
         order: {
             trump: 6,
-            notrump: 4
+            notrump: 4,
         },
         value: {
             trump: 3,
-            notrump: 3
+            notrump: 3,
         },
     },
     {
@@ -96,11 +96,11 @@ const cards = [
         color: 'S',
         order: {
             trump: 5,
-            notrump: 3
+            notrump: 3,
         },
         value: {
             trump: 4,
-            notrump: 4
+            notrump: 4,
         },
     },
     {
@@ -109,11 +109,11 @@ const cards = [
         color: 'H',
         order: {
             trump: 8,
-            notrump: 8
+            notrump: 8,
         },
         value: {
             trump: 0,
-            notrump: 0
+            notrump: 0,
         },
     },
     {
@@ -121,12 +121,12 @@ const cards = [
         height: '8',
         color: 'H',
         order: {
-            trump: 8,
-            notrump: 7
+            trump: 7,
+            notrump: 7,
         },
         value: {
             trump: 0,
-            notrump: 0
+            notrump: 0,
         },
     },
     {
@@ -135,11 +135,11 @@ const cards = [
         color: 'H',
         order: {
             trump: 2,
-            notrump: 6
+            notrump: 6,
         },
         value: {
             trump: 14,
-            notrump: 0
+            notrump: 0,
         },
     },
     {
@@ -148,11 +148,11 @@ const cards = [
         color: 'H',
         order: {
             trump: 4,
-            notrump: 2
+            notrump: 2,
         },
         value: {
             trump: 10,
-            notrump: 10
+            notrump: 10,
         },
     },
     {
@@ -161,11 +161,11 @@ const cards = [
         color: 'H',
         order: {
             trump: 3,
-            notrump: 1
+            notrump: 1,
         },
         value: {
             trump: 11,
-            notrump: 11
+            notrump: 11,
         },
     },
     {
@@ -174,11 +174,11 @@ const cards = [
         color: 'H',
         order: {
             trump: 1,
-            notrump: 5
+            notrump: 5,
         },
         value: {
             trump: 20,
-            notrump: 2
+            notrump: 2,
         },
     },
     {
@@ -187,11 +187,11 @@ const cards = [
         color: 'H',
         order: {
             trump: 6,
-            notrump: 4
+            notrump: 4,
         },
         value: {
             trump: 3,
-            notrump: 3
+            notrump: 3,
         },
     },
     {
@@ -200,11 +200,11 @@ const cards = [
         color: 'H',
         order: {
             trump: 5,
-            notrump: 3
+            notrump: 3,
         },
         value: {
             trump: 4,
-            notrump: 4
+            notrump: 4,
         },
     },
     {
@@ -213,11 +213,11 @@ const cards = [
         color: 'D',
         order: {
             trump: 8,
-            notrump: 8
+            notrump: 8,
         },
         value: {
             trump: 0,
-            notrump: 0
+            notrump: 0,
         },
     },
     {
@@ -226,11 +226,11 @@ const cards = [
         color: 'D',
         order: {
             trump: 8,
-            notrump: 7
+            notrump: 7,
         },
         value: {
             trump: 0,
-            notrump: 0
+            notrump: 0,
         },
     },
     {
@@ -239,11 +239,11 @@ const cards = [
         color: 'D',
         order: {
             trump: 2,
-            notrump: 6
+            notrump: 6,
         },
         value: {
             trump: 14,
-            notrump: 0
+            notrump: 0,
         },
     },
     {
@@ -252,11 +252,11 @@ const cards = [
         color: 'D',
         order: {
             trump: 4,
-            notrump: 2
+            notrump: 2,
         },
         value: {
             trump: 10,
-            notrump: 10
+            notrump: 10,
         },
     },
     {
@@ -265,11 +265,11 @@ const cards = [
         color: 'D',
         order: {
             trump: 3,
-            notrump: 1
+            notrump: 1,
         },
         value: {
             trump: 11,
-            notrump: 11
+            notrump: 11,
         },
     },
     {
@@ -278,11 +278,11 @@ const cards = [
         color: 'D',
         order: {
             trump: 1,
-            notrump: 5
+            notrump: 5,
         },
         value: {
             trump: 20,
-            notrump: 2
+            notrump: 2,
         },
     },
     {
@@ -291,11 +291,11 @@ const cards = [
         color: 'D',
         order: {
             trump: 6,
-            notrump: 4
+            notrump: 4,
         },
         value: {
             trump: 3,
-            notrump: 3
+            notrump: 3,
         },
     },
     {
@@ -304,11 +304,11 @@ const cards = [
         color: 'D',
         order: {
             trump: 5,
-            notrump: 3
+            notrump: 3,
         },
         value: {
             trump: 4,
-            notrump: 4
+            notrump: 4,
         },
     },
     {
@@ -317,11 +317,11 @@ const cards = [
         color: 'C',
         order: {
             trump: 8,
-            notrump: 8
+            notrump: 8,
         },
         value: {
             trump: 0,
-            notrump: 0
+            notrump: 0,
         },
     },
     {
@@ -330,11 +330,11 @@ const cards = [
         color: 'C',
         order: {
             trump: 8,
-            notrump: 7
+            notrump: 7,
         },
         value: {
             trump: 0,
-            notrump: 0
+            notrump: 0,
         },
     },
     {
@@ -343,11 +343,11 @@ const cards = [
         color: 'C',
         order: {
             trump: 2,
-            notrump: 6
+            notrump: 6,
         },
         value: {
             trump: 14,
-            notrump: 0
+            notrump: 0,
         },
     },
     {
@@ -356,11 +356,11 @@ const cards = [
         color: 'C',
         order: {
             trump: 4,
-            notrump: 2
+            notrump: 2,
         },
         value: {
             trump: 10,
-            notrump: 10
+            notrump: 10,
         },
     },
     {
@@ -369,11 +369,11 @@ const cards = [
         color: 'C',
         order: {
             trump: 3,
-            notrump: 1
+            notrump: 1,
         },
         value: {
             trump: 11,
-            notrump: 11
+            notrump: 11,
         },
     },
     {
@@ -382,11 +382,11 @@ const cards = [
         color: 'C',
         order: {
             trump: 1,
-            notrump: 5
+            notrump: 5,
         },
         value: {
             trump: 20,
-            notrump: 2
+            notrump: 2,
         },
     },
     {
@@ -395,11 +395,11 @@ const cards = [
         color: 'C',
         order: {
             trump: 6,
-            notrump: 4
+            notrump: 4,
         },
         value: {
             trump: 3,
-            notrump: 3
+            notrump: 3,
         },
     },
     {
@@ -408,24 +408,73 @@ const cards = [
         color: 'C',
         order: {
             trump: 5,
-            notrump: 3
+            notrump: 3,
         },
         value: {
             trump: 4,
-            notrump: 4
+            notrump: 4,
         },
-    }
+    },
 ];
 
+const filterCardsByColor = color => card => card.color === color;
+
+/**
+ * Return the higher card in the cardsList
+ * @param boolean isTrump
+ * @return {Function}
+ */
+export const sortCards = isTrump => (cardA, cardB) => {
+    const order = isTrump ? 'trump' : 'notrump';
+    const cardAInDeck = deckOfThirtyTwoCards.find(card => card.id === cardA.id);
+    const cardBInDeck = deckOfThirtyTwoCards.find(card => card.id === cardB.id);
+    if (cardAInDeck.order[order] > cardBInDeck.order[order]) {
+        return 1;
+    }
+    if (cardAInDeck.order[order] < cardBInDeck.order[order]) {
+        return -1;
+    }
+
+    return 0;
+};
+
+export const getHigherCards = (isTrump, cardPlayed) => (card) => {
+    const sortCardPlayed = cardPlayed.sort(sortCards(isTrump));
+    // console.log(sortCardPlayed);
+    const cardInDeck = deckOfThirtyTwoCards.find(c => c.id === card.id);
+    // console.log(cardInDeck);
+    const cardPlayedInDeck = deckOfThirtyTwoCards.find(c => c.id === sortCardPlayed[0].id);
+    const trump = isTrump ? 'trump' : 'notrump';
+
+    return cardInDeck.value[trump] > cardPlayedInDeck.value[trump];
+};
+
+export class Hand {
+    constructor(handCards, trump, firstCardOfTrick){
+        this.colorCards = handCards.filter(filterCardsByColor(firstCardOfTrick.color));
+        this.trumpCards = handCards.filter(filterCardsByColor(trump));
+        this.otherCards = handCards.filter(card => !this.colorCards.concat(this.trumpCards).map(c => c.id).includes(card.id));
+    }
+
+    getColorCards() {
+        return this.colorCards.sort(sortCards(false));
+    }
+
+    getTrumpCards() {
+        return this.trumpCards.sort(sortCards(true));
+    }
+
+    getOtherCards() {
+        return this.otherCards.sort(sortCards(false));
+    }
+}
 
 export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
     // get the first card of the cardsPlayed
     // if first card of the trick is === trump
         // get the higher trump card of the trick
         // AA) list of trump card of the hand
-        // list of other card
-
-        // if cards > 0
+        // if length trumpcards > 0
             //  Player has a cards > to the the higher card of the trick
                 // return all cards > to the higher one
             // else return all others cards
@@ -441,74 +490,27 @@ export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
         // else list all others cards
 
     //---------------------------------------------------------
-    const firstCardOfTheTrick = cards.filter(card => cardsPlayed[0].cardId === card.id);
-    if(firstCardOfTheTrick.color === trump) {
-        const higherCardOfTrick = cardsPlayed.sort(getTheHigherCard)
-        });
+    const firstCardOfTheTrick = cardsPlayed[0];
+    if (firstCardOfTheTrick.color === trump) {
+        const trumpCards = cardsPlayed.filter(filterCardsByColor(trump));
+        if (trumpCards) {
+            const higherCardOfTrick = trumpCards.sort(sortCards(trump))[0];
+            const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, higherCardOfTrick);
+            if (hand.getTrumpCards().length > 0) {
+
+            }
+        }
+
     }else{
 
     }
 };
 
-export const checkIfCardBelongsToColor = (color, card) => {
-    return getCardColor(card) === color;
-};
-
-export const filterCardsByColor = (color) => (card) => {
-    return checkIfCardBelongsToColor(color, card);
-};
-
-export const getTheHigherCard = (trump) => (carda, cardb) => {
-    cardsPlayed.map(cardPlayed => cards.filter(card => card.id === cardPlayed.id)).sort((carda, cardb) => {
-        if (trump) {
-            return carda.order.trump < cardb.order.trump;
-        }
-
-        return cards.order.notrump < cardb.order.notrump;
-};
-
-const getTrumpCards = (trump, cards) => {
-    return cards.filter((card) => checkIfCardBelongsToColor(trump, card));
-};
-
-const hand = {
-    colorCards: [],
-    trumpCards: [],
-    otherCards: [],
-};
-
-const negate = (f) => (elm) => f(!elm);
-
-class Hand {
-
-    constructor(hand, trump, firstCardColor){
-        this.colorCards = hand.filter(filterCardsByColor(firstCardColor));
-        this.trumpCards = hand.filter(filterCardsByColor(trump));
-        this.otherCards = hand.filter(
-            negate(this.colorCards.concat(this.trumpCards).includes)
-        );
-    }
+export function Card(id) {
+    this.id = id;
+    this.color = this.getCardColor(id);
+    this.height = this.getCardHeight(id);
 }
 
-
-function Card(id){
-    const getCardColor = cardId => cardId.slice(-1);
-    const getCardHeight = cardId => cardId.slice(0, 1);
-    const belongsToTrump = trump => trump === this.color;
-    this.color = getCardColor(id);
-    this.height = getCardHeight(id);
-};
-
-Card.prototype.getValue = (trump) => {
-    if(belongsToTrump(trump)){
-        const cardWeight = [
-            {
-                height: 1
-            }
-        ];
-
-
-            1 > 10 > K > Q > J > 9 > 8 > 7
-        11 / 10 / 4 / 3 / 2 / 0 / 0 / 0
-    }
-};
+Card.prototype.getCardColor = cardId => cardId.slice(-1);
+Card.prototype.getCardHeight = cardId => cardId.slice(0, 1);
