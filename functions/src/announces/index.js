@@ -1,7 +1,9 @@
 import * as functions from 'firebase-functions';
-import { getTableById, nextPlayerPlusPlus, COLLECTION_NAME as tableCollectionName } from '../tables';
 
-import { announceIA, shouldStopAnnounces } from './business';
+import { emptyCollection } from '../common/collection';
+
+import { getTableById, nextPlayerPlusPlus, COLLECTION_NAME as tableCollectionName } from '../tables';
+import { announceIA, shouldStopAnnounces, getBestAnnounce } from './business';
 
 const COLLECTION_NAME = 'announces';
 
@@ -46,13 +48,17 @@ exports.onAnnounce = functions.firestore
         const tableId = event.params.tableId;
         const playerId = event.data.data().playerId;
 
-        if (shouldStopAnnounces(await getAnnounces(tableId))) {
+        const announces = await getAnnounces(tableId);
+        if (shouldStopAnnounces(announces)) {
             const fbTable = getTableById(tableId);
             const firstPlayerId = await fbTable.get().then(doc => doc.data().firstPlayerId);
+
+            emptyCollection(getAnnouncesCollection(tableId));
 
             fbTable.update(
                 {
                     currentPlayerId: firstPlayerId,
+                    currentAnnounce: getBestAnnounce(announces),
                     mode: 'play',
                 },
                 { merge: true },

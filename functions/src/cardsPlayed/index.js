@@ -1,4 +1,6 @@
 import * as functions from 'firebase-functions';
+import { emptyCollection } from '../common/collection';
+
 import { getTableById, COLLECTION_NAME as tableCollectionName, nextPlayerPlusPlus } from '../tables/index';
 import { getTricksCollection } from '../tricks/index';
 
@@ -45,12 +47,7 @@ exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{ta
         const tricksCollection = getTricksCollection(tableId);
         tricksCollection.add({ ...cardsPlayed });
         // empty cardsPlayed
-        const cardsPlayedRef = getCardsPlayedCollection(tableId);
-        await cardsPlayedRef.get().then((querySnapshot) => {
-            querySnapshot.forEach(async (snapshot) => {
-                await cardsPlayedRef.doc(snapshot.id).delete();
-            });
-        });
+        await emptyCollection(getCardsPlayedCollection(tableId));
     }
 
     await nextPlayerPlusPlus(tableId, event.data.data().playerId);
