@@ -8,9 +8,7 @@ import { getPlayerId } from '../player/selectors';
 import { setTableId, updateTrick, updateTableDocument, updatePlayers } from './ducks';
 import { getTableId } from '../table/selectors';
 
-const INITIAL_DOCUMENT = {
-    general: {},
-};
+const INITIAL_DOCUMENT = {};
 
 /**
  * Return a "table" document
