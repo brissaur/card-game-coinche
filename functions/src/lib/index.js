@@ -438,15 +438,18 @@ export const sortCards = isTrump => (cardA, cardB) => {
     return 0;
 };
 
-export const getHigherCards = (isTrump, cardPlayed) => (card) => {
-    const sortCardPlayed = cardPlayed.sort(sortCards(isTrump));
-    // console.log(sortCardPlayed);
+/**
+ * Filter cards and return card with value > lastHigherCard
+ * @param isTrump
+ * @param lastHighestCard
+ * @returns {function(*): boolean}
+ */
+export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
     const cardInDeck = deckOfThirtyTwoCards.find(c => c.id === card.id);
-    // console.log(cardInDeck);
-    const cardPlayedInDeck = deckOfThirtyTwoCards.find(c => c.id === sortCardPlayed[0].id);
+    const lastHighestCardInDeck = deckOfThirtyTwoCards.find(c => c.id === lastHighestCard.id);
     const trump = isTrump ? 'trump' : 'notrump';
 
-    return cardInDeck.value[trump] > cardPlayedInDeck.value[trump];
+    return cardInDeck.value[trump] > lastHighestCardInDeck.value[trump];
 };
 
 export class Hand {
@@ -478,31 +481,43 @@ export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
             //  Player has a cards > to the the higher card of the trick
                 // return all cards > to the higher one
             // else return all others cards
-    // else (first card is none a trump one)
-        // player has trump one
-
-        // else
-        // is there any trump card which was played
-            // player should play a trump card. See AA section
-        // else player has color card in hand ?
-            // return colors cards
-
-        // else list all others cards
-
+//     else (first card is none a trump one)
+//         player has trump one
+//             What happens ?
+//         else
+//         is there any trump card which was played
+//             player should play a trump card. See AA section
+//         else player has color card in hand ?
+//             return colors cards
+//
+//         else list all others cards
     //---------------------------------------------------------
     const firstCardOfTheTrick = cardsPlayed[0];
     if (firstCardOfTheTrick.color === trump) {
-        const trumpCards = cardsPlayed.filter(filterCardsByColor(trump));
-        if (trumpCards) {
-            const higherCardOfTrick = trumpCards.sort(sortCards(trump))[0];
-            const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, higherCardOfTrick);
-            if (hand.getTrumpCards().length > 0) {
-
+        const highestCardOfTrick = cardsPlayed.sort(sortCards(true))[0];
+        const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, highestCardOfTrick);
+        if (hand.getTrumpCards().length > 0) {
+            const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, highestCardOfTrick))
+            if(higherCardInHand.length > 0){
+                return higherCardInHand;
             }
+            return hand.getOtherCards();
         }
 
     }else{
-
+        const highestCardOfTrick = cardsPlayed.sort(sortCards(false))[0];
+        const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, highestCardOfTrick);
+        if (hand.getTrumpCards().length > 0) {
+            // what should happens ?
+        }else{
+            const trumpCards = cardsPlayed.filter(filterCardsByColor(trump));
+            if(trumpCards.length > 0 && hand.getTrumpCards().length > 0){
+                return hand.getTrumpCards();
+            }else if(hand.getColorCards().length > 0){
+                return hand.getColorCards();
+            }
+            return hand.getOtherCards();
+        }
     }
 };
 

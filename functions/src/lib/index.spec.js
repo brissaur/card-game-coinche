@@ -1,6 +1,4 @@
-import { filterCardsByColor, getCardColor, sortCards, Card, Hand, getHigherCards } from './index';
-
-// remove lodash, it should not be useful
+import { filterCardsByColor, getCardColor, sortCards, Card, Hand, filterHigherCards } from './index';
 
 export const cards = [
     '7S',
@@ -92,12 +90,23 @@ describe('test function', () => {
             eligibleCardsInHand: [
                 new Card('AD'),
             ],
-            playedCardsInTrick: [
-                new Card('8D'),
-                new Card('10D'),
-            ],
+            lastHighestCard: new Card('10D'),
             expected: [
-                new Card('AD'),
+                new Card('AD')
+            ],
+        },
+        {
+            isTrump: false, // hearts
+            eligibleCardsInHand: [
+                new Card('8H'),
+                new Card('AH'),
+                new Card('JH'),
+                new Card('KH'),
+            ],
+            lastHighestCard: new Card('QH'),
+            expected: [
+                new Card('AH'),
+                new Card('KH'),
                 // Card order when  `no-trumps`:
                 // A > 10 > K > Q > J > 9 > 8 > 7
                 // 11 / 10 / 4 / 3 / 2 / 0 / 0 / 0
@@ -108,7 +117,7 @@ describe('test function', () => {
             ],
         },
         // {
-        //     hand: [
+        //     eligibleCardsInHand: [
         //         new Card('KC'),
         //         new Card('9S'),
         //         new Card('8C'),
@@ -120,8 +129,8 @@ describe('test function', () => {
         //     ],
         // }
     ].forEach((data) => {
-        test.only('getHigherCard', () => {
-            expect(data.eligibleCardsInHand.filter(getHigherCards(data.isTrump, data.playedCardsInTrick)).map(card => card.id)).toEqual(data.expected.map(card => card.id));
+        test.only('filterHigherCards', () => {
+            expect(data.eligibleCardsInHand.filter(filterHigherCards(data.isTrump, data.lastHighestCard)).map(card => card.id)).toEqual(data.expected.map(card => card.id));
             // en entrée j'ai un tableau de Card a comparé
             // je passe en paramètre la main du joueur
 
