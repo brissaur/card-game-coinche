@@ -1,7 +1,8 @@
 import * as functions from 'firebase-functions';
 import { emptyCollection } from '../common/collection';
 
-import { getTableById, COLLECTION_NAME as tableCollectionName, nextPlayerPlusPlus } from '../tables/index';
+import { computeNextPlayerForTrick } from '../tables/business';
+import { getTableById, COLLECTION_NAME as tableCollectionName } from '../tables/index';
 import { getRoundsCollection } from '../rounds';
 import { getPlayersOnTable, getPlayersCollection } from '../players';
 import { dealCards } from '../players/business';
@@ -70,13 +71,16 @@ exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId
         });
         // update next player, dealer, mode
         const fbTableRef = getTableById(tableId);
-        const nextDealer = await fbTableRef.then(snap => snap.data().firstPlayerId);
-        const nextPlayer = await nextPlayerPlusPlus(tableId, nextDealer);
+        const nextDealerId = await fbTableRef.get().then(snap => snap.data().firstPlayerId);
+
+        const nextPlayer = computeNextPlayerForTrick(players, nextDealerId);
+        const nextPlayerId = nextPlayer.id;
+
         fbTableRef.update(
             {
                 mode: 'announce',
-                firstPlayerId: nextPlayer,
-                currentPlayerId: nextPlayer,
+                firstPlayerId: nextPlayerId,
+                currentPlayerId: nextPlayerId,
             },
             { merge: true },
         );
