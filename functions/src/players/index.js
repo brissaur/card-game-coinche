@@ -22,14 +22,17 @@ export const getPlayersCollection = (tableId) => {
 export const getPlayersOnTable = async (tableId) => {
     const players = [];
     const playersRef = getPlayersCollection(tableId);
-    await playersRef.get().then((snapshot) => {
-        snapshot.forEach((player) => {
-            players.push(player.data());
+    await playersRef
+        .get()
+        .then((snapshot) => {
+            snapshot.forEach((player) => {
+                players.push(player.data());
+            });
+        })
+        .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.log('Error getting documents', err);
         });
-    }).catch((err) => {
-        // eslint-disable-next-line no-console
-        console.log('Error getting documents', err);
-    });
 
     return players;
 };
@@ -47,15 +50,19 @@ async function onAddPlayer(event) {
         const playersRef = getPlayersCollection(tableId);
         const playersWithCards = dealCards(players);
 
-        playersWithCards.forEach((player) => {
+        playersWithCards.forEach(async (player) => {
             playersRef.doc(player.id).update({ cards: player.cards });
         });
         const tableRef = getTableById(tableId);
-        tableRef.update({
-            general: {
-                currentPlayerId: players.find(searchStartPlayer).id,
+        const firstPlayerId = players.find(searchStartPlayer).id;
+        tableRef.update(
+            {
+                firstPlayerId,
+                currentPlayerId: firstPlayerId,
+                mode: 'announce',
             },
-        });
+            { merge: true },
+        );
     }
 
     return event;

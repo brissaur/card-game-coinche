@@ -1,6 +1,7 @@
 const SET_TABLE_ID = 'table:set-current-table-id';
 const UPDATE_PLAYERS = 'table:UPDATE_PLAYERS';
 const UPDATE_TRICK = 'table:UPDATE_TRICK';
+const UPDATE_ANNOUNCES = 'table:UPDATE_ANNOUNCES';
 const UPDATE_TABLE_DOCUMENT = 'table:UPDATE_TABLE';
 
 const initialState = {
@@ -8,6 +9,7 @@ const initialState = {
     trick: [],
     general: {},
     players: [],
+    announces: [],
 };
 
 export function updateTableDocument(table) {
@@ -21,6 +23,13 @@ export function updateTrick(trick) {
     return {
         type: UPDATE_TRICK,
         trick,
+    };
+}
+
+export function updateAnnounces(announces) {
+    return {
+        type: UPDATE_ANNOUNCES,
+        announces,
     };
 }
 
@@ -54,6 +63,11 @@ export function reducer(state = initialState, action) {
         return {
             ...state,
             trick: action.trick,
+        };
+    case UPDATE_ANNOUNCES:
+        return {
+            ...state,
+            announces: action.announces,
         };
     case UPDATE_TABLE_DOCUMENT:
         return {

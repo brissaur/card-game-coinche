@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
-import { getTableById, COLLECTION_NAME as tableCollectionName } from '../tables/index';
-import { getPlayersOnTable } from '../players/index';
-import { computeNextPlayerAfterCardPlayed } from './business';
+import { emptyCollection } from '../common/collection';
+
+import { getTableById, COLLECTION_NAME as tableCollectionName, nextPlayerPlusPlus } from '../tables/index';
 import { getTricksCollection } from '../tricks/index';
 
 const COLLECTION_NAME = 'cardsPlayed';
@@ -19,14 +19,17 @@ export const getCardsPlayedCollection = (tableId) => {
 export const getCardsPlayedOnTable = async (tableId) => {
     const cardsPlayed = [];
     const cardsPlayedRef = getCardsPlayedCollection(tableId);
-    await cardsPlayedRef.get().then((snapshot) => {
-        snapshot.forEach((cardPlayed) => {
-            cardsPlayed.push(cardPlayed.data());
+    await cardsPlayedRef
+        .get()
+        .then((snapshot) => {
+            snapshot.forEach((cardPlayed) => {
+                cardsPlayed.push(cardPlayed.data());
+            });
+        })
+        .catch((err) => {
+            // eslint-disable-next-line no-console
+            console.log('Error getting documents', err);
         });
-    }).catch((err) => {
-        // eslint-disable-next-line no-console
-        console.log('Error getting documents', err);
-    });
 
     return cardsPlayed;
 };
@@ -44,22 +47,10 @@ exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{ta
         const tricksCollection = getTricksCollection(tableId);
         tricksCollection.add({ ...cardsPlayed });
         // empty cardsPlayed
-        const cardsPlayedRef = getCardsPlayedCollection(tableId);
-        await cardsPlayedRef.get().then((querySnapshot) => {
-            querySnapshot.forEach(async (snapshot) => {
-                await cardsPlayedRef.doc(snapshot.id).delete();
-            });
-        });
+        await emptyCollection(getCardsPlayedCollection(tableId));
     }
-    const players = await getPlayersOnTable(tableId);
-    const previousPlayerId = event.data.data().playerId;
-    const currentPlayer = computeNextPlayerAfterCardPlayed(players, previousPlayerId);
-    const tableRef = getTableById(tableId);
-    tableRef.update({
-        general: {
-            currentPlayerId: currentPlayer.id,
-        },
-    });
+
+    await nextPlayerPlusPlus(tableId, event.data.data().playerId);
 
     return event;
 });

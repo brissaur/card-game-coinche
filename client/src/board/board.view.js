@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Hand from '../hand/hand.view';
+import Hand from '../hand/hand.container';
 import Player from '../player/components/player.view';
+import AnnounceBoard from '../announce-board/announce-board.container';
 
 import styles from './styles';
 
-export default function Board({
-    children, handCards, trick, players = [],
-}) {
+export default function Board({ children, trick, players = [] }) {
     global.console.log('trick', trick);
 
     return (
@@ -20,6 +19,7 @@ export default function Board({
                             <Player {...players[1]} />
                         </div>
                     ) : null}
+                    <AnnounceBoard />
                     {players[3] ? (
                         <div style={styles.eastDiv}>
                             <Player {...players[3]} />
@@ -29,7 +29,7 @@ export default function Board({
                 <div style={styles.southDiv}>{players[0] ? <Player {...players[0]} /> : null}</div>
             </div>
             <h1 style={styles.mainTitle}> Welcome to this app coinche! </h1>
-            <Hand cardsId={handCards} />
+            <Hand />
             {children}
         </div>
     );

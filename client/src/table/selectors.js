@@ -3,12 +3,18 @@ import { createSelector } from 'reselect';
 
 import { getPlayerId } from '../player/selectors';
 
+const isEqual = (a, b) => a === b;
+
 export function getTableId(state) {
     return get(state, 'table.id');
 }
 
 export function getTrick(state) {
     return get(state, 'table.trick');
+}
+
+export function getAnnounces(state) {
+    return get(state, 'table.announces');
 }
 
 export function getPlayersRaw(state) {
@@ -21,11 +27,20 @@ export const getMyPlayer = createSelector(getPlayersRaw, getPlayerId, (players, 
 export const getPlayerCards = createSelector(getMyPlayer, me => (me && me.cards ? me.cards : []));
 
 export function getGeneral(state) {
-    return get(state, 'table.general', {});
+    return get(state, 'table', {});
 }
 
-export const getCurrentPlayerId = createSelector(getGeneral, general => general.currentPlayerId);
+export const getGameMode = createSelector(getGeneral, general => general.mode);
 
+export const isGameModeAnnounce = createSelector(getGameMode, gameMode => gameMode === 'announce');
+export const getCurrentPlayerId = createSelector(getGeneral, general => general.currentPlayerId);
+export const isActivePlayer = createSelector(getPlayerId, getCurrentPlayerId, isEqual);
+
+export const isMyTurn = createSelector(
+    getCurrentPlayerId,
+    getMyPlayer,
+    (currentPlayerId, myPlayer) => (myPlayer ? myPlayer.id === currentPlayerId : false),
+);
 // eslint-disable-next-line no-nested-ternary
 const byPos = (a, b) => (a.pos === b.pos ? 0 : a.pos > b.pos ? 1 : -1);
 
@@ -33,10 +48,12 @@ export const getPlayers = createSelector(
     getPlayersRaw,
     getTrick,
     getCurrentPlayerId,
-    (players, trick, currentPlayerId) =>
+    getAnnounces,
+    (players, trick, currentPlayerId, announces) =>
         players.sort(byPos).map(player => ({
             ...player,
             cardPlayed: (trick.find(card => card.playerId === player.id) || {}).cardId,
+            announce: (announces.find(announce => announce.playerId === player.id) || {}).announce,
             active: player.id === currentPlayerId,
         })),
 );
