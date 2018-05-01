@@ -22,7 +22,7 @@ describe('test players function', () => {
         expect(dealCards(players)).toEqual(expected);
     });
 
-    test.only('searchStartPlayer', () => {
+    test('searchStartPlayer', () => {
         const players = [
             { id: 1, pos: 1 },
             { id: 2, pos: 2 },
