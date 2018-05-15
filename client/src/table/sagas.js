@@ -98,12 +98,14 @@ export function* createTableAndAddPlayerToTable() {
         .map((player, idx) => ({
             ...player,
             pos: idx + 1,
+            team: ((idx + 1) % 2) === 0 ? 'red' : 'bleu',
         }))
         // Add current player Id to other ID
         .concat({
             id: meId,
             isFakePlayer: false,
             pos: 0,
+            team: 'red',
         });
 
     const document = yield db.collection(TABLE_COLLECTION).add(INITIAL_DOCUMENT);

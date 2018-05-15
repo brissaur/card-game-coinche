@@ -322,8 +322,19 @@ describe('test function', () => {
             },
             expected: ['8S', '10S'],
         },
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: ['AD', '7H'].map(c => new Card(c)),
+                currentPlayer: {
+                    id: 2,
+                    cards: ['7D', '8H'].map(c => new Card(c)),
+                },
+            },
+            expected: ['7D'], // work in progress, this should work
+        },
     ].forEach((data) => {
-        test('possibleCards', () => {
+        test.only('possibleCards', () => {
             expect(possibleCards(data.data.trump, data.data.currentPlayer, data.data.cardsPlayed)
                 .map(card => card.id))
                 .toEqual(expect.arrayContaining(data.expected));

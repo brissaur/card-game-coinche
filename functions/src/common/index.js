@@ -490,14 +490,22 @@ export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
     }
     const highestCardOfTrick = cardsPlayed.sort(sortCards(false))[0];
     const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, highestCardOfTrick);
-    const trumpCards = cardsPlayed.filter(filterCardsByColor(trump));
-    if (trumpCards.length > 0 && hand.getTrumpCards().length > 0) {
-        return hand.getTrumpCards();
-    } else if (hand.getColorCards().length > 0) {
+    if (hand.getColorCards().length > 0) {
         return hand.getColorCards();
-    }
+    } else{
+        // est-ce que mon partenaire est maitre ?
+            // je récupère la carte de mon partenaire en récupérant l'avant dernière carte jouer (cardsPlayed.length > 1 ? cardsPlayed[cardsPlayed.length - 2] : null
+            // si mon partenaire est maitre je joue ce que je veux
 
-    return hand.getOtherCards();
+        // sinon,
+            // je dois couper (donc jouer atout, donc monter si qqun a déjà couper)
+            // si je peux pas couper, ni monter, je me défausse (other)
+        //const trumpCards = cardsPlayed.filter(filterCardsByColor(trump));
+
+
+
+        // je me défausse
+        hand.getOtherCards();
 };
 
 export function Card(id) {
