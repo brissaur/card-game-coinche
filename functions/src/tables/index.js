@@ -4,7 +4,7 @@ import { getPlayersOnTable, getPlayersCollection } from '../players/index';
 import { getCardsPlayedCollection, getCardsPlayedOnTable } from '../cardsPlayed';
 import { performAnnounce } from '../announces';
 import { computeNextPlayerForTrick } from './business';
-import { possibleCards, Card } from "../lib";
+import { possibleCards, Card } from '../common/';
 
 export const COLLECTION_NAME = 'tables';
 

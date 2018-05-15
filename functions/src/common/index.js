@@ -453,7 +453,7 @@ export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
 };
 
 export class Hand {
-    constructor(handCards, trump, firstCardOfTrick){
+    constructor(handCards, trump, firstCardOfTrick) {
         this.colorCards = handCards.filter(filterCardsByColor(firstCardOfTrick.color));
         this.trumpCards = handCards.filter(filterCardsByColor(trump));
         this.otherCards = handCards.filter(card => !this.colorCards.concat(this.trumpCards).map(c => c.id).includes(card.id));
@@ -473,52 +473,31 @@ export class Hand {
 }
 
 export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
-    // get the first card of the cardsPlayed
-    // if first card of the trick is === trump
-        // get the higher trump card of the trick
-        // AA) list of trump card of the hand
-        // if length trumpcards > 0
-            //  Player has a cards > to the the higher card of the trick
-                // return all cards > to the higher one
-            // else return all others cards
-//     else (first card is none a trump one)
-//         player has trump one
-//             What happens ?
-//         else
-//         is there any trump card which was played
-//             player should play a trump card. See AA section
-//         else player has color card in hand ?
-//             return colors cards
-//
-//         else list all others cards
-    //---------------------------------------------------------
     const firstCardOfTheTrick = cardsPlayed[0];
     if (firstCardOfTheTrick.color === trump) {
         const highestCardOfTrick = cardsPlayed.sort(sortCards(true))[0];
         const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, highestCardOfTrick);
         if (hand.getTrumpCards().length > 0) {
-            const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, highestCardOfTrick))
-            if(higherCardInHand.length > 0){
+            const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, highestCardOfTrick));
+            if (higherCardInHand.length > 0) {
                 return higherCardInHand;
             }
-            return hand.getOtherCards();
+
+            return hand.getTrumpCards();
         }
 
-    }else{
-        const highestCardOfTrick = cardsPlayed.sort(sortCards(false))[0];
-        const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, highestCardOfTrick);
-        if (hand.getTrumpCards().length > 0) {
-            // what should happens ?
-        }else{
-            const trumpCards = cardsPlayed.filter(filterCardsByColor(trump));
-            if(trumpCards.length > 0 && hand.getTrumpCards().length > 0){
-                return hand.getTrumpCards();
-            }else if(hand.getColorCards().length > 0){
-                return hand.getColorCards();
-            }
-            return hand.getOtherCards();
-        }
+        return hand.getOtherCards();
     }
+    const highestCardOfTrick = cardsPlayed.sort(sortCards(false))[0];
+    const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, highestCardOfTrick);
+    const trumpCards = cardsPlayed.filter(filterCardsByColor(trump));
+    if (trumpCards.length > 0 && hand.getTrumpCards().length > 0) {
+        return hand.getTrumpCards();
+    } else if (hand.getColorCards().length > 0) {
+        return hand.getColorCards();
+    }
+
+    return hand.getOtherCards();
 };
 
 export function Card(id) {
@@ -528,4 +507,4 @@ export function Card(id) {
 }
 
 Card.prototype.getCardColor = cardId => cardId.slice(-1);
-Card.prototype.getCardHeight = cardId => cardId.slice(0, 1);
+Card.prototype.getCardHeight = cardId => cardId.slice(0, cardId.length - 1);

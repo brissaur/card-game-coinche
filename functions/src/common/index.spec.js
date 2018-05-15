@@ -39,7 +39,7 @@ describe('test function', () => {
     [
         { cardId: '7H', expected: { color: 'H', height: '7' } },
         { cardId: '10H', expected: { color: 'H', height: '10' } },
-        { cardId: 'AH', expected: { color: 'H', height: 'AH' } },
+        { cardId: 'AH', expected: { color: 'H', height: 'A' } },
     ].forEach((data) => {
         test('create Card', () => {
             const card = new Card(data.cardId);
@@ -91,7 +91,7 @@ describe('test function', () => {
             ],
             lastHighestCard: new Card('10D'),
             expected: [
-                new Card('AD')
+                new Card('AD'),
             ],
         },
         {
@@ -115,21 +115,11 @@ describe('test function', () => {
                 // 20 / 14 / 11 / 10 / 4 / 3 / 0 / 0
             ],
         },
-        // {
-        //     eligibleCardsInHand: [
-        //         new Card('KC'),
-        //         new Card('9S'),
-        //         new Card('8C'),
-        //         new Card('KH'),
-        //         new Card('AD'),
-        //         new Card('QC'),
-        //         new Card('QH'),
-        //         new Card('KS'),
-        //     ],
-        // }
     ].forEach((data) => {
         test('filterHigherCards', () => {
-            expect(data.eligibleCardsInHand.filter(filterHigherCards(data.isTrump, data.lastHighestCard)).map(card => card.id)).toEqual(data.expected.map(card => card.id));
+            const higherCard = filterHigherCards(data.isTrump, data.lastHighestCard);
+            const eligibleCard = data.eligibleCardsInHand.filter(higherCard).map(card => card.id);
+            expect(eligibleCard).toEqual(data.expected.map(card => card.id));
         });
     });
 });
@@ -148,7 +138,7 @@ describe('test Hand', () => {
                 new Card('JC'),
             ],
             trump: 'H',
-            firstCardColor: 'H',
+            firstCardOfTrick: new Card('9H'),
             expected: {
                 colorCards: [
                     new Card('8H'),
@@ -157,13 +147,13 @@ describe('test Hand', () => {
                     new Card('8H'),
                 ],
                 otherCards: [
-                    new Card('9D'),
-                    new Card('7D'),
                     new Card('10S'),
-                    new Card('QD'),
                     new Card('10C'),
-                    new Card('9S'),
+                    new Card('QD'),
                     new Card('JC'),
+                    new Card('9D'),
+                    new Card('9S'),
+                    new Card('7D'),
                 ],
             },
         },
@@ -179,27 +169,27 @@ describe('test Hand', () => {
                 new Card('JC'),
             ],
             trump: 'S',
-            firstCardColor: 'H',
+            firstCardOfTrick: new Card('9H'),
             expected: {
                 colorCards: [
                     new Card('8H'),
                 ],
                 trumpCards: [
-                    new Card('10S'),
                     new Card('9S'),
+                    new Card('10S'),
                 ],
                 otherCards: [
+                    new Card('10C'),
+                    new Card('QD'),
+                    new Card('JC'),
                     new Card('9D'),
                     new Card('7D'),
-                    new Card('QD'),
-                    new Card('10C'),
-                    new Card('JC'),
                 ],
             },
         },
     ].forEach((data) => {
         test('create Hand', () => {
-            const hand = new Hand(data.handCards, data.trump, data.firstCardColor);
+            const hand = new Hand(data.handCards, data.trump, data.firstCardOfTrick);
             expect(hand.getColorCards().map(card => card.id)).toEqual(data.expected.colorCards.map(card => card.id));
             expect(hand.getTrumpCards().map(card => card.id)).toEqual(data.expected.trumpCards.map(card => card.id));
             expect(hand.getOtherCards().map(card => card.id)).toEqual(data.expected.otherCards.map(card => card.id));
