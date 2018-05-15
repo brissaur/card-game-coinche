@@ -1,9 +1,10 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { getPlayersOnTable, getPlayersCollection } from '../players/index';
-import { getCardsPlayedCollection } from '../cardsPlayed';
+import { getCardsPlayedCollection, getCardsPlayedOnTable } from '../cardsPlayed';
 import { performAnnounce } from '../announces';
 import { computeNextPlayerForTrick } from './business';
+import { possibleCards, Card } from '../common/';
 
 export const COLLECTION_NAME = 'tables';
 
@@ -40,9 +41,14 @@ exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}
     if (currentPlayer.isFakePlayer) {
         if (eventData.mode === 'play') {
             const cardsPlayedRef = getCardsPlayedCollection(tableId);
+            const cards = possibleCards(
+                eventData.currentAnnounce,
+                { ...currentPlayer, cards: currentPlayer.cards.map(cardId => new Card(cardId)) },
+                getCardsPlayedOnTable(tableId).map(cardId => new Card(cardId)),
+            );
             cardsPlayedRef.add({
                 playerId: currentPlayerId,
-                cardId: currentPlayer.cards[0],
+                cardId: cards[0].map(card => card.id),
             });
             const playersRef = getPlayersCollection(tableId);
             playersRef.doc(currentPlayerId).update({ cards: currentPlayer.cards.slice(1) });
