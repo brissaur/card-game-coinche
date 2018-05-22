@@ -458,9 +458,7 @@ export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
  * @param isTrump
  * @returns {*}
  */
-export const getHighestCard = (cards, isTrump) => {
-    return cards.sort(sortCards(isTrump))[0];
-}
+export const getHighestCard = (cards, isTrump) => cards.sort(sortCards(isTrump))[0];
 
 export class Hand {
     constructor(handCards, trump, firstCardOfTrick) {
@@ -506,26 +504,25 @@ export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
     }
     if (hand.getColorCards().length > 0) {
         return hand.getColorCards();
-    } else{
-        const partnerCard = (cardsPlayed.length > 1) ? cardsPlayed[cardsPlayed.length - 2] : null;
-        // partner is the master of trick
-        if(partnerCard === highestCardOfTrick){
-           // I can play whatever I want
-            return hand.getHandsCards();
-        }else{
-            const trumpCards = cardsPlayed.filter(filterCardsByColor(trump)).sort(sortCards(true));
-            // At least one trump card was played, and I have trump cards
-            if(trumpCards.length > 0 && hand.getTrumpCards().length > 0) {
-                const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, trumpCards[0])).sort(sortCards(true));
-                // I have higher card
-                if (higherCardInHand.length > 0) {
-                    return higherCardInHand;
-                }
-            }
-            // I can't play a trump, so I discard
-            return hand.getOtherCards().concat(hand.getColorCards());
+    }
+    const partnerCard = (cardsPlayed.length > 1) ? cardsPlayed[cardsPlayed.length - 2] : null;
+    // partner is the master of trick
+    if (partnerCard === highestCardOfTrick) {
+        // I can play whatever I want
+        return hand.getHandsCards();
+    }
+    const trumpCards = cardsPlayed.filter(filterCardsByColor(trump)).sort(sortCards(true));
+    // At least one trump card was played, and I have trump cards
+    if (trumpCards.length > 0 && hand.getTrumpCards().length > 0) {
+        const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, trumpCards[0])).sort(sortCards(true));
+        // I have higher card
+        if (higherCardInHand.length > 0) {
+            return higherCardInHand;
         }
     }
+
+    // I can't play a trump, so I discard
+    return hand.getOtherCards().concat(hand.getColorCards());
 };
 
 export function Card(id) {
