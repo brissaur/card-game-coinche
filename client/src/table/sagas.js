@@ -98,7 +98,6 @@ export function* createTableAndAddPlayerToTable() {
         .map((player, idx) => ({
             ...player,
             pos: idx + 1,
-            team: ((idx + 1) % 2) === 0 ? 'red' : 'bleu',
         }))
         // Add current player Id to other ID
         .concat({

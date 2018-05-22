@@ -334,7 +334,7 @@ describe('test function', () => {
             expected: ['7D'], // work in progress, this should work
         },
     ].forEach((data) => {
-        test.only('possibleCards', () => {
+        test('possibleCards', () => {
             expect(possibleCards(data.data.trump, data.data.currentPlayer, data.data.cardsPlayed)
                 .map(card => card.id))
                 .toEqual(expect.arrayContaining(data.expected));

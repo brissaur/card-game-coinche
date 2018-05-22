@@ -420,7 +420,7 @@ const deckOfThirtyTwoCards = [
 const filterCardsByColor = color => card => card.color === color;
 
 /**
- * Return the higher card in the cardsList
+ * Sort cards from the higher to the lower
  * @param boolean isTrump
  * @return {Function}
  */
@@ -452,11 +452,22 @@ export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
     return cardInDeck.value[trump] > lastHighestCardInDeck.value[trump];
 };
 
+/**
+ * Get the highestCard of cards
+ * @param cards
+ * @param isTrump
+ * @returns {*}
+ */
+export const getHighestCard = (cards, isTrump) => {
+    return cards.sort(sortCards(isTrump))[0];
+}
+
 export class Hand {
     constructor(handCards, trump, firstCardOfTrick) {
         this.colorCards = handCards.filter(filterCardsByColor(firstCardOfTrick.color));
         this.trumpCards = handCards.filter(filterCardsByColor(trump));
         this.otherCards = handCards.filter(card => !this.colorCards.concat(this.trumpCards).map(c => c.id).includes(card.id));
+        this.handCards = handCards;
     }
 
     getColorCards() {
@@ -470,13 +481,18 @@ export class Hand {
     getOtherCards() {
         return this.otherCards.sort(sortCards(false));
     }
+
+    getHandsCards() {
+        return this.handCards;
+    }
 }
 
 export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
     const firstCardOfTheTrick = cardsPlayed[0];
-    if (firstCardOfTheTrick.color === trump) {
-        const highestCardOfTrick = cardsPlayed.sort(sortCards(true))[0];
-        const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, highestCardOfTrick);
+    const isTrump = firstCardOfTheTrick.color === trump;
+    const highestCardOfTrick = getHighestCard(cardsPlayed, isTrump);
+    const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, highestCardOfTrick);
+    if (isTrump) {
         if (hand.getTrumpCards().length > 0) {
             const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, highestCardOfTrick));
             if (higherCardInHand.length > 0) {
@@ -488,24 +504,28 @@ export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
 
         return hand.getOtherCards();
     }
-    const highestCardOfTrick = cardsPlayed.sort(sortCards(false))[0];
-    const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, highestCardOfTrick);
     if (hand.getColorCards().length > 0) {
         return hand.getColorCards();
     } else{
-        // est-ce que mon partenaire est maitre ?
-            // je récupère la carte de mon partenaire en récupérant l'avant dernière carte jouer (cardsPlayed.length > 1 ? cardsPlayed[cardsPlayed.length - 2] : null
-            // si mon partenaire est maitre je joue ce que je veux
-
-        // sinon,
-            // je dois couper (donc jouer atout, donc monter si qqun a déjà couper)
-            // si je peux pas couper, ni monter, je me défausse (other)
-        //const trumpCards = cardsPlayed.filter(filterCardsByColor(trump));
-
-
-
-        // je me défausse
-        hand.getOtherCards();
+        const partnerCard = (cardsPlayed.length > 1) ? cardsPlayed[cardsPlayed.length - 2] : null;
+        // partner is the master of trick
+        if(partnerCard === highestCardOfTrick){
+           // I can play whatever I want
+            return hand.getHandsCards();
+        }else{
+            const trumpCards = cardsPlayed.filter(filterCardsByColor(trump)).sort(sortCards(true));
+            // At least one trump card was played, and I have trump cards
+            if(trumpCards.length > 0 && hand.getTrumpCards().length > 0) {
+                const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, trumpCards[0])).sort(sortCards(true));
+                // I have higher card
+                if (higherCardInHand.length > 0) {
+                    return higherCardInHand;
+                }
+            }
+            // I can't play a trump, so I discard
+            return hand.getOtherCards().concat(hand.getColorCards());
+        }
+    }
 };
 
 export function Card(id) {
