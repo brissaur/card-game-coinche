@@ -104,7 +104,6 @@ export function* createTableAndAddPlayerToTable() {
             id: meId,
             isFakePlayer: false,
             pos: 0,
-            team: 'red',
         });
 
     const document = yield db.collection(TABLE_COLLECTION).add(INITIAL_DOCUMENT);
