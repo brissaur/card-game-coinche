@@ -462,7 +462,7 @@ export const getHighestCard = (cards, isTrump) => cards.sort(sortCards(isTrump))
 
 export class Hand {
     constructor(handCards, trump, firstCardOfTrick) {
-        this.colorCards = (firstCardOfTrick !== undefined) ? handCards.filter(filterCardsByColor(firstCardOfTrick.color)) : [];
+        this.colorCards = (firstCardOfTrick !== undefined) ? handCards.filter(filterCardsByColor(firstCardOfTrick.color)) : [];
         this.trumpCards = handCards.filter(filterCardsByColor(trump));
         this.otherCards = handCards.filter(card => !this.colorCards.concat(this.trumpCards).map(c => c.id).includes(card.id));
         this.handCards = handCards;
@@ -486,7 +486,7 @@ export class Hand {
 }
 
 export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
-    if(cardsPlayed.length > 0) {
+    if (cardsPlayed.length > 0) {
         const firstCardOfTheTrick = cardsPlayed[0];
         const isTrump = firstCardOfTheTrick.color === trump;
         const highestCardOfTrick = getHighestCard(cardsPlayed, isTrump);
@@ -526,7 +526,8 @@ export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
         return hand.getOtherCards().concat(hand.getColorCards());
     }
     const hand = new Hand(currentPlayer.cards, trump);
-    return hand.getHandsCards()
+
+    return hand.getHandsCards();
 };
 
 export function Card(id) {

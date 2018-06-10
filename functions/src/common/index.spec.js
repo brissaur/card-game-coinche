@@ -337,13 +337,13 @@ describe('test function', () => {
         {
             data: {
                 trump: 'H',
-                cardsPlayed: [],// no card played !?
+                cardsPlayed: [], // no card played !?
                 currentPlayer: {
                     id: 1,
                     cards: ['7D', '8H'].map(c => new Card(c)),
                 },
             },
-            expected: ['7D', '8H'], //check this
+            expected: ['7D', '8H'], // check this
         },
         // I'm the second one playing
         {
@@ -355,37 +355,37 @@ describe('test function', () => {
                     cards: ['7D', '8H'].map(c => new Card(c)),
                 },
             },
-            expected: ['7D'], //check this
+            expected: ['7D'], // check this
         },
         // My partner played, and he's master
         {
             data: {
                 trump: 'H',
-                cardsPlayed: ['8D', '9C'].map(c => new Card(c)),//partner played 8D
+                cardsPlayed: ['8D', '9C'].map(c => new Card(c)), // partner played 8D
                 currentPlayer: {
                     id: 3,
                     cards: ['7D', '8H'].map(c => new Card(c)),
                 },
             },
-            expected: ['7D'],//check this
+            expected: ['7D'], // check this
         },
         // My partner played, but opponent have the higherCard
         {
             data: {
                 trump: 'H',
-                cardsPlayed: ['8D', 'KC'].map(c => new Card(c)),//partner played 8D
+                cardsPlayed: ['8D', 'KC'].map(c => new Card(c)), // partner played 8D
                 currentPlayer: {
                     id: 3,
                     cards: ['10C', '8H'].map(c => new Card(c)),
                 },
             },
-            expected: ['10C'],//this should be correct
+            expected: ['10C'], // this should be correct
         },
         // My partner played a trump card, but opponent played > trump.
         {
             data: {
                 trump: 'H',
-                cardsPlayed: ['AH', '9H'].map(c => new Card(c)),//opponent played 9H
+                cardsPlayed: ['AH', '9H'].map(c => new Card(c)), // opponent played 9H
                 currentPlayer: {
                     id: 3,
                     cards: ['7D', 'JH'].map(c => new Card(c)),
@@ -397,14 +397,14 @@ describe('test function', () => {
         {
             data: {
                 trump: 'H',
-                cardsPlayed: ['AH', '9H'].map(c => new Card(c)),//opponent played 9H
+                cardsPlayed: ['AH', '9H'].map(c => new Card(c)), // opponent played 9H
                 currentPlayer: {
                     id: 3,
                     cards: ['7D', '8D'].map(c => new Card(c)),
                 },
             },
             expected: ['7D', '8D'],
-        }
+        },
     ].forEach((data) => {
         test('possibleCards', () => {
             expect(possibleCards(data.data.trump, data.data.currentPlayer, data.data.cardsPlayed)
