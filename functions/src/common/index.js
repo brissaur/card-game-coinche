@@ -462,7 +462,7 @@ export const getHighestCard = (cards, isTrump) => cards.sort(sortCards(isTrump))
 
 export class Hand {
     constructor(handCards, trump, firstCardOfTrick) {
-        this.colorCards = handCards.filter(filterCardsByColor(firstCardOfTrick.color));
+        this.colorCards = (firstCardOfTrick !== undefined) ? handCards.filter(filterCardsByColor(firstCardOfTrick.color)) : [];
         this.trumpCards = handCards.filter(filterCardsByColor(trump));
         this.otherCards = handCards.filter(card => !this.colorCards.concat(this.trumpCards).map(c => c.id).includes(card.id));
         this.handCards = handCards;
@@ -486,43 +486,47 @@ export class Hand {
 }
 
 export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
-    const firstCardOfTheTrick = cardsPlayed[0];
-    const isTrump = firstCardOfTheTrick.color === trump;
-    const highestCardOfTrick = getHighestCard(cardsPlayed, isTrump);
-    const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick.color, highestCardOfTrick);
-    if (isTrump) {
-        if (hand.getTrumpCards().length > 0) {
-            const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, highestCardOfTrick));
+    if(cardsPlayed.length > 0) {
+        const firstCardOfTheTrick = cardsPlayed[0];
+        const isTrump = firstCardOfTheTrick.color === trump;
+        const highestCardOfTrick = getHighestCard(cardsPlayed, isTrump);
+        const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick);
+        if (isTrump) {
+            if (hand.getTrumpCards().length > 0) {
+                const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, highestCardOfTrick));
+                if (higherCardInHand.length > 0) {
+                    return higherCardInHand;
+                }
+
+                return hand.getTrumpCards();
+            }
+
+            return hand.getOtherCards();
+        }
+        if (hand.getColorCards().length > 0) {
+            return hand.getColorCards();
+        }
+        const partnerCard = (cardsPlayed.length > 1) ? cardsPlayed[cardsPlayed.length - 2] : null;
+        // partner is the master of trick
+        if (partnerCard === highestCardOfTrick) {
+            // I can play whatever I want
+            return hand.getHandsCards();
+        }
+        const trumpCards = cardsPlayed.filter(filterCardsByColor(trump)).sort(sortCards(true));
+        // At least one trump card was played, and I have trump cards
+        if (trumpCards.length > 0 && hand.getTrumpCards().length > 0) {
+            const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, trumpCards[0])).sort(sortCards(true));
+            // I have higher card
             if (higherCardInHand.length > 0) {
                 return higherCardInHand;
             }
-
-            return hand.getTrumpCards();
         }
 
-        return hand.getOtherCards();
+        // I can't play a trump, so I discard
+        return hand.getOtherCards().concat(hand.getColorCards());
     }
-    if (hand.getColorCards().length > 0) {
-        return hand.getColorCards();
-    }
-    const partnerCard = (cardsPlayed.length > 1) ? cardsPlayed[cardsPlayed.length - 2] : null;
-    // partner is the master of trick
-    if (partnerCard === highestCardOfTrick) {
-        // I can play whatever I want
-        return hand.getHandsCards();
-    }
-    const trumpCards = cardsPlayed.filter(filterCardsByColor(trump)).sort(sortCards(true));
-    // At least one trump card was played, and I have trump cards
-    if (trumpCards.length > 0 && hand.getTrumpCards().length > 0) {
-        const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, trumpCards[0])).sort(sortCards(true));
-        // I have higher card
-        if (higherCardInHand.length > 0) {
-            return higherCardInHand;
-        }
-    }
-
-    // I can't play a trump, so I discard
-    return hand.getOtherCards().concat(hand.getColorCards());
+    const hand = new Hand(currentPlayer.cards, trump);
+    return hand.getHandsCards()
 };
 
 export function Card(id) {
