@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { emptyCollection } from '../common/collection';
+import { emptyCollection } from 'common';
 import { getTableById, COLLECTION_NAME as tableCollectionName, nextPlayerPlusPlus } from '../tables/index';
 import { getTricksCollection } from '../tricks/index';
 

@@ -1,5 +1,7 @@
 import { deckOfThirtyTwoCards } from './constant';
 
+export { emptyCollection } from './collection';
+
 const filterCardsByColor = color => card => card.color === color;
 
 /**
@@ -43,15 +45,19 @@ export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
  * @returns {*}
  */
 export const getHighestCard = (cards, trump, color) =>
-    cards.filter(filterCardsByColor(trump)).sort(sortCards(true))[0]
-        || cards.filter(filterCardsByColor(color)).sort(sortCards(false))[0]
-        || new Error('No trump / color cards found');
+    cards.filter(filterCardsByColor(trump)).sort(sortCards(true))[0] ||
+    cards.filter(filterCardsByColor(color)).sort(sortCards(false))[0] ||
+    new Error('No trump / color cards found');
 
 export class Hand {
     constructor(handCards, trump, firstCardOfTrick) {
-        this.colorCards = (firstCardOfTrick !== undefined) ? handCards.filter(filterCardsByColor(firstCardOfTrick.color)) : [];
+        this.colorCards = firstCardOfTrick !== undefined ? handCards.filter(filterCardsByColor(firstCardOfTrick.color)) : [];
         this.trumpCards = handCards.filter(filterCardsByColor(trump));
-        this.otherCards = handCards.filter(card => !this.colorCards.concat(this.trumpCards).map(c => c.id).includes(card.id));
+        this.otherCards = handCards.filter(card =>
+            !this.colorCards
+                .concat(this.trumpCards)
+                .map(c => c.id)
+                .includes(card.id));
         this.handCards = handCards;
     }
 
@@ -93,7 +99,7 @@ export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
         if (hand.getColorCards().length > 0) {
             return hand.getColorCards();
         }
-        const partnerCard = (cardsPlayed.length > 1) ? cardsPlayed[cardsPlayed.length - 2] : null;
+        const partnerCard = cardsPlayed.length > 1 ? cardsPlayed[cardsPlayed.length - 2] : null;
         // partner is the master of trick
         if (partnerCard === highestCardOfTrick) {
             // I can play whatever I want
@@ -102,7 +108,8 @@ export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
         const trumpCards = cardsPlayed.filter(filterCardsByColor(trump));
         // At least one trump card was played, and I have trump cards
         if (trumpCards.length > 0 && hand.getTrumpCards().length > 0) {
-            const higherCardInHand = hand.getTrumpCards()
+            const higherCardInHand = hand
+                .getTrumpCards()
                 .filter(filterHigherCards(true, highestCardOfTrick))
                 .sort(sortCards(true));
             // I have higher card

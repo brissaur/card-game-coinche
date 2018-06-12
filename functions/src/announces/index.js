@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { emptyCollection } from '../common/collection';
+import { emptyCollection } from 'common';
 import { getTableById, nextPlayerPlusPlus, COLLECTION_NAME as tableCollectionName } from '../tables';
 import { announceIA, shouldStopAnnounces, getBestAnnounce } from './business';
 
