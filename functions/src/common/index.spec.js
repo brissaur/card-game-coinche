@@ -103,9 +103,9 @@ describe('test function', () => {
             expected: new Card('7D'),
         },
     ].forEach((data) => {
-       test('getHighestCard', () => {
-           expect(getHighestCard(data.cards, data.trump, data.color)).toEqual(data.expected);
-       });
+        test('getHighestCard', () => {
+            expect(getHighestCard(data.cards, data.trump, data.color)).toEqual(data.expected);
+        });
     });
 
     [

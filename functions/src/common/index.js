@@ -42,20 +42,10 @@ export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
  * @param string color
  * @returns {*}
  */
-export const getHighestCard = (cards, trump, color) => {
-    const sortedTrumpCards = cards.filter(filterCardsByColor(trump)).sort(sortCards(true));
-
-    if (sortedTrumpCards.length > 0) {
-        return sortedTrumpCards[0];
-    }
-    const sortedColorCards = cards.filter(filterCardsByColor(color)).sort(sortCards(false));
-
-    if (sortedColorCards.length > 0) {
-        return sortedColorCards[0];
-    }
-
-    return cards.filter(card => card.color !== color && card.color !== trump)[0];
-};
+export const getHighestCard = (cards, trump, color) =>
+    cards.filter(filterCardsByColor(trump)).sort(sortCards(true))[0]
+        || cards.filter(filterCardsByColor(color)).sort(sortCards(false))[0]
+        || new Error('No trump / color cards found');
 
 export class Hand {
     constructor(handCards, trump, firstCardOfTrick) {
