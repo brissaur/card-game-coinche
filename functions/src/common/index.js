@@ -1,6 +1,6 @@
-import { deckOfThirtyTwoCards } from './constant';
+const { deckOfThirtyTwoCards } = require('./constant');
 
-export { emptyCollection } from './collection';
+const { emptyCollection } = require('./collection');
 
 const filterCardsByColor = color => card => card.color === color;
 
@@ -9,7 +9,7 @@ const filterCardsByColor = color => card => card.color === color;
  * @param boolean isTrump
  * @return {Function}
  */
-export const sortCards = isTrump => (cardA, cardB) => {
+const sortCards = isTrump => (cardA, cardB) => {
     const order = isTrump ? 'trump' : 'notrump';
     const cardAInDeck = deckOfThirtyTwoCards.find(card => card.id === cardA.id);
     const cardBInDeck = deckOfThirtyTwoCards.find(card => card.id === cardB.id);
@@ -29,7 +29,7 @@ export const sortCards = isTrump => (cardA, cardB) => {
  * @param lastHighestCard
  * @returns {function(*): boolean}
  */
-export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
+const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
     const cardInDeck = deckOfThirtyTwoCards.find(c => c.id === card.id);
     const lastHighestCardInDeck = deckOfThirtyTwoCards.find(c => c.id === lastHighestCard.id);
     const trump = isTrump ? 'trump' : 'notrump';
@@ -44,12 +44,12 @@ export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
  * @param string color
  * @returns {*}
  */
-export const getHighestCard = (cards, trump, color) =>
+const getHighestCard = (cards, trump, color) =>
     cards.filter(filterCardsByColor(trump)).sort(sortCards(true))[0] ||
     cards.filter(filterCardsByColor(color)).sort(sortCards(false))[0] ||
     new Error('No trump / color cards found');
 
-export class Hand {
+class Hand {
     constructor(handCards, trump, firstCardOfTrick) {
         this.colorCards = firstCardOfTrick !== undefined ? handCards.filter(filterCardsByColor(firstCardOfTrick.color)) : [];
         this.trumpCards = handCards.filter(filterCardsByColor(trump));
@@ -78,7 +78,7 @@ export class Hand {
     }
 }
 
-export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
+const possibleCards = (trump, currentPlayer, cardsPlayed) => {
     if (cardsPlayed.length > 0) {
         const firstCardOfTheTrick = cardsPlayed[0];
         const isTrump = firstCardOfTheTrick.color === trump;
@@ -128,7 +128,7 @@ export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
     return hand.getHandsCards();
 };
 
-export function Card(id) {
+function Card(id) {
     this.id = id;
     this.color = this.getCardColor(id);
     this.height = this.getCardHeight(id);
@@ -136,3 +136,13 @@ export function Card(id) {
 
 Card.prototype.getCardColor = cardId => cardId.slice(-1);
 Card.prototype.getCardHeight = cardId => cardId.slice(0, cardId.length - 1);
+
+module.exports = {
+    emptyCollection,
+    sortCards,
+    filterHigherCards,
+    getHighestCard,
+    Hand,
+    possibleCards,
+    Card,
+};

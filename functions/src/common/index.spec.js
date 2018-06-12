@@ -1,39 +1,6 @@
-import { sortCards, Card, Hand, filterHigherCards, possibleCards, getHighestCard } from './index';
-
-export const cards = [
-    '7S',
-    '8S',
-    '9S',
-    '10S',
-    'AS',
-    'JS',
-    'QS',
-    'KS',
-    '7H',
-    '8H',
-    '9H',
-    '10H',
-    'AH',
-    'JH',
-    'QH',
-    'KH',
-    '7D',
-    '8D',
-    '9D',
-    '10D',
-    'AD',
-    'JD',
-    'QD',
-    'KD',
-    '7C',
-    '8C',
-    '9C',
-    '10C',
-    'AC',
-    'JC',
-    'QC',
-    'KC',
-];
+const {
+    sortCards, Card, Hand, filterHigherCards, possibleCards, getHighestCard,
+} = require('./index');
 
 describe('test function', () => {
     [
@@ -51,30 +18,12 @@ describe('test function', () => {
     [
         {
             trump: null,
-            cards: [
-                new Card('7H'),
-                new Card('KH'),
-                new Card('JH'),
-                new Card('AH'),
-                new Card('9H'),
-                new Card('8H'),
-                new Card('10H'),
-                new Card('QH'),
-            ],
+            cards: [new Card('7H'), new Card('KH'), new Card('JH'), new Card('AH'), new Card('9H'), new Card('8H'), new Card('10H'), new Card('QH')],
             expected: ['AH', '10H', 'KH', 'QH', 'JH', '9H', '8H', '7H'],
         },
         {
             trump: 'H',
-            cards: [
-                new Card('7H'),
-                new Card('KH'),
-                new Card('JH'),
-                new Card('AH'),
-                new Card('9H'),
-                new Card('8H'),
-                new Card('10H'),
-                new Card('QH'),
-            ],
+            cards: [new Card('7H'), new Card('KH'), new Card('JH'), new Card('AH'), new Card('9H'), new Card('8H'), new Card('10H'), new Card('QH')],
             expected: ['JH', '9H', 'AH', '10H', 'KH', 'QH', '8H', '7H'],
         },
     ].forEach((data) => {
@@ -111,22 +60,13 @@ describe('test function', () => {
     [
         {
             isTrump: true, // diamonds
-            eligibleCardsInHand: [
-                new Card('AD'),
-            ],
+            eligibleCardsInHand: [new Card('AD')],
             lastHighestCard: new Card('10D'),
-            expected: [
-                new Card('AD'),
-            ],
+            expected: [new Card('AD')],
         },
         {
             isTrump: false, // hearts
-            eligibleCardsInHand: [
-                new Card('8H'),
-                new Card('AH'),
-                new Card('JH'),
-                new Card('KH'),
-            ],
+            eligibleCardsInHand: [new Card('8H'), new Card('AH'), new Card('JH'), new Card('KH')],
             lastHighestCard: new Card('QH'),
             expected: [
                 new Card('AH'),
@@ -165,21 +105,9 @@ describe('test Hand', () => {
             trump: 'H',
             firstCardOfTrick: new Card('9H'),
             expected: {
-                colorCards: [
-                    new Card('8H'),
-                ],
-                trumpCards: [
-                    new Card('8H'),
-                ],
-                otherCards: [
-                    new Card('10S'),
-                    new Card('10C'),
-                    new Card('QD'),
-                    new Card('JC'),
-                    new Card('9D'),
-                    new Card('9S'),
-                    new Card('7D'),
-                ],
+                colorCards: [new Card('8H')],
+                trumpCards: [new Card('8H')],
+                otherCards: [new Card('10S'), new Card('10C'), new Card('QD'), new Card('JC'), new Card('9D'), new Card('9S'), new Card('7D')],
             },
         },
         {
@@ -196,20 +124,9 @@ describe('test Hand', () => {
             trump: 'S',
             firstCardOfTrick: new Card('9H'),
             expected: {
-                colorCards: [
-                    new Card('8H'),
-                ],
-                trumpCards: [
-                    new Card('9S'),
-                    new Card('10S'),
-                ],
-                otherCards: [
-                    new Card('10C'),
-                    new Card('QD'),
-                    new Card('JC'),
-                    new Card('9D'),
-                    new Card('7D'),
-                ],
+                colorCards: [new Card('8H')],
+                trumpCards: [new Card('9S'), new Card('10S')],
+                otherCards: [new Card('10C'), new Card('QD'), new Card('JC'), new Card('9D'), new Card('7D')],
             },
         },
     ].forEach((data) => {
@@ -432,9 +349,7 @@ describe('test function', () => {
         },
     ].forEach((data) => {
         test('possibleCards', () => {
-            expect(possibleCards(data.data.trump, data.data.currentPlayer, data.data.cardsPlayed)
-                .map(card => card.id))
-                .toEqual(expect.arrayContaining(data.expected));
+            expect(possibleCards(data.data.trump, data.data.currentPlayer, data.data.cardsPlayed).map(card => card.id)).toEqual(expect.arrayContaining(data.expected));
         });
     });
 });

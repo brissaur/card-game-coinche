@@ -1,4 +1,4 @@
-export const deckOfThirtyTwoCards = [
+module.exports.deckOfThirtyTwoCards = [
     {
         id: '7S',
         height: '7',
