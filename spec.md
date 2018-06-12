@@ -1,5 +1,7 @@
 # Table of content
 
+http://www.ffbelote.org/regles-coinche/
+
 # General stuff
 - Coinche requires 4 players
 - There is two team of 2 players

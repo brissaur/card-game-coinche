@@ -1,4 +1,4 @@
-import { sortCards, Card, Hand, filterHigherCards, possibleCards } from './index';
+import { sortCards, Card, Hand, filterHigherCards, possibleCards, getHighestCard } from './index';
 
 export const cards = [
     '7S',
@@ -80,6 +80,31 @@ describe('test function', () => {
     ].forEach((data) => {
         test('sortCard', () => {
             expect(data.cards.sort(sortCards(data.trump)).map(card => card.id)).toEqual(data.expected);
+        });
+    });
+
+    [
+        {
+            cards: ['10H', 'JH', 'AH', '9H', '10S', 'JS', 'AS', '9S', '7D'].map(c => new Card(c)),
+            trump: 'H',
+            color: 'H',
+            expected: new Card('JH'),
+        },
+        {
+            cards: ['10H', 'JH', 'AH', '9H', '10S', 'JS', 'AS', '9S', '7D'].map(c => new Card(c)),
+            trump: 'C',
+            color: 'S',
+            expected: new Card('AS'),
+        },
+        {
+            cards: ['10H', 'JH', 'AH', '9H', '10S', 'JS', 'AS', '9S', '7D'].map(c => new Card(c)),
+            trump: 'C',
+            color: 'D',
+            expected: new Card('7D'),
+        },
+    ].forEach((data) => {
+        test('getHighestCard', () => {
+            expect(getHighestCard(data.cards, data.trump, data.color)).toEqual(data.expected);
         });
     });
 
@@ -321,6 +346,89 @@ describe('test function', () => {
                 },
             },
             expected: ['8S', '10S'],
+        },
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: ['AD', '7H'].map(c => new Card(c)),
+                currentPlayer: {
+                    id: 2,
+                    cards: ['7D', '8H'].map(c => new Card(c)),
+                },
+            },
+            expected: ['7D'],
+        },
+        // I'm the first one playing
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: [], // no card played !?
+                currentPlayer: {
+                    id: 1,
+                    cards: ['7D', '8H'].map(c => new Card(c)),
+                },
+            },
+            expected: ['7D', '8H'], // check this
+        },
+        // I'm the second one playing
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: ['8D'].map(c => new Card(c)),
+                currentPlayer: {
+                    id: 2,
+                    cards: ['7D', '8H'].map(c => new Card(c)),
+                },
+            },
+            expected: ['7D'], // check this
+        },
+        // My partner played, and he's master
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: ['8D', '9C'].map(c => new Card(c)), // partner played 8D
+                currentPlayer: {
+                    id: 3,
+                    cards: ['7D', '8H'].map(c => new Card(c)),
+                },
+            },
+            expected: ['7D'], // check this
+        },
+        // My partner played, but opponent have the higherCard
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: ['8D', 'KC'].map(c => new Card(c)), // partner played 8D
+                currentPlayer: {
+                    id: 3,
+                    cards: ['10C', '8H'].map(c => new Card(c)),
+                },
+            },
+            expected: ['10C'], // this should be correct
+        },
+        // My partner played a trump card, but opponent played > trump.
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: ['AH', '9H'].map(c => new Card(c)), // opponent played 9H
+                currentPlayer: {
+                    id: 3,
+                    cards: ['7D', 'JH'].map(c => new Card(c)),
+                },
+            },
+            expected: ['JH'],
+        },
+        // My partner played a trump card, but opponent played > trump,  I don't have trump card
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: ['AH', '9H'].map(c => new Card(c)), // opponent played 9H
+                currentPlayer: {
+                    id: 3,
+                    cards: ['7D', '8D'].map(c => new Card(c)),
+                },
+            },
+            expected: ['7D', '8D'],
         },
     ].forEach((data) => {
         test('possibleCards', () => {
