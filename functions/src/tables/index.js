@@ -41,17 +41,23 @@ exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}
     if (currentPlayer.isFakePlayer) {
         if (eventData.mode === 'play') {
             const cardsPlayedRef = getCardsPlayedCollection(tableId);
+            const cardsPlayed = await getCardsPlayedOnTable(tableId);
+
             const cards = possibleCards(
                 eventData.currentAnnounce,
                 { ...currentPlayer, cards: currentPlayer.cards.map(cardId => new Card(cardId)) },
-                getCardsPlayedOnTable(tableId).map(cardId => new Card(cardId)),
+                cardsPlayed.map(({ cardId }) => new Card(cardId)),
             );
+
+            const nextCardPlayed = cards[0].id;
+
             cardsPlayedRef.add({
                 playerId: currentPlayerId,
-                cardId: cards[0].map(card => card.id),
+                cardId: nextCardPlayed,
             });
+
             const playersRef = getPlayersCollection(tableId);
-            playersRef.doc(currentPlayerId).update({ cards: currentPlayer.cards.slice(1) });
+            playersRef.doc(currentPlayerId).update({ cards: currentPlayer.cards.filter(c => c !== nextCardPlayed) });
         } else {
             performAnnounce(tableId, currentPlayerId);
         }
