@@ -1,4 +1,4 @@
-import { sortCards, Card, Hand, filterHigherCards, possibleCards } from './index';
+import { sortCards, Card, Hand, filterHigherCards, possibleCards, getHighestCard } from './index';
 
 export const cards = [
     '7S',
@@ -81,6 +81,31 @@ describe('test function', () => {
         test('sortCard', () => {
             expect(data.cards.sort(sortCards(data.trump)).map(card => card.id)).toEqual(data.expected);
         });
+    });
+
+    [
+        {
+            cards: ['10H', 'JH', 'AH', '9H', '10S', 'JS', 'AS', '9S', '7D'].map(c => new Card(c)),
+            trump: 'H',
+            color: 'H',
+            expected: new Card('JH'),
+        },
+        {
+            cards: ['10H', 'JH', 'AH', '9H', '10S', 'JS', 'AS', '9S', '7D'].map(c => new Card(c)),
+            trump: 'C',
+            color: 'S',
+            expected: new Card('AS'),
+        },
+        {
+            cards: ['10H', 'JH', 'AH', '9H', '10S', 'JS', 'AS', '9S', '7D'].map(c => new Card(c)),
+            trump: 'C',
+            color: 'D',
+            expected: new Card('7D'),
+        },
+    ].forEach((data) => {
+       test('getHighestCard', () => {
+           expect(getHighestCard(data.cards, data.trump, data.color)).toEqual(data.expected);
+       });
     });
 
     [
