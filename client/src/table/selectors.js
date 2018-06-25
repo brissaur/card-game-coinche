@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import { createSelector } from 'reselect';
+import { possibleCards, Card } from 'common';
 
 import { getPlayerId } from '../player/selectors';
 
@@ -55,4 +56,25 @@ export const getPlayers = createSelector(
             announce: (announces.find(announce => announce.playerId === player.id) || {}).announce,
             active: player.id === currentPlayerId,
         })),
+);
+
+const getTrumpColor = createSelector(
+    getGeneral,
+    general => general.currentAnnounce && general.currentAnnounce.announce.slice(-1),
+);
+
+export const getPlayableCards = createSelector(
+    getGeneral,
+    getPlayerCards,
+    getTrick,
+    getTrumpColor,
+    (general, playerCards, trick, trump) => {
+        const cardsId = trick.map(({ cardId }) => new Card(cardId));
+
+        return possibleCards(
+            trump,
+            { cards: playerCards.map(cardId => new Card(cardId)) },
+            cardsId,
+        ).map(({ id }) => id);
+    },
 );
