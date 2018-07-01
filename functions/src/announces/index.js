@@ -35,7 +35,7 @@ export async function performAnnounce(tableId, playerId) {
 }
 
 /**
- * @dataProvider addCardPlayed({playerId: '2GQLBAuwQiPlDAlAMmVT', card: 'AH'})
+ * @dataProvider onAnnounce({playerId: 'OrWsj706IArc3XuoHW9q', card: 'AH'}, {params: {tableId: 'Zidre5WkxNJZb1o0YHme', announceId: 'ABCD'}})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
 exports.onAnnounce = functions.firestore

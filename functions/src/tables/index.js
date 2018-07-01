@@ -1,12 +1,12 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { getPlayersOnTable, getPlayersCollection } from '../players/index';
-import { getCardsPlayedCollection, getCardsPlayedOnTable } from '../cardsPlayed';
+import { getPlayersOnTable } from '../players/index';
 import { performAnnounce } from '../announces';
 import { computeNextPlayerForTrick } from './business';
-import { possibleCards, Card } from '../common/';
 
 export const COLLECTION_NAME = 'tables';
+export const MODE_ANNOUNCE = 'announce';
+export const MODE_PLAY = 'play';
 
 export const getTableById = tableId =>
     admin
@@ -17,20 +17,43 @@ export const getTableById = tableId =>
 export async function nextPlayerPlusPlus(tableId, previousPlayerId) {
     const players = await getPlayersOnTable(tableId);
     const nextPlayer = computeNextPlayerForTrick(players, previousPlayerId);
+    await updateCurrentPlayerId(tableId, nextPlayer.id);
+}
+
+export async function getCurrentAnnounce(tableId) {
     const tableRef = getTableById(tableId);
-    tableRef.update(
+
+    return await tableRef.get().then(doc => doc.data().currentAnnounce);
+}
+
+export async function getCurrentPlayerId(tableId){
+    const tableRef = getTableById(tableId);
+
+    return await tableRef.get().then(doc => doc.data().currentPlayerId);
+}
+
+export async function updateCurrentPlayerId(tableId, playerId){
+    const tableRef = getTableById(tableId);
+    console.log('updateCurrentPlayerId', {
+        currentPlayerId: playerId,
+    });
+    await tableRef.update(
         {
-            currentPlayerId: nextPlayer.id,
+            currentPlayerId: playerId,
         },
         { merge: true },
     );
 }
 
 /**
- * @dataProvider updateTable({after: {currentPlayerId: 'V32GHS3W8yCxvpepFbgF'}, before: {}})
+ * @dataProvider updateTable({after: {currentPlayerId: 'OrWsj706IArc3XuoHW9q'}, before: {}}, {params: {tableId: 'Zidre5WkxNJZb1o0YHme'}})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
 exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}`).onUpdate(async (change, context) => {
+    console.log('updateTable called');
+    console.log('before', change.before.data());
+    console.log('after', change.after.data());
+    console.log('context', context);
     const tableId = context.params.tableId;
     const eventData = change.after.data();
     const currentPlayerId = eventData.currentPlayerId;
@@ -38,28 +61,7 @@ exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}
     const players = await getPlayersOnTable(tableId);
     const currentPlayer = players.find(player => player.id === currentPlayerId);
 
-    if (currentPlayer.isFakePlayer) {
-        if (eventData.mode === 'play') {
-            const cardsPlayedRef = getCardsPlayedCollection(tableId);
-            const cardsPlayed = await getCardsPlayedOnTable(tableId);
-            const trump = eventData.currentAnnounce.announce.slice(-1);
-            const cards = possibleCards(
-                trump,
-                { ...currentPlayer, cards: currentPlayer.cards.map(cardId => new Card(cardId)) },
-                cardsPlayed.map(({ cardId }) => new Card(cardId)),
-            );
-
-            const nextCardPlayed = cards[0].id;
-
-            await cardsPlayedRef.add({
-                playerId: currentPlayerId,
-                cardId: nextCardPlayed,
-            });
-
-            const playersRef = getPlayersCollection(tableId);
-            await playersRef.doc(currentPlayerId).update({ cards: currentPlayer.cards.filter(c => c !== nextCardPlayed) });
-        } else {
-            await performAnnounce(tableId, currentPlayerId);
-        }
+    if (eventData.mode === MODE_ANNOUNCE && currentPlayer.isFakePlayer) {
+        await performAnnounce(tableId, currentPlayerId);
     }
 });

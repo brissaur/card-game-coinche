@@ -5,6 +5,9 @@ import { getTableById, COLLECTION_NAME as tableCollectionName, nextPlayerPlusPlu
 import { getRoundsCollection } from '../rounds';
 import { getPlayersOnTable, getPlayersCollection } from '../players';
 import { dealCards } from '../players/business';
+import {getCardsPlayedCollection} from "../cardsPlayed";
+import { updateCurrentPlayerId, getCurrentAnnounce, MODE_ANNOUNCE } from "../tables";
+import { selectWinnerOfTrick } from "../cardsPlayed/business";
 
 const COLLECTION_NAME = 'tricks';
 
@@ -23,7 +26,7 @@ export const getTricksCollection = (tableId) => {
  * @param tableId
  * @returns {Promise<Array>}
  */
-const getTricksOnTable = async (tableId) => {
+export const getTricksOnTable = async (tableId) => {
     const tricks = [];
     const tricksRef = getTricksCollection(tableId);
     await tricksRef
@@ -42,13 +45,16 @@ const getTricksOnTable = async (tableId) => {
 };
 
 /**
- * @dataProvider addCardPlayed({playerId: 'XXXXXX', cardId: 'AH'})
+ * @dataProvider addTrick({playerId: '3k13yBuPHp8IRDqhtEq6', cardId: '8H'}, {params: {tableId: 'ZGbsZgB4MPaJR9AJRka1', trickId: 'REBs7d7uNgLnWTmYHn5U'}})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
 exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{trickId}`).onCreate(async (snap, context) => {
     const tableId = context.params.tableId;
 
     const tricks = await getTricksOnTable(tableId);
+
+    // empty cardsPlayed
+    await emptyCollection(getCardsPlayedCollection(tableId));
 
     if (tricks.length === 8) {
         // add new round
@@ -74,7 +80,7 @@ exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId
         const nextPlayer = await nextPlayerPlusPlus(tableId, nextDealer);
         await fbTableRef.update(
             {
-                mode: 'announce',
+                mode: MODE_ANNOUNCE,
                 firstPlayerId: nextPlayer,
                 currentPlayerId: nextPlayer,
             },
