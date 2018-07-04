@@ -37,8 +37,8 @@ export const getCardsPlayedOnTable = async (tableId) => {
  * @dataProvider addCardPlayed({playerId: '2GQLBAuwQiPlDAlAMmVT', card: 'AH'})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
-exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{cardPlayedId}`).onCreate(
-    async (snap, context) => {
+exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{cardPlayedId}`)
+    .onCreate(async (snap, context) => {
         const tableId = context.params.tableId;
         const cardsPlayed = await getCardsPlayedOnTable(tableId);
 
