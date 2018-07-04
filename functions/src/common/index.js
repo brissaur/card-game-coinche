@@ -22,7 +22,7 @@ export const sortCards = isTrump => (cardA, cardB) => {
 };
 
 /**
- * Filter cards and return card with value > lastHigherCard
+ * Filter cards and return card with order > lastHigherCard
  * @param isTrump
  * @param lastHighestCard
  * @returns {function(*): boolean}
@@ -32,7 +32,7 @@ export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
     const lastHighestCardInDeck = deckOfThirtyTwoCards.find(c => c.id === lastHighestCard.id);
     const trump = isTrump ? 'trump' : 'notrump';
 
-    return cardInDeck.value[trump] >= lastHighestCardInDeck.value[trump];
+    return cardInDeck.order[trump] < lastHighestCardInDeck.order[trump];
 };
 
 /**
