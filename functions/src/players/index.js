@@ -39,11 +39,12 @@ export const getPlayersOnTable = async (tableId) => {
 
 /**
  *
- * @param event
+ * @param snap
+ * @param context
  * @returns {Promise<*>}
  */
-async function onAddPlayer(event) {
-    const tableId = event.params.tableId;
+async function onAddPlayer(snap, context) {
+    const tableId = context.params.tableId;
     const players = await getPlayersOnTable(tableId);
 
     if (players.length === 4) {
@@ -55,7 +56,7 @@ async function onAddPlayer(event) {
         });
         const tableRef = getTableById(tableId);
         const firstPlayerId = players.find(searchStartPlayer).id;
-        tableRef.update(
+        await tableRef.update(
             {
                 firstPlayerId,
                 currentPlayerId: firstPlayerId,
@@ -64,8 +65,6 @@ async function onAddPlayer(event) {
             { merge: true },
         );
     }
-
-    return event;
 }
 
 /**

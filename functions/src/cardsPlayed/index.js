@@ -37,19 +37,18 @@ export const getCardsPlayedOnTable = async (tableId) => {
  * @dataProvider addCardPlayed({playerId: '2GQLBAuwQiPlDAlAMmVT', card: 'AH'})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
-exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{cardPlayedId}`).onCreate(async (event) => {
-    const tableId = event.params.tableId;
-    const cardsPlayed = await getCardsPlayedOnTable(tableId);
+exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{cardPlayedId}`).onCreate(
+    async (snap, context) => {
+        const tableId = context.params.tableId;
+        const cardsPlayed = await getCardsPlayedOnTable(tableId);
 
-    if (cardsPlayed.length >= 4) {
-        // add a trick with cardsPlayed
-        const tricksCollection = getTricksCollection(tableId);
-        tricksCollection.add({ ...cardsPlayed });
-        // empty cardsPlayed
-        await emptyCollection(getCardsPlayedCollection(tableId));
-    }
+        if (cardsPlayed.length >= 4) {
+            // add a trick with cardsPlayed
+            const tricksCollection = getTricksCollection(tableId);
+            tricksCollection.add({ ...cardsPlayed });
+            // empty cardsPlayed
+            await emptyCollection(getCardsPlayedCollection(tableId));
+        }
 
-    await nextPlayerPlusPlus(tableId, event.data.data().playerId);
-
-    return event;
-});
+        await nextPlayerPlusPlus(tableId, snap.data().playerId);
+    });

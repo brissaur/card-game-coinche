@@ -30,9 +30,9 @@ export async function nextPlayerPlusPlus(tableId, previousPlayerId) {
  * @dataProvider updateTable({after: {currentPlayerId: 'V32GHS3W8yCxvpepFbgF'}, before: {}})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
-exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}`).onUpdate(async (event) => {
-    const tableId = event.params.tableId;
-    const eventData = event.data.data();
+exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}`).onUpdate(async (change, context) => {
+    const tableId = context.params.tableId;
+    const eventData = change.after.data();
     const currentPlayerId = eventData.currentPlayerId;
 
     const players = await getPlayersOnTable(tableId);
@@ -51,15 +51,15 @@ exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}
 
             const nextCardPlayed = cards[0].id;
 
-            cardsPlayedRef.add({
+            await cardsPlayedRef.add({
                 playerId: currentPlayerId,
                 cardId: nextCardPlayed,
             });
 
             const playersRef = getPlayersCollection(tableId);
-            playersRef.doc(currentPlayerId).update({ cards: currentPlayer.cards.filter(c => c !== nextCardPlayed) });
+            await playersRef.doc(currentPlayerId).update({ cards: currentPlayer.cards.filter(c => c !== nextCardPlayed) });
         } else {
-            performAnnounce(tableId, currentPlayerId);
+            await performAnnounce(tableId, currentPlayerId);
         }
     }
 });
