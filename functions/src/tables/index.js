@@ -42,9 +42,9 @@ exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}
         if (eventData.mode === 'play') {
             const cardsPlayedRef = getCardsPlayedCollection(tableId);
             const cardsPlayed = await getCardsPlayedOnTable(tableId);
-
+            const trump = eventData.currentAnnounce.announce.slice(-1);
             const cards = possibleCards(
-                eventData.currentAnnounce,
+                trump,
                 { ...currentPlayer, cards: currentPlayer.cards.map(cardId => new Card(cardId)) },
                 cardsPlayed.map(({ cardId }) => new Card(cardId)),
             );
