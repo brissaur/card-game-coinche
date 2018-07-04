@@ -5,9 +5,9 @@ import { getTableById, COLLECTION_NAME as tableCollectionName, nextPlayerPlusPlu
 import { getRoundsCollection } from '../rounds';
 import { getPlayersOnTable, getPlayersCollection } from '../players';
 import { dealCards } from '../players/business';
-import {getCardsPlayedCollection} from "../cardsPlayed";
-import { updateCurrentPlayerId, getCurrentAnnounce, MODE_ANNOUNCE } from "../tables";
-import { selectWinnerOfTrick } from "../cardsPlayed/business";
+import { getCardsPlayedCollection } from '../cardsPlayed';
+import { updateCurrentPlayerId, getCurrentAnnounce, MODE_ANNOUNCE } from '../tables';
+import { selectWinnerOfTrick } from '../cardsPlayed/business';
 
 const COLLECTION_NAME = 'tricks';
 

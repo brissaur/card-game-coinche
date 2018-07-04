@@ -28,27 +28,27 @@ describe.only('test cardsPlayed function', () => {
             cardsPlayed: [
                 {
                     cardId: 'AH',
-                    playerId: 1
+                    playerId: 1,
                 },
                 {
                     cardId: '8H',
-                    playerId: 2
+                    playerId: 2,
                 },
                 {
                     cardId: 'KH',
-                    playerId: 3
+                    playerId: 3,
                 },
                 {
                     cardId: 'JH',
-                    playerId: 4
+                    playerId: 4,
                 },
             ],
             trump: 'H',
-            expectedPlayer: 4
-        }
+            expectedPlayer: 4,
+        },
     ].forEach((data) => {
         test('selectWinnerOfTrick', () => {
             expect(selectWinnerOfTrick(data.cardsPlayed, data.trump)).toEqual(data.expectedPlayer);
         });
-    })
+    });
 });

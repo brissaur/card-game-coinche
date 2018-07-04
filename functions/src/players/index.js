@@ -39,9 +39,9 @@ export const getPlayersOnTable = async (tableId) => {
 
 export const getPlayerById = async (tableId, playerId) => {
     const players = await getPlayersOnTable(tableId);
-    return players.filter((player) => player.id === playerId)[0];
-};
 
+    return players.filter(player => player.id === playerId)[0];
+};
 
 /**
  *

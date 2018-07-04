@@ -26,13 +26,13 @@ export async function getCurrentAnnounce(tableId) {
     return await tableRef.get().then(doc => doc.data().currentAnnounce);
 }
 
-export async function getCurrentPlayerId(tableId){
+export async function getCurrentPlayerId(tableId) {
     const tableRef = getTableById(tableId);
 
     return await tableRef.get().then(doc => doc.data().currentPlayerId);
 }
 
-export async function updateCurrentPlayerId(tableId, playerId){
+export async function updateCurrentPlayerId(tableId, playerId) {
     const tableRef = getTableById(tableId);
     console.log('updateCurrentPlayerId', {
         currentPlayerId: playerId,
