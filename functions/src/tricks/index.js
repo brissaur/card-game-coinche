@@ -45,15 +45,15 @@ const getTricksOnTable = async (tableId) => {
  * @dataProvider addCardPlayed({playerId: 'XXXXXX', cardId: 'AH'})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
-exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{trickId}`).onCreate(async (event) => {
-    const tableId = event.params.tableId;
+exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{trickId}`).onCreate(async (snap, context) => {
+    const tableId = context.params.tableId;
 
     const tricks = await getTricksOnTable(tableId);
 
     if (tricks.length === 8) {
         // add new round
         const roundsRef = getRoundsCollection(tableId);
-        roundsRef.add({ ...tricks });
+        await roundsRef.add({ ...tricks });
 
         // => remove tricks
 
@@ -70,9 +70,9 @@ exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId
         });
         // update next player, dealer, mode
         const fbTableRef = getTableById(tableId);
-        const nextDealer = await fbTableRef.then(snap => snap.data().firstPlayerId);
+        const nextDealer = await fbTableRef.then(snapshot => snapshot.data().firstPlayerId);
         const nextPlayer = await nextPlayerPlusPlus(tableId, nextDealer);
-        fbTableRef.update(
+        await fbTableRef.update(
             {
                 mode: 'announce',
                 firstPlayerId: nextPlayer,
@@ -81,6 +81,4 @@ exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId
             { merge: true },
         );
     }
-
-    return event;
 });
