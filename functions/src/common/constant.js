@@ -3,10 +3,12 @@ export const deckOfThirtyTwoCards = [
         id: '7S',
         height: '7',
         color: 'S',
+        // determines the StrEnGh of the card
         order: {
             trump: 8,
             notrump: 8,
         },
+        // determines how many points it is worth
         value: {
             trump: 0,
             notrump: 0,
