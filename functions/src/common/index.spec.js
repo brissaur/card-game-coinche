@@ -430,6 +430,17 @@ describe('test function', () => {
             },
             expected: ['7D', '8D'],
         },
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: ['7H'].map(c => new Card(c)), // opponent played 9H
+                currentPlayer: {
+                    id: 3,
+                    cards: ['8H', 'JH'].map(c => new Card(c)),
+                },
+            },
+            expected: ['8H', 'JH'],
+        },
     ].forEach((data) => {
         test('possibleCards', () => {
             expect(possibleCards(data.data.trump, data.data.currentPlayer, data.data.cardsPlayed)
