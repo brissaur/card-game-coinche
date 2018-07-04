@@ -45,7 +45,7 @@ exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{ta
         if (cardsPlayed.length >= 4) {
             // add a trick with cardsPlayed
             const tricksCollection = getTricksCollection(tableId);
-            tricksCollection.add({ ...cardsPlayed });
+            await tricksCollection.add({ ...cardsPlayed });
             // empty cardsPlayed
             await emptyCollection(getCardsPlayedCollection(tableId));
         }
