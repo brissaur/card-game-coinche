@@ -14,35 +14,45 @@ export const getTableById = tableId =>
         .collection(COLLECTION_NAME)
         .doc(tableId);
 
-export async function nextPlayerPlusPlus(tableId, previousPlayerId) {
-    const players = await getPlayersOnTable(tableId);
-    const nextPlayer = computeNextPlayerForTrick(players, previousPlayerId);
-    await updateCurrentPlayerId(tableId, nextPlayer.id);
-}
-
-export async function getCurrentAnnounce(tableId) {
-    const tableRef = getTableById(tableId);
-
-    return await tableRef.get().then(doc => doc.data().currentAnnounce);
-}
-
-export async function getCurrentPlayerId(tableId) {
-    const tableRef = getTableById(tableId);
-
-    return await tableRef.get().then(doc => doc.data().currentPlayerId);
-}
 
 export async function updateCurrentPlayerId(tableId, playerId) {
     const tableRef = getTableById(tableId);
     console.log('updateCurrentPlayerId', {
         currentPlayerId: playerId,
     });
+
     await tableRef.update(
         {
             currentPlayerId: playerId,
         },
         { merge: true },
     );
+}
+
+export async function nextPlayerPlusPlus(tableId, previousPlayerId) {
+    const players = await getPlayersOnTable(tableId);
+    const nextPlayer = computeNextPlayerForTrick(players, previousPlayerId);
+    await updateCurrentPlayerId(tableId, nextPlayer.id);
+}
+
+/**
+ * @param tableId
+ * @return {Promise<*>}
+ */
+export async function getCurrentAnnounce(tableId) {
+    const tableRef = getTableById(tableId);
+
+    return tableRef.get().then(doc => doc.data().currentAnnounce);
+}
+
+/**
+ * @param tableId
+ * @return {Promise<*>}
+ */
+export async function getCurrentPlayerId(tableId) {
+    const tableRef = getTableById(tableId);
+
+    return tableRef.get().then(doc => doc.data().currentPlayerId);
 }
 
 /**

@@ -1,13 +1,11 @@
 import * as functions from 'firebase-functions';
 import { emptyCollection } from '../common/collection';
 
-import { getTableById, COLLECTION_NAME as tableCollectionName, nextPlayerPlusPlus } from '../tables/index';
+import { getTableById, COLLECTION_NAME as tableCollectionName, nextPlayerPlusPlus, MODE_ANNOUNCE } from '../tables/index';
 import { getRoundsCollection } from '../rounds';
 import { getPlayersOnTable, getPlayersCollection } from '../players';
 import { dealCards } from '../players/business';
 import { getCardsPlayedCollection } from '../cardsPlayed';
-import { updateCurrentPlayerId, getCurrentAnnounce, MODE_ANNOUNCE } from '../tables';
-import { selectWinnerOfTrick } from '../cardsPlayed/business';
 
 const COLLECTION_NAME = 'tricks';
 
@@ -51,7 +49,7 @@ export const getTricksOnTable = async (tableId) => {
 exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{trickId}`).onCreate(async (snap, context) => {
     const tableId = context.params.tableId;
 
-    const tricks = await getTricksOnTable(tableId);
+    const tricks = getTricksOnTable(tableId);
 
     // empty cardsPlayed
     await emptyCollection(getCardsPlayedCollection(tableId));

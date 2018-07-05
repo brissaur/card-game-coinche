@@ -44,7 +44,7 @@ export const getCardsPlayedOnTable = async (tableId) => {
 
 async function letFakePlayerPlay(tableId, currentPlayer, cardsPlayed) {
     console.log('letFackPlayerPlay');
-    const cardsPlayedRef = getCardsPlayedCollection(tableId);
+    const cardsPlayedRef = await getCardsPlayedCollection(tableId);
     const currentAnnounce = await getCurrentAnnounce(tableId);
     const currentPlayerId = currentPlayer.id;
 
