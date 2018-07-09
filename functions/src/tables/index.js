@@ -33,6 +33,8 @@ export async function nextPlayerPlusPlus(tableId, previousPlayerId) {
     const players = await getPlayersOnTable(tableId);
     const nextPlayer = computeNextPlayerForTrick(players, previousPlayerId);
     await updateCurrentPlayerId(tableId, nextPlayer.id);
+
+    return nextPlayer.id;
 }
 
 /**

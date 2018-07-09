@@ -1,11 +1,13 @@
 import * as functions from 'firebase-functions';
-import { emptyCollection } from '../common/collection';
+import * as admin from 'firebase-admin';
+import {deleteCollection, emptyCollection} from '../common/collection';
 
 import { getTableById, COLLECTION_NAME as tableCollectionName, nextPlayerPlusPlus, MODE_ANNOUNCE } from '../tables/index';
 import { getRoundsCollection } from '../rounds';
 import { getPlayersOnTable, getPlayersCollection } from '../players';
 import { dealCards } from '../players/business';
 import { getCardsPlayedCollection } from '../cardsPlayed';
+import {getAnnouncesCollection} from "../announces";
 
 const COLLECTION_NAME = 'tricks';
 
@@ -38,7 +40,6 @@ export const getTricksOnTable = async (tableId) => {
             // eslint-disable-next-line no-console
             console.log('Error getting documents', err);
         });
-
     return tricks;
 };
 
@@ -48,11 +49,13 @@ export const getTricksOnTable = async (tableId) => {
  */
 exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{trickId}`).onCreate(async (snap, context) => {
     const tableId = context.params.tableId;
+    console.log('add trick');
 
-    const tricks = getTricksOnTable(tableId);
+    const tricks = await getTricksOnTable(tableId);
 
     // empty cardsPlayed
-    await emptyCollection(getCardsPlayedCollection(tableId));
+    await deleteCollection(admin.firestore(), getCardsPlayedCollection(tableId));
+    //await emptyCollection(getCardsPlayedCollection(tableId));
 
     if (tricks.length === 8) {
         // add new round
@@ -60,8 +63,8 @@ exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId
         await roundsRef.add({ ...tricks });
 
         // => remove tricks
-
-        await emptyCollection(getTricksCollection(tableId));
+        await deleteCollection(admin.firestore(), getTricksCollection(tableId));
+        //await emptyCollection(getTricksCollection(tableId));
 
         // => next round
         // deal cards
@@ -69,9 +72,11 @@ exports.addTrick = functions.firestore.document(`${tableCollectionName}/{tableId
         const playersWithCards = dealCards(players);
         const playersRef = getPlayersCollection(tableId);
 
-        await playersWithCards.forEach(async (player) => {
-            playersRef.doc(player.id).update({ cards: player.cards });
+        const promises = [];
+        playersWithCards.forEach(player => {
+            promises.push(playersRef.doc(player.id).update({ cards: player.cards }));
         });
+        await Promise.all(promises);
         // update next player, dealer, mode
         const fbTableRef = getTableById(tableId);
         const nextDealer = await fbTableRef.then(snapshot => snapshot.data().firstPlayerId);

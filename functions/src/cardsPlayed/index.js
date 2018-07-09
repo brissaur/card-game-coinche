@@ -48,7 +48,7 @@ async function letFakePlayerPlay(tableId, currentPlayer, cardsPlayed) {
     const currentAnnounce = await getCurrentAnnounce(tableId);
     const currentPlayerId = currentPlayer.id;
 
-    console.log('currentPlayerId', currentPlayerId);
+    console.log('fake player id playing: ', currentPlayerId);
 
     const cards = possibleCards(
         currentAnnounce,
@@ -56,19 +56,16 @@ async function letFakePlayerPlay(tableId, currentPlayer, cardsPlayed) {
         cardsPlayed.map(({ cardId }) => new Card(cardId)),
     );
 
-    console.log('nextCard', cards[0].id);
+    const cardBeingPlayed = cards[0].id;
 
-    const nextCardPlayed = cards[0].id;
-
-    const playersRef = getPlayersCollection(tableId);
-    await playersRef.doc(currentPlayer.id).update({ cards: currentPlayer.cards.filter(c => c !== nextCardPlayed) });
-    console.log('should play', {
+    console.log('card being played: ', {
         playerId: currentPlayerId,
-        cardId: nextCardPlayed,
+        cardId: cardBeingPlayed,
     });
+
     await cardsPlayedRef.add({
         playerId: currentPlayerId,
-        cardId: nextCardPlayed,
+        cardId: cardBeingPlayed,
     });
 }
 
@@ -86,36 +83,41 @@ exports.addCardPlayed = functions.firestore.document(`${tableCollectionName}/{ta
 
     console.log('cardsPlayed.length', cardsPlayed.length);
 
-    if (cardsPlayed.length >= 4) {
-        // add a trick with cardsPlayed
-        const tricksCollection = getTricksCollection(tableId);
-        await tricksCollection.add({ ...cardsPlayed });
+    // remove card from hand which has just been played
+    const playersRef = getPlayersCollection(tableId);
+    const currentPlayer = await getPlayerById(tableId, snap.data().playerId);
+    await playersRef.doc(snap.data().playerId).update({ cards: currentPlayer.cards.filter(c => c !== snap.data().cardId) });
 
+    if (cardsPlayed.length >= 4) {
         /** end of Trick, Select the winner * */
         const currentAnnounce = await getCurrentAnnounce(tableId);
         const winner = selectWinnerOfTrick(cardsPlayed, currentAnnounce.announce.slice(-1));
         console.log('the winner is: ', winner);
         await updateCurrentPlayerId(tableId, winner);
 
+        // add a trick with cardsPlayed
+        const tricksCollection = getTricksCollection(tableId);
+        await tricksCollection.add({ ...cardsPlayed });
+
         return null;
     }
 
-    await nextPlayerPlusPlus(tableId, snap.data().playerId);
+    const nextPlayerId = await nextPlayerPlusPlus(tableId, snap.data().playerId);
 
-    const currentPlayerId = await getCurrentPlayerId(tableId);
-    console.log('currentPlayerId', currentPlayerId);
-    const currentPlayer = await getPlayerById(tableId, currentPlayerId);
-    console.log('currentPlayer', currentPlayer);
-    if (currentPlayer.isFakePlayer) {
+    const nextPlayer = await getPlayerById(tableId, nextPlayerId);
+    console.log('nextPlayer', nextPlayer);
+    if (nextPlayer.isFakePlayer) {
         console.log('should call letFakePlayerPlay');
-        await letFakePlayerPlay(tableId, currentPlayer, cardsPlayed);
+        await letFakePlayerPlay(tableId, nextPlayer, cardsPlayed);
     }
 });
 
 exports.deleteCardPlayed = functions.firestore.document(`${tableCollectionName}/{tableId}/${COLLECTION_NAME}/{cardPlayedId}`).onDelete(async (snap, context) => {
+    console.log('deletedCard:', snap.data());
     const tableId = context.params.tableId;
     const cardsPlayed = await getCardsPlayedOnTable(tableId);
     const tricks = await getTricksOnTable(tableId);
+
     // Trick has ended, and this is not the end of the round, let's start a new trick
     if (cardsPlayed.length === 0 && tricks.length < 8) {
         console.log('should go for another trick');
