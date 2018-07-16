@@ -14,12 +14,8 @@ export const getTableById = tableId =>
         .collection(COLLECTION_NAME)
         .doc(tableId);
 
-
 export async function updateCurrentPlayerId(tableId, playerId) {
     const tableRef = getTableById(tableId);
-    console.log('updateCurrentPlayerId', {
-        currentPlayerId: playerId,
-    });
 
     await tableRef.update(
         {
@@ -58,14 +54,21 @@ export async function getCurrentPlayerId(tableId) {
 }
 
 /**
+ *
+ * @param tableId
+ * @returns {Promise<*>}
+ */
+export async function getFirstPlayerId(tableId) {
+    const tableRef = getTableById(tableId);
+
+    return tableRef.get().then(snapshot => snapshot.data().firstPlayerId);
+}
+
+/**
  * @dataProvider updateTable({after: {currentPlayerId: 'OrWsj706IArc3XuoHW9q'}, before: {}}, {params: {tableId: 'Zidre5WkxNJZb1o0YHme'}})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
 exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}`).onUpdate(async (change, context) => {
-    console.log('updateTable called');
-    console.log('before', change.before.data());
-    console.log('after', change.after.data());
-    console.log('context', context);
     const tableId = context.params.tableId;
     const eventData = change.after.data();
     const currentPlayerId = eventData.currentPlayerId;

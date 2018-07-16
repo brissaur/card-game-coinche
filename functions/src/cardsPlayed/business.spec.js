@@ -2,45 +2,45 @@ import { selectWinnerOfTrick } from './business';
 
 describe.only('test cardsPlayed function', () => {
     [
-        // {
-        //     cardsPlayed: [
-        //         {
-        //             cardId: 'AH',
-        //             playerId: 1
-        //         },
-        //         {
-        //             cardId: '7S',
-        //             playerId: 2
-        //         },
-        //         {
-        //             cardId: 'JD',
-        //             playerId: 3
-        //         },
-        //         {
-        //             cardId: '10C',
-        //             playerId: 4
-        //         },
-        //     ],
-        //     trump: 'H',
-        //     expectedPlayer: 1
-        // },
         {
             cardsPlayed: [
                 {
                     cardId: 'AH',
-                    playerId: 1,
+                    playerId: 1,
+                },
+                {
+                    cardId: '7S',
+                    playerId: 2,
+                },
+                {
+                    cardId: 'JD',
+                    playerId: 3,
+                },
+                {
+                    cardId: '10C',
+                    playerId: 4,
+                },
+            ],
+            trump: 'H',
+            expectedPlayer: 1,
+        },
+        {
+            cardsPlayed: [
+                {
+                    cardId: 'AH',
+                    playerId: 1,
                 },
                 {
                     cardId: '8H',
-                    playerId: 2,
+                    playerId: 2,
                 },
                 {
                     cardId: 'KH',
-                    playerId: 3,
+                    playerId: 3,
                 },
                 {
                     cardId: 'JH',
-                    playerId: 4,
+                    playerId: 4,
                 },
             ],
             trump: 'H',

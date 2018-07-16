@@ -58,7 +58,7 @@ async function onAddPlayer(snap, context) {
         const playersWithCards = dealCards(players);
 
         const promises = [];
-        playersWithCards.forEach(player => {
+        playersWithCards.forEach((player) => {
             promises.push(playersRef.doc(player.id).update({ cards: player.cards }));
         });
         await Promise.all(promises);

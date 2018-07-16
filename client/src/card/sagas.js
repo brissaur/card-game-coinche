@@ -34,7 +34,7 @@ function* cardPlayed({ card }) {
     //     .update({ cards: myHand.filter(cardId => cardId !== card.id) });
 
     // This should be done instead (but do not work)
-    //yield put({ type: REMOVE_CARD_ID_IN_HAND, card});
+    yield put({ type: REMOVE_CARD_ID_IN_HAND, card});
 }
 
 // eslint-disable-next-line import/prefer-default-export
