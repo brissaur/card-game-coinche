@@ -1,19 +1,15 @@
-const express = require('express');
-const storage = require('./storage/index');
-const api = express();
+const WebSocket = require('ws');
 
-api.get('/healthcheck', async (req, res) => {
-
-    const collection = 'tables/UJgnB48Zgv0uCiyuSqui/cardsPlayed';
-    const totalOfCardsPlayed = await storage.collection(collection)
-        .get().then((querySnapshot) => {
-            return querySnapshot.size;
-    });
-
-    res.send(`Number of items in collection (${collection}): ` + totalOfCardsPlayed)
-
+const port = 8080;
+const wss = new WebSocket.Server({ port }, () => {
+	global.console.log('Server listening for WS on port ' + port);
 });
 
-api.listen(3001, () => {
-    console.log('Api listening on 3001')
+wss.on('connection', function connection(ws) {
+	global.console.log('New connection:', ws);
+	ws.on('message', function incoming(message) {
+		global.console.log('received: %s', message);
+	});
+
+	ws.send('something', { meta: { a: 'b' }, payload: { c: 'd' } });
 });
