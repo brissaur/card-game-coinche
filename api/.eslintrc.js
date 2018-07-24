@@ -1,15 +1,20 @@
 module.exports = {
-	env: {
-		node: true
-	},
-	extends: 'eslint:recommended',
-	parserOptions: {
-		ecmaVersion: 8
-	},
-	rules: {
-		indent: ['error', 'tab'],
-		'linebreak-style': ['error', 'unix'],
-		quotes: ['error', 'single'],
-		semi: ['error', 'always']
-	}
+    extends: 'airbnb',
+    env: { browser: true, jest: true },
+    rules: {
+        'no-multiple-empty-lines': [2, { max: 1, maxEOF: 1, maxBOF: 0 }],
+        'newline-before-return': 2,
+        'react/jsx-filename-extension': 0,
+        'react/require-default-props': 0,
+        indent: ['error', 4],
+        'react/jsx-indent': [1, 4],
+        'react/jsx-indent-props': [1, 4],
+        'no-underscore-dangle': [2],
+        'max-len': [2, { ignoreComments: true, code: 150 }],
+        'jsx-a11y/click-events-have-key-events': 0,
+        'jsx-a11y/no-static-element-interactions': 0,
+        'no-mixed-operators': 0,
+        'prefer-destructuring': 0,
+        'import/prefer-default-export': 0,
+    },
 };
