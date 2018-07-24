@@ -3,8 +3,7 @@ const config = require('../build.properties');
 
 const firestore = new Firestore({
 	projectId: config.FIREBASE_PROJECT_ID,
-	keyFilename:
-		'/Users/busson-arnaud/Sites/card-game-coinche/api/card-game-coinche-f9dad125fcc4.json'
+    keyFilename: config.GCLOUD_PRIVATE_KEY_FILE,
 });
 
 // prevent warning with Date Objects which will change any soon
