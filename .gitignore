@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 **/build.properties.js
 .idea/
+**/card-game-coinche-f9dad125fcc4.json
 
 # Runtime data
 pids
