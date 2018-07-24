@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { getTableById } from '../tables/index';
+import { getTableById, MODE_ANNOUNCE } from '../tables';
 import { dealCards, searchStartPlayer } from './business';
 
 const COLLECTION_NAME = 'players';
@@ -37,6 +37,12 @@ export const getPlayersOnTable = async (tableId) => {
     return players;
 };
 
+export const getPlayerById = async (tableId, playerId) => {
+    const players = await getPlayersOnTable(tableId);
+
+    return players.filter(player => player.id === playerId)[0];
+};
+
 /**
  *
  * @param snap
@@ -51,16 +57,18 @@ async function onAddPlayer(snap, context) {
         const playersRef = getPlayersCollection(tableId);
         const playersWithCards = dealCards(players);
 
-        playersWithCards.forEach(async (player) => {
-            playersRef.doc(player.id).update({ cards: player.cards });
+        const promises = [];
+        playersWithCards.forEach((player) => {
+            promises.push(playersRef.doc(player.id).update({ cards: player.cards }));
         });
+        await Promise.all(promises);
         const tableRef = getTableById(tableId);
         const firstPlayerId = players.find(searchStartPlayer).id;
         await tableRef.update(
             {
                 firstPlayerId,
                 currentPlayerId: firstPlayerId,
-                mode: 'announce',
+                mode: MODE_ANNOUNCE,
             },
             { merge: true },
         );
@@ -68,7 +76,7 @@ async function onAddPlayer(snap, context) {
 }
 
 /**
- * @dataProvider addPlayer({id: 'XXXXXX'})
+ * @dataProvider addPlayer({id: 'XXXXXX'}, {params: {tableId: 'Zidre5WkxNJZb1o0YHme', 'playerId': 'OrWsj706IArc3XuoHW9q'}})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
 exports.addPlayer = functions.firestore.document('tables/{tableId}/players/{playerId}').onCreate(onAddPlayer);

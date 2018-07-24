@@ -1,12 +1,12 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { getPlayersOnTable, getPlayersCollection } from '../players/index';
-import { getCardsPlayedCollection, getCardsPlayedOnTable } from '../cardsPlayed';
+import { getPlayersOnTable } from '../players/index';
 import { performAnnounce } from '../announces';
 import { computeNextPlayerForTrick } from './business';
-import { possibleCards, Card } from '../common/';
 
 export const COLLECTION_NAME = 'tables';
+export const MODE_ANNOUNCE = 'announce';
+export const MODE_PLAY = 'play';
 
 export const getTableById = tableId =>
     admin
@@ -14,20 +14,58 @@ export const getTableById = tableId =>
         .collection(COLLECTION_NAME)
         .doc(tableId);
 
-export async function nextPlayerPlusPlus(tableId, previousPlayerId) {
-    const players = await getPlayersOnTable(tableId);
-    const nextPlayer = computeNextPlayerForTrick(players, previousPlayerId);
+export async function updateCurrentPlayerId(tableId, playerId) {
     const tableRef = getTableById(tableId);
-    tableRef.update(
+
+    await tableRef.update(
         {
-            currentPlayerId: nextPlayer.id,
+            currentPlayerId: playerId,
         },
         { merge: true },
     );
 }
 
+export async function nextPlayerPlusPlus(tableId, previousPlayerId) {
+    const players = await getPlayersOnTable(tableId);
+    const nextPlayer = computeNextPlayerForTrick(players, previousPlayerId);
+    await updateCurrentPlayerId(tableId, nextPlayer.id);
+
+    return nextPlayer.id;
+}
+
 /**
- * @dataProvider updateTable({after: {currentPlayerId: 'V32GHS3W8yCxvpepFbgF'}, before: {}})
+ * @param tableId
+ * @return {Promise<*>}
+ */
+export async function getCurrentAnnounce(tableId) {
+    const tableRef = getTableById(tableId);
+
+    return tableRef.get().then(doc => doc.data().currentAnnounce);
+}
+
+/**
+ * @param tableId
+ * @return {Promise<*>}
+ */
+export async function getCurrentPlayerId(tableId) {
+    const tableRef = getTableById(tableId);
+
+    return tableRef.get().then(doc => doc.data().currentPlayerId);
+}
+
+/**
+ *
+ * @param tableId
+ * @returns {Promise<*>}
+ */
+export async function getFirstPlayerId(tableId) {
+    const tableRef = getTableById(tableId);
+
+    return tableRef.get().then(snapshot => snapshot.data().firstPlayerId);
+}
+
+/**
+ * @dataProvider updateTable({after: {currentPlayerId: 'OrWsj706IArc3XuoHW9q'}, before: {}}, {params: {tableId: 'Zidre5WkxNJZb1o0YHme'}})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
 exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}`).onUpdate(async (change, context) => {
@@ -38,28 +76,7 @@ exports.updateTable = functions.firestore.document(`${COLLECTION_NAME}/{tableId}
     const players = await getPlayersOnTable(tableId);
     const currentPlayer = players.find(player => player.id === currentPlayerId);
 
-    if (currentPlayer.isFakePlayer) {
-        if (eventData.mode === 'play') {
-            const cardsPlayedRef = getCardsPlayedCollection(tableId);
-            const cardsPlayed = await getCardsPlayedOnTable(tableId);
-            const trump = eventData.currentAnnounce.announce.slice(-1);
-            const cards = possibleCards(
-                trump,
-                { ...currentPlayer, cards: currentPlayer.cards.map(cardId => new Card(cardId)) },
-                cardsPlayed.map(({ cardId }) => new Card(cardId)),
-            );
-
-            const nextCardPlayed = cards[0].id;
-
-            await cardsPlayedRef.add({
-                playerId: currentPlayerId,
-                cardId: nextCardPlayed,
-            });
-
-            const playersRef = getPlayersCollection(tableId);
-            await playersRef.doc(currentPlayerId).update({ cards: currentPlayer.cards.filter(c => c !== nextCardPlayed) });
-        } else {
-            await performAnnounce(tableId, currentPlayerId);
-        }
+    if (eventData.mode === MODE_ANNOUNCE && currentPlayer.isFakePlayer) {
+        await performAnnounce(tableId, currentPlayerId);
     }
 });

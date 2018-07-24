@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
-import { emptyCollection } from '../common/collection';
-import { getTableById, nextPlayerPlusPlus, COLLECTION_NAME as tableCollectionName } from '../tables';
+import * as admin from 'firebase-admin';
+import { deleteCollection } from '../common/collection';
+import { getTableById, nextPlayerPlusPlus, COLLECTION_NAME as tableCollectionName, MODE_PLAY } from '../tables';
 import { announceIA, shouldStopAnnounces, getBestAnnounce } from './business';
 
 const COLLECTION_NAME = 'announces';
@@ -20,11 +21,9 @@ function createAnnouncesFromSnapshot(snapshot) {
 }
 
 export async function getAnnounces(tableId) {
-    const announces = await getAnnouncesCollection(tableId)
+    return getAnnouncesCollection(tableId)
         .get()
         .then(createAnnouncesFromSnapshot);
-
-    return announces;
 }
 
 export async function performAnnounce(tableId, playerId) {
@@ -35,7 +34,7 @@ export async function performAnnounce(tableId, playerId) {
 }
 
 /**
- * @dataProvider addCardPlayed({playerId: '2GQLBAuwQiPlDAlAMmVT', card: 'AH'})
+ * @dataProvider onAnnounce({playerId: 'OrWsj706IArc3XuoHW9q', card: 'AH'}, {params: {tableId: 'Zidre5WkxNJZb1o0YHme', announceId: 'ABCD'}})
  * @type {CloudFunction<DeltaDocumentSnapshot>}
  */
 exports.onAnnounce = functions.firestore
@@ -51,13 +50,13 @@ exports.onAnnounce = functions.firestore
             const fbTable = getTableById(tableId);
             const firstPlayerId = await fbTable.get().then(doc => doc.data().firstPlayerId);
 
-            await emptyCollection(getAnnouncesCollection(tableId));
+            await deleteCollection(admin.firestore(), getAnnouncesCollection(tableId));
 
             await fbTable.update(
                 {
                     currentPlayerId: firstPlayerId,
                     currentAnnounce: getBestAnnounce(announces),
-                    mode: 'play',
+                    mode: MODE_PLAY,
                 },
                 { merge: true },
             );

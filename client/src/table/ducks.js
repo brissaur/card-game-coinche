@@ -1,8 +1,12 @@
+import { getPlayerId } from '../player/selectors';
+
+
 const SET_TABLE_ID = 'table:set-current-table-id';
 const UPDATE_PLAYERS = 'table:UPDATE_PLAYERS';
 const UPDATE_TRICK = 'table:UPDATE_TRICK';
 const UPDATE_ANNOUNCES = 'table:UPDATE_ANNOUNCES';
 const UPDATE_TABLE_DOCUMENT = 'table:UPDATE_TABLE';
+export const REMOVE_CARD_ID_IN_HAND = 'local:REMOVE_CARD_ID_IN_HAND';
 
 const initialState = {
     id: null,
@@ -74,6 +78,19 @@ export function reducer(state = initialState, action) {
             ...state,
             ...action.document,
         };
+    // case REMOVE_CARD_ID_IN_HAND:
+    //     return {
+    //         ...state,
+    //         players: {
+    //             ...state.players.map(player => {
+    //                 if(player.id === getPlayerId(state)){
+    //                     player.cards.filter(card => card.id !== action.card.id)
+    //                 }
+    //                 return player;
+    //             }),
+    //
+    //         }
+    //     };
     default:
         return state;
     }
