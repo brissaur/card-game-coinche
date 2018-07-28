@@ -1,14 +1,4 @@
-/**
- * https://github.com/erikras/ducks-modular-redux
- */
-
-// actionsType
-export const PLAYER_CONNECT_ACTION = 'PLAYER_CONNECT_ACTION';
-export const PLAYER_CONNECT_ACTION_SUCCEED = 'PLAYER_CONNECT_ACTION_SUCCEED';
-export const PLAYER_CONNECT_ACTION_FAIL = 'PLAYER_CONNECT_ACTION_FAIL';
 export const SET_PLAYERNAME_ACTION = 'SET_PLAYERNAME_ACTION';
-export const JOIN_PLAYER_TO_TABLE_ACTION = 'JOIN_PLAYER_TO_TABLE_ACTION';
-
 const initialState = {
     playername: null,
     id: null,
