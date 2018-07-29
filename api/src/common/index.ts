@@ -1,13 +1,14 @@
+import {ICard, IPlayer} from './types';
 import { deckOfThirtyTwoCards } from './constant';
 
-const filterCardsByColor = color => card => card.color === color;
+const filterCardsByColor = (color: string) => (card: ICard) => card.color === color;
 
 /**
  * Sort cards from the higher to the lower
- * @param boolean isTrump
  * @return {Function}
+ * @param isTrump
  */
-export const sortCards = isTrump => (cardA, cardB) => {
+export const sortCards = (isTrump: boolean) => (cardA: ICard, cardB: ICard) => {
     const order = isTrump ? 'trump' : 'notrump';
     const cardAInDeck = deckOfThirtyTwoCards.find(card => card.id === cardA.id);
     const cardBInDeck = deckOfThirtyTwoCards.find(card => card.id === cardB.id);
@@ -27,7 +28,7 @@ export const sortCards = isTrump => (cardA, cardB) => {
  * @param lastHighestCard
  * @returns {function(*): boolean}
  */
-export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
+export const filterHigherCards = (isTrump: boolean, lastHighestCard: ICard) => (card: ICard) => {
     const cardInDeck = deckOfThirtyTwoCards.find(c => c.id === card.id);
     const lastHighestCardInDeck = deckOfThirtyTwoCards.find(c => c.id === lastHighestCard.id);
     const trump = isTrump ? 'trump' : 'notrump';
@@ -37,24 +38,49 @@ export const filterHigherCards = (isTrump, lastHighestCard) => (card) => {
 
 /**
  * Get the highestCard of cards
- * @param Card[] cards
- * @param string trump
- * @param string color
  * @returns {*}
+ * @param cards
+ * @param trump
+ * @param color
  */
-export const getHighestCard = (cards, trump, color) =>
-    cards.filter(filterCardsByColor(trump)).sort(sortCards(true))[0] ||
-    cards.filter(filterCardsByColor(color)).sort(sortCards(false))[0] ||
-    new Error('No trump / color cards found');
+export const getHighestCard = (cards: ICard[], trump: string, color: string): ICard => {
+    const filterCards = cards.filter(filterCardsByColor(trump)).sort(sortCards(true))[0] ||
+        cards.filter(filterCardsByColor(color)).sort(sortCards(false))[0];
+    if (filterCards){
+        return filterCards;
+    }
+    throw new Error('No trump / color cards found');
+}
+
+export class Card {
+    id: string;
+    color: string;
+    height: string;
+    constructor(id: string) {
+        this.id = id;
+        this.color = this.getCardColor(id);
+        this.height = this.getCardHeight(id);
+    }
+    getCardColor(cardId: string): string{
+        return cardId.slice(-1);
+    }
+    getCardHeight(cardId: string): string{
+        return cardId.slice(0, cardId.length - 1);
+    }
+}
 
 export class Hand {
-    constructor(handCards, trump, firstCardOfTrick) {
+    colorCards: ICard[];
+    trumpCards: ICard[];
+    otherCards: ICard[];
+    handCards: ICard[];
+    constructor(handCards: ICard[], trump: string, firstCardOfTrick?: ICard) {
         this.colorCards = firstCardOfTrick !== undefined ? handCards.filter(filterCardsByColor(firstCardOfTrick.color)) : [];
         this.trumpCards = handCards.filter(filterCardsByColor(trump));
-        this.otherCards = handCards.filter(card =>
+        this.otherCards = handCards.filter((card: ICard) =>
             !this.colorCards
                 .concat(this.trumpCards)
-                .map(c => c.id)
+                .map((c: ICard) => c.id)
                 .includes(card.id));
         this.handCards = handCards;
     }
@@ -76,7 +102,7 @@ export class Hand {
     }
 }
 
-export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
+export const possibleCards = (trump: string, currentPlayer: IPlayer, cardsPlayed: ICard[]): ICard[] => {
     if (cardsPlayed.length > 0) {
         const firstCardOfTheTrick = cardsPlayed[0];
         const isTrump = firstCardOfTheTrick.color === trump;
@@ -125,12 +151,3 @@ export const possibleCards = (trump, currentPlayer, cardsPlayed) => {
 
     return hand.getHandsCards();
 };
-
-export function Card(id) {
-    this.id = id;
-    this.color = this.getCardColor(id);
-    this.height = this.getCardHeight(id);
-}
-
-Card.prototype.getCardColor = cardId => cardId.slice(-1);
-Card.prototype.getCardHeight = cardId => cardId.slice(0, cardId.length - 1);

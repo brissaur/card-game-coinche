@@ -4,7 +4,7 @@ export function announceIA() {
     return 'pass';
 }
 
-export function shouldStopAnnounces(announces) {
+export function shouldStopAnnounces(announces: IAnnounce[]) {
     return announces.length === 4;
 }
 

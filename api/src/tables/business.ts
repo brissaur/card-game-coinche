@@ -1,9 +1,11 @@
+import {IPlayer} from "../common/types";
+
 /**
  *
  * @param players
  * @param previousPlayerId
  */
-export const computeNextPlayerForTrick = (players, previousPlayerId) => {
+export const computeNextPlayerForTrick = (players: IPlayer[], previousPlayerId: string): IPlayer => {
     const previousPlayer = players.find(player => previousPlayerId === player.id);
 
     // if previousPlayer was the last one, take the first one

@@ -1,5 +1,7 @@
 import { getTableById } from '../tables/index';
 import { dealCards, searchStartPlayer } from './business';
+import { CollectionReference, DocumentReference, QuerySnapshot, QueryDocumentSnapshot } from "@google-cloud/firestore";
+import {IPlayer} from "../common/types";
 
 const COLLECTION_NAME = 'players';
 
@@ -7,13 +9,13 @@ const COLLECTION_NAME = 'players';
  *
  * @param tableId
  */
-export const getPlayersCollection = (tableId) => {
+export const getPlayersCollection = (tableId: string):CollectionReference  => {
     const table = getTableById(tableId);
 
     return table.collection(COLLECTION_NAME);
 };
 
-const savePlayer = (tableId, player) => {
+const savePlayer = (tableId: string, player: IPlayer): Promise<DocumentReference> => {
     return getPlayersCollection(tableId).add(player);
 };
 
@@ -22,14 +24,14 @@ const savePlayer = (tableId, player) => {
  * @param tableId
  * @returns {Promise<Array>}
  */
-export const getPlayersOnTable = async (tableId) => {
-    const players = [];
+export const getPlayersOnTable = async (tableId: string): Promise<IPlayer[]> => {
+    const players: IPlayer[] = [];
     const playersRef = getPlayersCollection(tableId);
     await playersRef
         .get()
-        .then((snapshot) => {
-            snapshot.forEach((player) => {
-                players.push(player.data());
+        .then((snapshot: QuerySnapshot) => {
+            snapshot.forEach((player: QueryDocumentSnapshot) => {
+                players.push(player.data() as IPlayer);
             });
         })
         .catch((err) => {
