@@ -1,34 +1,38 @@
-const db = require('./db/index');
 import { getPlayersOnTable, getPlayersCollection } from '../players/index';
 import { getCardsPlayedCollection, getCardsPlayedOnTable } from '../cardsPlayed';
 import { performAnnounce } from '../announces';
 import { computeNextPlayerForTrick } from './business';
 import { possibleCards, Card } from '../common/';
+import { firestore } from '../db/index';
+import { DocumentReference, WriteResult, FieldPath, FieldValue } from "@google-cloud/firestore";
+import { ITable } from './types';
 
 export const COLLECTION_NAME = 'tables';
 
-export const getTableById = tableId =>
-    return db
+export const getTableById = (tableId: string): DocumentReference => {
+    return firestore
         .collection(COLLECTION_NAME)
         .doc(tableId);
+}
 
-const updateTable = async (tableId, table) => {
+const updateTable = async (tableId: string, table: ITable): Promise<WriteResult> => {
     return getTableById(tableId).update(table);
 };
 
-export async function nextPlayerPlusPlus(tableId, previousPlayerId) {
+export async function nextPlayerPlusPlus(tableId: string, previousPlayerId: string) {
     const players = await getPlayersOnTable(tableId);
     const nextPlayer = computeNextPlayerForTrick(players, previousPlayerId);
     const tableRef = getTableById(tableId);
+    const toto = {
+        currentPlayerId: nextPlayer.id
+    };
     tableRef.update(
-        {
-            currentPlayerId: nextPlayer.id,
-        },
+        toto,
         { merge: true },
     );
 }
 
-const updateTable = async (message) => {
+const onUpdateTable = async (message) => {
     const tableId = message.meta.tableId;
     const eventData = message.payload;
 
