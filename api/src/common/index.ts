@@ -1,5 +1,6 @@
-import {ICard, IPlayer} from './types';
+import { ICard } from './types';
 import { deckOfThirtyTwoCards } from './constant';
+import {IPlayer} from "../players/types";
 
 const filterCardsByColor = (color: string) => (card: ICard) => card.color === color;
 
@@ -50,7 +51,7 @@ export const getHighestCard = (cards: ICard[], trump: string, color: string): IC
         return filterCards;
     }
     throw new Error('No trump / color cards found');
-}
+};
 
 export class Card {
     id: string;
@@ -107,7 +108,7 @@ export const possibleCards = (trump: string, currentPlayer: IPlayer, cardsPlayed
         const firstCardOfTheTrick = cardsPlayed[0];
         const isTrump = firstCardOfTheTrick.color === trump;
         const highestCardOfTrick = getHighestCard(cardsPlayed, trump, firstCardOfTheTrick.color);
-        const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick);
+        const hand = new Hand(currentPlayer.cards.map((cardId: string) => new Card(cardId)), trump, firstCardOfTheTrick);
         if (isTrump) {
             if (hand.getTrumpCards().length > 0) {
                 const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, highestCardOfTrick));
@@ -147,7 +148,7 @@ export const possibleCards = (trump: string, currentPlayer: IPlayer, cardsPlayed
         // I can't play a trump, so I discard
         return hand.getOtherCards();
     }
-    const hand = new Hand(currentPlayer.cards, trump);
+    const hand = new Hand(currentPlayer.cards.map((c: string) => new Card(c)), trump);
 
     return hand.getHandsCards();
 };
