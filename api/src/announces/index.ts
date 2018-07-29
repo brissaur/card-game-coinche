@@ -1,28 +1,31 @@
 import { emptyCollection } from '../common/collection';
 import { getTableById, nextPlayerPlusPlus } from '../tables';
 import { announceIA, shouldStopAnnounces, getBestAnnounce } from './business';
+import { QuerySnapshot } from "@google-cloud/firestore";
+import {IAnnounce} from "./types";
+import {IMessage} from "../websocket/types";
 
 const COLLECTION_NAME = 'announces';
 
-export const getAnnouncesCollection = (tableId) => {
+export const getAnnouncesCollection = (tableId: string) => {
     const table = getTableById(tableId);
 
     return table.collection(COLLECTION_NAME);
 };
 
-function createAnnouncesFromSnapshot(snapshot) {
-    const announces = [];
+function createAnnouncesFromSnapshot(snapshot: QuerySnapshot) {
+    const announces: IAnnounce[] = [];
 
-    snapshot.forEach(doc => announces.push(doc.data()));
+    snapshot.forEach(doc => announces.push(doc.data() as IAnnounce));
 
     return announces;
 }
 
-const saveAnnounce = (tableId, announce) => {
+const saveAnnounce = (tableId: string, announce: IAnnounce) => {
     return getAnnouncesCollection(tableId).add(announce);
 };
 
-export async function getAnnounces(tableId) {
+export async function getAnnounces(tableId: string) {
     const announces = await getAnnouncesCollection(tableId)
         .get()
         .then(createAnnouncesFromSnapshot);
@@ -30,20 +33,20 @@ export async function getAnnounces(tableId) {
     return announces;
 }
 
-export async function performAnnounce(tableId, playerId) {
+export async function performAnnounce(tableId: string, playerId: string) {
     await getAnnouncesCollection(tableId).add({
         playerId,
         announce: announceIA(),
     });
 }
 
-const onAnnounce = async (message) => {
+const onAnnounce = async (message: IMessage) => {
     const tableId = message.meta.tableId;
     const eventData = message.payload;
     const playerId = eventData.playerId;
 
     // save announce in DB
-    await saveAnnounce(eventData);
+    await saveAnnounce(tableId, eventData);
 
     // get back announces from DB
     const announces = await getAnnounces(tableId);
@@ -54,12 +57,11 @@ const onAnnounce = async (message) => {
         await emptyCollection(getAnnouncesCollection(tableId));
 
         await fbTable.update(
-            {
+        {
                 currentPlayerId: firstPlayerId,
                 currentAnnounce: getBestAnnounce(announces),
                 mode: 'play',
-            },
-            { merge: true },
+            }
         );
     } else {
         await nextPlayerPlusPlus(tableId, playerId);

@@ -1,7 +1,9 @@
 import { emptyCollection } from '../common/collection';
-import { getTableById, nextPlayerPlusPlus } from '../tables/index';
-import { getTricksCollection } from '../tricks/index';
+import { getTableById, nextPlayerPlusPlus } from '../tables';
+import { getTricksCollection } from '../tricks';
 import { ICardPlayed } from './types';
+import { QuerySnapshot } from '@google-cloud/firestore';
+import {IMessage} from "../websocket/types";
 
 const COLLECTION_NAME = 'cardsPlayed';
 
@@ -26,7 +28,7 @@ export const getCardsPlayedOnTable = async (tableId: string) => {
         .get()
         .then((snapshot: QuerySnapshot) => {
             snapshot.forEach((cardPlayed) => {
-                cardsPlayed.push(cardPlayed.data());
+                cardsPlayed.push(cardPlayed.data() as ICardPlayed);
             });
         })
         .catch((err) => {
@@ -37,11 +39,11 @@ export const getCardsPlayedOnTable = async (tableId: string) => {
     return cardsPlayed;
 };
 
-const addCardPlayed = async (message) => {
+const addCardPlayed = async (message: IMessage) => {
     const tableId = message.meta.tableId;
     const eventData = message.payload;
 
-    await saveCardPlayed(eventData);
+    await saveCardPlayed(tableId, eventData);
 
     const cardsPlayed = await getCardsPlayedOnTable(tableId);
 

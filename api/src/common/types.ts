@@ -3,11 +3,3 @@ export interface ICard {
     color: string;
     height: string;
 }
-
-export interface IPlayer{
-    id: string;
-    firstname: string;
-    isFakePlayer: boolean;
-    pos: number;
-    cards: ICard[];
-}

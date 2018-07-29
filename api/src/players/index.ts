@@ -2,6 +2,7 @@ import { getTableById } from '../tables/index';
 import { dealCards, searchStartPlayer } from './business';
 import { CollectionReference, DocumentReference, QuerySnapshot, QueryDocumentSnapshot } from "@google-cloud/firestore";
 import {IPlayer} from "../common/types";
+import {IMessage} from "../websocket/types";
 
 const COLLECTION_NAME = 'players';
 
@@ -42,7 +43,7 @@ export const getPlayersOnTable = async (tableId: string): Promise<IPlayer[]> => 
     return players;
 };
 
-const addPlayer = async (message) => {
+const addPlayer = async (message: IMessage) => {
     const tableId = message.meta.tableId;
     const eventData = message.payload;
 

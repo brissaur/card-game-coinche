@@ -1,5 +1,5 @@
 import { emptyCollection } from '../common/collection';
-import { getTableById, nextPlayerPlusPlus } from '../tables/index';
+import { getTableById, nextPlayerPlusPlus } from '../tables';
 import { getRoundsCollection } from '../rounds';
 import { getPlayersOnTable, getPlayersCollection } from '../players';
 import { dealCards } from '../players/business';
@@ -10,13 +10,13 @@ const COLLECTION_NAME = 'tricks';
  *
  * @param tableId
  */
-export const getTricksCollection = (tableId) => {
+export const getTricksCollection = (tableId: string) => {
     const table = getTableById(tableId);
 
     return table.collection(COLLECTION_NAME);
 };
 
-const saveTrick = async (tableId, trick) => {
+const saveTrick = async (tableId: string, trick) => {
     return getTricksCollection(tableId).add(trick);
 };
 
