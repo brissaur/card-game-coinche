@@ -81,8 +81,8 @@ export class Hand {
         this.otherCards = handCards.filter((card: ICard) =>
             !this.colorCards
                 .concat(this.trumpCards)
-                .map((c: ICard) => c.id)
-                .includes(card.id));
+                .map((c: ICard) => c.id));
+                //.includes(card.id));
         this.handCards = handCards;
     }
 

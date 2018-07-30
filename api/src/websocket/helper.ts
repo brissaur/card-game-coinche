@@ -1,4 +1,4 @@
-module.exports.formatMsgForWs = function(type, payload, meta) {
+export const formatMsgForWs = function(type: string, payload: any, meta: any) {
 	if (typeof payload !== 'object') {
 		throw new Error('Cannot format object of non-object type');
 	}
@@ -6,14 +6,14 @@ module.exports.formatMsgForWs = function(type, payload, meta) {
 	return JSON.stringify({ type, meta, payload });
 };
 
-module.exports.decodeMsgFromWs = function(message) {
+export const decodeMsgFromWs = function(message: string) {
 	let decoded = null;
 	try {
 		decoded = JSON.parse(message);
 	} catch (e) {
 		global.console.error(
 			'This doesn\'t look like a valid JSON: ',
-			message.data,
+			message,
 			e
 		);
 

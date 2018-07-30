@@ -7,7 +7,7 @@ import { firestore } from '../db';
 import { DocumentReference, WriteResult } from "@google-cloud/firestore";
 import { ITable } from './types';
 import {IMessage} from "../websocket/types";
-import Precondition = FirebaseFirestore.Precondition;
+import { connection } from "../websocket";
 
 export const COLLECTION_NAME = 'tables';
 
@@ -50,7 +50,7 @@ const onUpdateTable = async (message: IMessage) => {
             const trump = eventData.currentAnnounce.announce.slice(-1);
             const cards = possibleCards(
                 trump,
-                { ...currentPlayer, cards: currentPlayer.cards.map((cardId: string) => new Card(cardId)) },
+                { ...currentPlayer, cards: currentPlayer.cards },
                 cardsPlayed.map(({ cardId }) => new Card(cardId)),
             );
 
@@ -70,3 +70,9 @@ const onUpdateTable = async (message: IMessage) => {
         }
     }
 };
+
+// firestore.collection(`${COLLECTION_NAME}/{tableId}`).
+
+// wss.on('', (message: IMessage) => {
+//     return onUpdateTable(message);
+// });

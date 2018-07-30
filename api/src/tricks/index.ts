@@ -3,6 +3,9 @@ import { getTableById, nextPlayerPlusPlus } from '../tables';
 import { getRoundsCollection } from '../rounds';
 import { getPlayersOnTable, getPlayersCollection } from '../players';
 import { dealCards } from '../players/business';
+import { DocumentSnapshot, QuerySnapshot } from '@google-cloud/firestore';
+import {ITrick} from "./types";
+import {IMessage} from "../websocket/types";
 
 const COLLECTION_NAME = 'tricks';
 
@@ -16,7 +19,7 @@ export const getTricksCollection = (tableId: string) => {
     return table.collection(COLLECTION_NAME);
 };
 
-const saveTrick = async (tableId: string, trick) => {
+const saveTrick = async (tableId: string, trick: ITrick) => {
     return getTricksCollection(tableId).add(trick);
 };
 
@@ -25,14 +28,14 @@ const saveTrick = async (tableId: string, trick) => {
  * @param tableId
  * @returns {Promise<Array>}
  */
-const getTricksOnTable = async (tableId) => {
-    const tricks = [];
+const getTricksOnTable = async (tableId: string) => {
+    const tricks: ITrick[] = [];
     const tricksRef = getTricksCollection(tableId);
     await tricksRef
         .get()
-        .then((snapshot) => {
+        .then((snapshot: QuerySnapshot) => {
             snapshot.forEach((trick) => {
-                tricks.push(trick.data());
+                tricks.push(trick.data() as ITrick);
             });
         })
         .catch((err) => {
@@ -43,7 +46,7 @@ const getTricksOnTable = async (tableId) => {
     return tricks;
 };
 
-const addTrick = async (message) => {
+const addTrick = async (message: IMessage) => {
     const tableId = message.meta.tableId;
     const eventData = message.payload;
 
@@ -71,15 +74,15 @@ const addTrick = async (message) => {
         });
         // update next player, dealer, mode
         const fbTableRef = getTableById(tableId);
-        const nextDealer = await fbTableRef.then(snapshot => snapshot.data().firstPlayerId);
+        const nextDealer = await fbTableRef.get()
+            .then((snapshot: DocumentSnapshot) => snapshot.data().firstPlayerId);
         const nextPlayer = await nextPlayerPlusPlus(tableId, nextDealer);
         await fbTableRef.update(
             {
                 mode: 'announce',
                 firstPlayerId: nextPlayer,
-                currentPlayerId: nextPlayer,
+                currentPlayerId: nextPlayer
             },
-            { merge: true },
         );
     }
 };

@@ -1,8 +1,9 @@
 import { getTableById } from '../tables/index';
 import { dealCards, searchStartPlayer } from './business';
 import { CollectionReference, DocumentReference, QuerySnapshot, QueryDocumentSnapshot } from "@google-cloud/firestore";
-import {IPlayer} from "../common/types";
+import {IPlayer} from "../players/types";
 import {IMessage} from "../websocket/types";
+import {connection} from "../websocket";
 
 const COLLECTION_NAME = 'players';
 
@@ -43,7 +44,7 @@ export const getPlayersOnTable = async (tableId: string): Promise<IPlayer[]> => 
     return players;
 };
 
-const addPlayer = async (message: IMessage) => {
+const onAddPlayer = async (message: IMessage) => {
     const tableId = message.meta.tableId;
     const eventData = message.payload;
 
@@ -64,9 +65,12 @@ const addPlayer = async (message: IMessage) => {
             {
                 firstPlayerId,
                 currentPlayerId: firstPlayerId,
-                mode: 'announce',
-            },
-            { merge: true },
+                mode: 'announce'
+            }
         );
     }
 };
+
+// wss.on('', (message: IMessage) => {
+//     return onAddPlayer(message);
+// });
