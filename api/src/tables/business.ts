@@ -1,4 +1,4 @@
-import {IPlayer} from "../common/types";
+import {IPlayer} from "../players/types";
 
 /**
  *

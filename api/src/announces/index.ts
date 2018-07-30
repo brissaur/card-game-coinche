@@ -4,6 +4,7 @@ import { announceIA, shouldStopAnnounces, getBestAnnounce } from './business';
 import { QuerySnapshot } from "@google-cloud/firestore";
 import {IAnnounce} from "./types";
 import {IMessage} from "../websocket/types";
+import { ANNOUNCE_SERVER_WS, connection } from '../websocket';
 
 const COLLECTION_NAME = 'announces';
 
@@ -67,3 +68,8 @@ const onAnnounce = async (message: IMessage) => {
         await nextPlayerPlusPlus(tableId, playerId);
     }
 };
+
+connection.on(ANNOUNCE_SERVER_WS, (message: IMessage) => {
+    console.log('onAnnounce');
+    return onAnnounce(message);
+});

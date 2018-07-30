@@ -4,6 +4,7 @@ import { getTricksCollection } from '../tricks';
 import { ICardPlayed } from './types';
 import { QuerySnapshot } from '@google-cloud/firestore';
 import {IMessage} from "../websocket/types";
+import { connection } from "../websocket";
 
 const COLLECTION_NAME = 'cardsPlayed';
 
@@ -39,7 +40,7 @@ export const getCardsPlayedOnTable = async (tableId: string) => {
     return cardsPlayed;
 };
 
-const addCardPlayed = async (message: IMessage) => {
+const onAddCardPlayed = async (message: IMessage) => {
     const tableId = message.meta.tableId;
     const eventData = message.payload;
 
@@ -57,3 +58,7 @@ const addCardPlayed = async (message: IMessage) => {
 
     await nextPlayerPlusPlus(tableId, eventData.playerId);
 };
+
+// wss.on('', (message: IMessage) => {
+//     return onAddCardPlayed(message);
+//});
