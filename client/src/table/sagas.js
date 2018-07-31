@@ -1,124 +1,60 @@
-import { call, select, put, take, fork } from 'redux-saga/effects';
-import { eventChannel } from 'redux-saga';
-import db from '../api/init';
+import { takeEvery, select, put } from 'redux-saga/effects';
+import { updateTrick, updatePlayers, updateAnnounces, updateHand, updateGeneral } from './ducks';
+import { getTrick, getAnnounces, getPlayers } from './selectors';
 import {
-    TABLE_COLLECTION,
-    CARD_PLAYED_COLLECTION,
-    PLAYERS_COLLECTION,
-    ANNOUNCES_COLLECTION,
-} from '../api/constants';
+    WS_CARD_PLAYED,
+    WS_NEW_ANNOUNCE,
+    WS_NEW_PLAYER,
+    WS_GAME_START,
+    WS_DEAL_CARDS,
+    WS_ACTIVE_PLAYER,
+    WS_ROUND_MODE,
+} from '../technical/websocket/actions';
 
-import { createFakePlayers } from '../player/sagas';
-import { getPlayerId } from '../player/selectors';
-import {
-    setTableId,
-    updateTrick,
-    updateTableDocument,
-    updatePlayers,
-    updateAnnounces,
-} from './ducks';
-import { getTableId } from '../table/selectors';
+function* onCardPlayed({ payload }) {
+    const trick = yield select(getTrick);
+    const res = trick.concat([payload.card]);
 
-const INITIAL_DOCUMENT = {};
-
-/**
- * Return a "table" document
- * @param tableId
- * @returns {*}
- */
-export function* getTable(tableId) {
-    return yield db.collection(TABLE_COLLECTION).doc(tableId);
+    yield put(updateTrick(res));
 }
 
-// this function creates an event channel from a given document
-// Setup subscription to incoming `snapshot` events
-/**
- * @doc https://github.com/redux-saga/redux-saga/blob/master/docs/advanced/Channels.md#using-the-eventchannel-factory-to-connect-to-external-events
- * @param document
- * @return DocumentSnapshot
- */
-function createSnapshotChannel(documentOrCollection) {
-    return eventChannel((emit) => {
-        documentOrCollection.onSnapshot(emit);
+function* onNewAnnounce({ payload }) {
+    const announces = yield select(getAnnounces);
+    const res = announces.concat([payload.announce]);
 
-        return () => {};
-    });
+    yield put(updateAnnounces(res));
 }
 
-export function* watchUpdateOnDocumentTable() {
-    const tableId = yield select(getTableId);
-    const document = yield call(getTable, tableId);
-    const snapshotChannel = yield call(createSnapshotChannel, document);
+function* onNewPlayer({ payload }) {
+    const players = yield select(getPlayers);
+    const res = players.concat([payload.player]);
 
-    while (true) {
-        const snapshot = yield take(snapshotChannel);
-        yield put(updateTableDocument(snapshot.data()));
-    }
+    yield put(updatePlayers(res));
 }
 
-function watchUpdateOnTableSubcollection(COLLECTION_NAME, action, snapshotTransform) {
-    return function* watchUpdate() {
-        const tableId = yield select(getTableId);
-        const coll = yield db
-            .collection(TABLE_COLLECTION)
-            .doc(tableId)
-            .collection(COLLECTION_NAME);
-
-        const snapshotChannel = yield call(createSnapshotChannel, coll);
-
-        while (true) {
-            const snapshot = yield take(snapshotChannel);
-            yield put(action(snapshotTransform(snapshot)));
-        }
-    };
+function* onGameStart({ payload }) {
+    const { dealerId, mode } = payload;
+    yield put(updateGeneral({ dealerId, mode }));
 }
 
-export const watchUpdateOnCollectionPlayers = watchUpdateOnTableSubcollection(
-    PLAYERS_COLLECTION,
-    updatePlayers,
-    snapshot => snapshot.docs.map(doc => doc.data()),
-);
+function* onDealCards({ payload }) {
+    yield put(updateHand(payload.cards));
+}
 
-export const watchUpdateOnCollectionTrick = watchUpdateOnTableSubcollection(
-    CARD_PLAYED_COLLECTION,
-    updateTrick,
-    snapshot => snapshot.docs.map(doc => doc.data()),
-);
+function* onSetActivePlayer({ payload }) {
+    yield put(updateGeneral({ playerId: payload.playerId }));
+}
 
-export const watchUpdateOnCollectionAnnounce = watchUpdateOnTableSubcollection(
-    ANNOUNCES_COLLECTION,
-    updateAnnounces,
-    snapshot => snapshot.docs.map(doc => doc.data()),
-);
+function* onSetRoundMode({ payload }) {
+    yield put(updateGeneral({ mode: payload.mode }));
+}
 
-export function* createTableAndAddPlayerToTable() {
-    const meId = yield select(getPlayerId);
-    // create fake player and add a position (start at 1) for each of them
-    const players = (yield call(createFakePlayers))
-        .map((player, idx) => ({
-            ...player,
-            pos: idx + 1,
-        }))
-        // Add current player Id to other ID
-        .concat({
-            id: meId,
-            isFakePlayer: false,
-            pos: 0,
-        });
-
-    const document = yield db.collection(TABLE_COLLECTION).add(INITIAL_DOCUMENT);
-    yield put(setTableId(document.id));
-
-    const table = yield call(getTable, document.id);
-    const playerCollection = table.collection(PLAYERS_COLLECTION);
-    // eslint-disable-next-line no-restricted-syntax
-    for (const player of players) {
-        yield playerCollection.doc(player.id).set(player);
-    }
-
-    // launch listeners
-    yield fork(watchUpdateOnDocumentTable);
-    yield fork(watchUpdateOnCollectionPlayers);
-    yield fork(watchUpdateOnCollectionTrick);
-    yield fork(watchUpdateOnCollectionAnnounce);
+export function* watchers() {
+    yield takeEvery(WS_CARD_PLAYED, onCardPlayed);
+    yield takeEvery(WS_NEW_ANNOUNCE, onNewAnnounce);
+    yield takeEvery(WS_NEW_PLAYER, onNewPlayer);
+    yield takeEvery(WS_GAME_START, onGameStart);
+    yield takeEvery(WS_DEAL_CARDS, onDealCards);
+    yield takeEvery(WS_ACTIVE_PLAYER, onSetActivePlayer);
+    yield takeEvery(WS_ROUND_MODE, onSetRoundMode);
 }

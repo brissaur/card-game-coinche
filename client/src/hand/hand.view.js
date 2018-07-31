@@ -24,5 +24,5 @@ Hand.propTypes = {
     cardsId: PropTypes.arrayOf(PropTypes.string),
     playableCards: PropTypes.arrayOf(PropTypes.string),
     isActive: PropTypes.bool.isRequired,
-    mode: PropTypes.string.isRequired,
+    mode: PropTypes.string,
 };

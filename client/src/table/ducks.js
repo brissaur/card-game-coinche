@@ -3,6 +3,8 @@ const UPDATE_PLAYERS = 'table:UPDATE_PLAYERS';
 const UPDATE_TRICK = 'table:UPDATE_TRICK';
 const UPDATE_ANNOUNCES = 'table:UPDATE_ANNOUNCES';
 const UPDATE_TABLE_DOCUMENT = 'table:UPDATE_TABLE';
+const UPDATE_HAND = 'table:UPDATE_HAND';
+const UPDATE_GENERAL = 'table:UPDATE_GENERAL';
 
 const initialState = {
     id: null,
@@ -10,12 +12,20 @@ const initialState = {
     general: {},
     players: [],
     announces: [],
+    hand: [],
 };
 
 export function updateTableDocument(table) {
     return {
         type: UPDATE_TABLE_DOCUMENT,
         document: table,
+    };
+}
+
+export function updateGeneral(general) {
+    return {
+        type: UPDATE_GENERAL,
+        general,
     };
 }
 
@@ -47,6 +57,13 @@ export function updatePlayers(players) {
     };
 }
 
+export function updateHand(hand) {
+    return {
+        type: UPDATE_HAND,
+        hand,
+    };
+}
+
 export function reducer(state = initialState, action) {
     switch (action.type) {
     case SET_TABLE_ID:
@@ -73,6 +90,19 @@ export function reducer(state = initialState, action) {
         return {
             ...state,
             ...action.document,
+        };
+    case UPDATE_HAND:
+        return {
+            ...state,
+            ...action.hand,
+        };
+    case UPDATE_GENERAL:
+        return {
+            ...state,
+            general: {
+                ...state.general,
+                ...action.general,
+            },
         };
     default:
         return state;
