@@ -1,11 +1,25 @@
-import { getTableById } from '../tables/index';
+import {getTableById, Table} from '../tables/index';
 import { dealCards, searchStartPlayer } from './business';
 import { CollectionReference, DocumentReference, QuerySnapshot, QueryDocumentSnapshot } from "@google-cloud/firestore";
 import {IPlayer} from "../players/types";
 import {IMessage} from "../websocket/types";
 import {connection} from "../websocket";
+import { repository as playerRepository } from '../repository/PlayerRepository';
+import { repository as tableRepository } from '../repository/TableRepository';
 
 const COLLECTION_NAME = 'players';
+
+export class Player{
+    id: string;
+    firstname: string;
+    isFakePlayer: boolean;
+    pos: number;
+    cards: string[];
+    constructor(firstname: string, isFakePlayer: boolean){
+        this.firstname = firstname;
+        this.isFakePlayer = isFakePlayer;
+    }
+}
 
 /**
  *
@@ -17,8 +31,16 @@ export const getPlayersCollection = (tableId: string):CollectionReference  => {
     return table.collection(COLLECTION_NAME);
 };
 
-const savePlayer = (tableId: string, player: IPlayer): Promise<DocumentReference> => {
-    return getPlayersCollection(tableId).add(player);
+const savePlayer = (player: Player): Promise<DocumentReference> => {
+    return
+};
+
+const createFakePlayer = (pos: number) => {
+    let player = new Player('Robot '+pos, true);
+};
+
+const createPlayer = (): Player => {
+    return new Player('Michelle', false);
 };
 
 /**
@@ -44,13 +66,13 @@ export const getPlayersOnTable = async (tableId: string): Promise<IPlayer[]> => 
     return players;
 };
 
-const onAddPlayer = async (message: IMessage) => {
-    const tableId = message.meta.tableId;
-    const eventData = message.payload;
+const onInit = async () => {
+    let player = createPlayer();
+    let table = new Table();
 
-    await savePlayer(tableId, eventData);
+    player = await playerRepository.savePlayer(player);
 
-    const players = await getPlayersOnTable(tableId);
+    table = await tableRepository.saveTable(new Table());
 
     if (players.length === 4) {
         const playersRef = getPlayersCollection(tableId);
@@ -69,6 +91,11 @@ const onAddPlayer = async (message: IMessage) => {
             }
         );
     }
+};
+
+
+export const actions = {
+    "init": onInit
 };
 
 // wss.on('', (message: IMessage) => {

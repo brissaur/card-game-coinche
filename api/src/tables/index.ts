@@ -11,6 +11,31 @@ import { connection } from "../websocket";
 
 export const COLLECTION_NAME = 'tables';
 
+export class Table{
+    id: string;
+    currentPlayerId: string;
+    firstPlayerId: string;
+    mode: string
+    setCurrentPlayerId(currentPlayerId: string){
+        this.currentPlayerId = currentPlayerId;
+    }
+    getCurrentPlayerId(): string{
+        return this.currentPlayerId;
+    }
+    setFirstPlayerId(firstPlayerId: string){
+        this.firstPlayerId = firstPlayerId;
+    }
+    getFirstPlayerId(): string{
+        return this.firstPlayerId;
+    }
+    setMode(mode: string){
+        this.mode = mode;
+    }
+    getMode(): string{
+        return this.mode
+    }
+}
+
 export const getTableById = (tableId: string): DocumentReference => {
     return firestore
         .collection(COLLECTION_NAME)
