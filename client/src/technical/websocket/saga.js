@@ -1,8 +1,8 @@
-import { take, put, call } from 'redux-saga/effects';
+import { take, put, call, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
 
 import { wsAction } from './actions';
-import { decodeMsgFromWs } from './services';
+import { decodeMsgFromWs, formatMsgForWs } from './services';
 import { getConnection } from './index';
 
 function onerror(error) {
@@ -22,7 +22,7 @@ export function createWsChannel(connection) {
         connection.awaitConnectionOpened = new Promise((resolve) => {
             connection.onopen = function onopen() {
                 global.console.log('WS connection available!');
-                connection.send(JSON.stringify({ type: 'hello', payload: { message: 'really hello ^^' } }));
+                connection.send(formatMsgForWs('hello', { message: 'really hello ^^' }));
                 resolve();
             };
         });
@@ -35,10 +35,15 @@ export function createWsChannel(connection) {
     });
 }
 
-export function* initializeWebSocket() {
-    const channel = yield call(createWsChannel, getConnection());
+function* listenForChannelEvents(channel) {
     while (true) {
         const message = yield take(channel);
         yield put(wsAction(message));
     }
+}
+
+export function* initializeWebSocket() {
+    const channel = yield call(createWsChannel, getConnection());
+
+    yield fork(listenForChannelEvents, channel);
 }

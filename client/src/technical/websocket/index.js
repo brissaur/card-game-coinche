@@ -13,5 +13,5 @@ export async function wsSend(type, payload, meta) {
     connection.send(formatMsgForWs(type, payload, meta));
 }
 
-export const CARD_PLAYED_SERVER_WS = 'card/played';
-export const ANNOUNCE_SERVER_WS = 'card/played';
+export const CARD_PLAYED_SERVER_WS = 'card/play';
+export const ANNOUNCE_SERVER_WS = 'announce/make';
