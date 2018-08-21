@@ -1,15 +1,15 @@
-import { takeEvery, select, put } from 'redux-saga/effects';
-import { updateTrick, updatePlayers, updateAnnounces, updateHand, updateGeneral } from './ducks';
-import { getTrick, getAnnounces, getPlayers } from './selectors';
+import { put, select, takeEvery } from 'redux-saga/effects';
 import {
+    WS_ACTIVE_PLAYER,
     WS_CARD_PLAYED,
+    WS_DEAL_CARDS,
+    WS_GAME_START,
     WS_NEW_ANNOUNCE,
     WS_NEW_PLAYER,
-    WS_GAME_START,
-    WS_DEAL_CARDS,
-    WS_ACTIVE_PLAYER,
     WS_ROUND_MODE,
 } from '../technical/websocket/actions';
+import { updateAnnounces, updateGeneral, updateHand, updatePlayers, updateTrick } from './ducks';
+import { getAnnounces, getPlayers, getTrick } from './selectors';
 
 function* onCardPlayed({ payload }) {
     const trick = yield select(getTrick);
