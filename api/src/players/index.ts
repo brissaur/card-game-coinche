@@ -1,25 +1,22 @@
-import {getTableById, Table} from '../tables/index';
+import {getTableById} from '../tables/index';
 import { dealCards, searchStartPlayer } from './business';
 import { CollectionReference, DocumentReference, QuerySnapshot, QueryDocumentSnapshot } from "@google-cloud/firestore";
-import {IPlayer} from "../players/types";
 import {IMessage} from "../websocket/types";
 import {connection} from "../websocket";
+import {formatMsgForWs} from "../websocket/helper";
 import { repository as playerRepository } from '../repository/PlayerRepository';
 import { repository as tableRepository } from '../repository/TableRepository';
-
+import { Player, createPlayer, createFakePlayer } from './model';
+import { createTable, modeAnnounce } from '../tables/model';
 const COLLECTION_NAME = 'players';
-
-export class Player{
-    id: string;
-    firstname: string;
-    isFakePlayer: boolean;
-    pos: number;
-    cards: string[];
-    constructor(firstname: string, isFakePlayer: boolean){
-        this.firstname = firstname;
-        this.isFakePlayer = isFakePlayer;
-    }
-}
+import {
+    PLAYER_JOIN_SERVER_WS,
+    GAME_START_SERVER_WS,
+    PLAYER_INIT_SERVER_WS,
+    CARDS_DEAL_SERVER_WS,
+    PLAYER_ACTIVE_SERVER_WS
+} from '../websocket/index'
+import WebSocket from 'ws';
 
 /**
  *
@@ -31,31 +28,19 @@ export const getPlayersCollection = (tableId: string):CollectionReference  => {
     return table.collection(COLLECTION_NAME);
 };
 
-const savePlayer = (player: Player): Promise<DocumentReference> => {
-    return
-};
-
-const createFakePlayer = (pos: number) => {
-    let player = new Player('Robot '+pos, true);
-};
-
-const createPlayer = (): Player => {
-    return new Player('Michelle', false);
-};
-
 /**
  *
  * @param tableId
  * @returns {Promise<Array>}
  */
-export const getPlayersOnTable = async (tableId: string): Promise<IPlayer[]> => {
-    const players: IPlayer[] = [];
+export const getPlayersOnTable = async (tableId: string): Promise<Player[]> => {
+    const players: Player[] = [];
     const playersRef = getPlayersCollection(tableId);
     await playersRef
         .get()
         .then((snapshot: QuerySnapshot) => {
             snapshot.forEach((player: QueryDocumentSnapshot) => {
-                players.push(player.data() as IPlayer);
+                players.push(player.data() as Player);
             });
         })
         .catch((err) => {
@@ -66,38 +51,80 @@ export const getPlayersOnTable = async (tableId: string): Promise<IPlayer[]> => 
     return players;
 };
 
-const onInit = async () => {
-    let player = createPlayer();
-    let table = new Table();
+export const onInit = async (ws: WebSocket) => {
+    let player = await playerRepository.savePlayer(createPlayer());
+    let table = createTable();
+    table = await tableRepository.saveTable(table);
 
-    player = await playerRepository.savePlayer(player);
+    ws.send(formatMsgForWs(PLAYER_INIT_SERVER_WS, {
+        playerId: player.getId(),
+        playerName: player.getFirstname(),
+        tableId: table.getId()
+    }, {}));
+    ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
+        player: {
+            id: player.getId(),
+            pos: player.getPos()
+        },
+    }, {}));
 
-    table = await tableRepository.saveTable(new Table());
+    const robot1Pr = playerRepository.savePlayer(createFakePlayer(1));
+    const robot2Pr = playerRepository.savePlayer(createFakePlayer(2));
+    const robot3Pr = playerRepository.savePlayer(createFakePlayer(3));
+    const [robot1, robot2, robot3] = await Promise.all([robot1Pr, robot2Pr, robot3Pr]);
 
-    if (players.length === 4) {
-        const playersRef = getPlayersCollection(tableId);
-        const playersWithCards = dealCards(players);
+    table.setPlayers([player, robot1, robot2, robot3]);
+    // table.setCurrentPlayerId(player.getId());
+    // table.setFirstPlayerId(player.getId());
+    // table.setMode()
 
-        playersWithCards.forEach(async (player) => {
-            playersRef.doc(player.id).update({ cards: player.cards });
-        });
-        const tableRef = getTableById(tableId);
-        const firstPlayerId = players.find(searchStartPlayer).id;
-        await tableRef.update(
-            {
-                firstPlayerId,
-                currentPlayerId: firstPlayerId,
-                mode: 'announce'
-            }
-        );
+    ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
+        player: {
+            id: robot1.getId(),
+            pos: robot1.getPos()
+        },
+    }, {}));
+    ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS,{
+        player: {
+            id: robot2.getId(),
+            pos: robot2.getPos()
+        },
+    }, {}));
+    ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
+        player: {
+            id: robot3.getId(),
+            pos: robot3.getPos()
+        },
+    }, {}));
+
+    if (table.getPlayers().length === 4) {
+        table.setPlayers(dealCards(table.getPlayers()));
+
+        const firstPlayerId = table.getPlayers().find(searchStartPlayer).id;
+        table.setFirstPlayerId(firstPlayerId);
+        table.setCurrentPlayerId(firstPlayerId);
+        table.setMode(modeAnnounce);
+
+        await tableRepository.saveTable(table);
+
+        ws.send(formatMsgForWs(GAME_START_SERVER_WS, {
+            dealerId: table.getCurrentPlayerId(),
+            mode: table.getMode(),
+            firstPlayerId: table.getFirstPlayerId(),
+            currentPlayerId: table.getCurrentPlayerId(),
+        }, {}));
+
+        ws.send(formatMsgForWs(CARDS_DEAL_SERVER_WS, {
+            cards: player.getCards().map(c => c.getId())
+        }, {}));
+
+        ws.send(formatMsgForWs(PLAYER_ACTIVE_SERVER_WS, {
+            playerId: player.getId()
+        }, {}));
+
     }
 };
 
-
-export const actions = {
+export const actions: {[key: string]: any} = {
     "init": onInit
 };
-
-// wss.on('', (message: IMessage) => {
-//     return onAddPlayer(message);
-// });

@@ -1,6 +1,7 @@
 import { ICard } from './types';
 import { deckOfThirtyTwoCards } from './constant';
-import {IPlayer} from "../players/types";
+import {Player} from "../players/model";
+import { Card } from "../entity/card";
 
 const filterCardsByColor = (color: string) => (card: ICard) => card.color === color;
 
@@ -53,23 +54,6 @@ export const getHighestCard = (cards: ICard[], trump: string, color: string): IC
     throw new Error('No trump / color cards found');
 };
 
-export class Card {
-    id: string;
-    color: string;
-    height: string;
-    constructor(id: string) {
-        this.id = id;
-        this.color = this.getCardColor(id);
-        this.height = this.getCardHeight(id);
-    }
-    getCardColor(cardId: string): string{
-        return cardId.slice(-1);
-    }
-    getCardHeight(cardId: string): string{
-        return cardId.slice(0, cardId.length - 1);
-    }
-}
-
 export class Hand {
     colorCards: ICard[];
     trumpCards: ICard[];
@@ -103,12 +87,12 @@ export class Hand {
     }
 }
 
-export const possibleCards = (trump: string, currentPlayer: IPlayer, cardsPlayed: ICard[]): ICard[] => {
+export const possibleCards = (trump: string, currentPlayer: Player, cardsPlayed: Card[]): ICard[] => {
     if (cardsPlayed.length > 0) {
         const firstCardOfTheTrick = cardsPlayed[0];
         const isTrump = firstCardOfTheTrick.color === trump;
         const highestCardOfTrick = getHighestCard(cardsPlayed, trump, firstCardOfTheTrick.color);
-        const hand = new Hand(currentPlayer.cards.map((cardId: string) => new Card(cardId)), trump, firstCardOfTheTrick);
+        const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick);
         if (isTrump) {
             if (hand.getTrumpCards().length > 0) {
                 const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, highestCardOfTrick));
@@ -148,7 +132,7 @@ export const possibleCards = (trump: string, currentPlayer: IPlayer, cardsPlayed
         // I can't play a trump, so I discard
         return hand.getOtherCards();
     }
-    const hand = new Hand(currentPlayer.cards.map((c: string) => new Card(c)), trump);
+    const hand = new Hand(currentPlayer.cards, trump);
 
     return hand.getHandsCards();
 };
