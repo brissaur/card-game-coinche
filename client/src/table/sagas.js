@@ -42,7 +42,7 @@ function* onDealCards({ payload }) {
 }
 
 function* onSetActivePlayer({ payload }) {
-    yield put(updateGeneral({ playerId: payload.playerId }));
+    yield put(updateGeneral({ currentPlayerId: payload.playerId }));
 }
 
 function* onSetRoundMode({ payload }) {
