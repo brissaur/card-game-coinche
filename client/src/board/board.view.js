@@ -7,8 +7,6 @@ import AnnounceBoard from '../announce-board/announce-board.container';
 import styles from './styles';
 
 export default function Board({ children, trick, players = [] }) {
-    global.console.log('trick', trick);
-
     return (
         <div style={styles.board}>
             <div style={styles.players}>

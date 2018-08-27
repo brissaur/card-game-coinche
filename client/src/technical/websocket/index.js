@@ -1,8 +1,7 @@
 import { formatMsgForWs } from './services';
+import * as config from '../../build.properties';
 
-const host = 'localhost';
-const port = 8080;
-const connection = new WebSocket(`ws://${host}:${port}`);
+const connection = new WebSocket(`ws://${config.WEBSOCKET_HOST}:${config.WEBSOCKET_PORT}`);
 
 export function getConnection() {
     return connection;
