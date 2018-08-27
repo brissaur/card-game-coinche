@@ -1,22 +1,21 @@
-import {getTableById} from '../tables/index';
+import {getTableById} from '../tables';
 import { dealCards, searchStartPlayer } from './business';
 import { CollectionReference, DocumentReference, QuerySnapshot, QueryDocumentSnapshot } from "@google-cloud/firestore";
-import {IMessage} from "../websocket/types";
-import {connection} from "../websocket";
 import {formatMsgForWs} from "../websocket/helper";
-import { repository as playerRepository } from '../repository/PlayerRepository';
-import { repository as tableRepository } from '../repository/TableRepository';
+import { repository as playerRepository } from '../repository/player/playerRepository';
+import { repository as tableRepository } from '../repository/table/tableRepository';
 import { Player, createPlayer, createFakePlayer } from './model';
 import { createTable, modeAnnounce } from '../tables/model';
-const COLLECTION_NAME = 'players';
 import {
     PLAYER_JOIN_SERVER_WS,
     GAME_START_SERVER_WS,
     PLAYER_INIT_SERVER_WS,
     CARDS_DEAL_SERVER_WS,
     PLAYER_ACTIVE_SERVER_WS
-} from '../websocket/index'
+} from '../websocket';
 import WebSocket from 'ws';
+
+const COLLECTION_NAME = 'players';
 
 /**
  *
@@ -52,9 +51,14 @@ export const getPlayersOnTable = async (tableId: string): Promise<Player[]> => {
 };
 
 export const onInit = async (ws: WebSocket) => {
+    console.log('on init');
     let player = await playerRepository.savePlayer(createPlayer());
     let table = createTable();
-    table = await tableRepository.saveTable(table);
+
+    console.log('upsert table');
+    table = await tableRepository.upsertTable(table);
+
+    console.log('on est la');
 
     ws.send(formatMsgForWs(PLAYER_INIT_SERVER_WS, {
         playerId: player.getId(),
@@ -73,10 +77,8 @@ export const onInit = async (ws: WebSocket) => {
     const robot3Pr = playerRepository.savePlayer(createFakePlayer(3));
     const [robot1, robot2, robot3] = await Promise.all([robot1Pr, robot2Pr, robot3Pr]);
 
-    table.setPlayers([player, robot1, robot2, robot3]);
-    // table.setCurrentPlayerId(player.getId());
-    // table.setFirstPlayerId(player.getId());
-    // table.setMode()
+    const players = [player, robot1, robot2, robot3];
+    table.setPlayers(players);
 
     ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
         player: {
@@ -98,14 +100,14 @@ export const onInit = async (ws: WebSocket) => {
     }, {}));
 
     if (table.getPlayers().length === 4) {
-        table.setPlayers(dealCards(table.getPlayers()));
+        table.setPlayers(dealCards(players));
 
-        const firstPlayerId = table.getPlayers().find(searchStartPlayer).id;
+        const firstPlayerId = players.find(searchStartPlayer).id;
         table.setFirstPlayerId(firstPlayerId);
         table.setCurrentPlayerId(firstPlayerId);
         table.setMode(modeAnnounce);
 
-        await tableRepository.saveTable(table);
+        await tableRepository.upsertTable(table);
 
         ws.send(formatMsgForWs(GAME_START_SERVER_WS, {
             dealerId: table.getCurrentPlayerId(),
@@ -115,7 +117,7 @@ export const onInit = async (ws: WebSocket) => {
         }, {}));
 
         ws.send(formatMsgForWs(CARDS_DEAL_SERVER_WS, {
-            cards: player.getCards().map(c => c.getId())
+            cards: player.getCards()
         }, {}));
 
         ws.send(formatMsgForWs(PLAYER_ACTIVE_SERVER_WS, {

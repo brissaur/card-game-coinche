@@ -1,6 +1,5 @@
 import { shuffle } from 'lodash';
-import {Player} from "./model";
-import { Card } from "../entity/card";
+import {IPlayer, Player} from "./model";
 
 /**
  *
@@ -50,13 +49,13 @@ export const searchStartPlayer = (player: Player) => player.pos === 0;
 
 /**
  *
- * @param players
- * @returns {*}
+ * @param players IPlayer[]
+ * @returns ICardId[]
  */
-export const dealCards = (players: Player[]) => {
+export const dealCards = (players: IPlayer[]) => {
     const shuffleCards = shuffle(cards);
-    players.map(function(player: Player, idx: number){
-        player.setCards(shuffleCards.slice(idx * 8, idx * 8 + 8).map( c => new Card(c)))
+    players.map(function(player, idx: number){
+        player.setCards(shuffleCards.slice(idx * 8, idx * 8 + 8))
     });
 
     return players;

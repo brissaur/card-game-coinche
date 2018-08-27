@@ -1,3 +1,5 @@
+import {IMessage} from "./types";
+
 export const formatMsgForWs = function(type: string, payload: any, meta: any) {
 	if (typeof payload !== 'object') {
 		throw new Error('Cannot format object of non-object type');

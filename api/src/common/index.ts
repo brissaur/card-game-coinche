@@ -1,9 +1,8 @@
-import { ICard } from './types';
 import { deckOfThirtyTwoCards } from './constant';
 import {Player} from "../players/model";
-import { Card } from "../entity/card";
+import { Card, ICard, ICardId } from "../cardsPlayed/model";
 
-const filterCardsByColor = (color: string) => (card: ICard) => card.color === color;
+const filterCardsByColor = (color: string) => (card: ICard) => card.getCardColor() === color;
 
 /**
  * Sort cards from the higher to the lower
@@ -12,8 +11,8 @@ const filterCardsByColor = (color: string) => (card: ICard) => card.color === co
  */
 export const sortCards = (isTrump: boolean) => (cardA: ICard, cardB: ICard) => {
     const order = isTrump ? 'trump' : 'notrump';
-    const cardAInDeck = deckOfThirtyTwoCards.find(card => card.id === cardA.id);
-    const cardBInDeck = deckOfThirtyTwoCards.find(card => card.id === cardB.id);
+    const cardAInDeck = deckOfThirtyTwoCards.find(card => card.id === cardA.getCardId());
+    const cardBInDeck = deckOfThirtyTwoCards.find(card => card.id === cardB.getCardId());
     if (cardAInDeck.order[order] > cardBInDeck.order[order]) {
         return 1;
     }
@@ -60,7 +59,7 @@ export class Hand {
     otherCards: ICard[];
     handCards: ICard[];
     constructor(handCards: ICard[], trump: string, firstCardOfTrick?: ICard) {
-        this.colorCards = firstCardOfTrick !== undefined ? handCards.filter(filterCardsByColor(firstCardOfTrick.color)) : [];
+        this.colorCards = firstCardOfTrick !== undefined ? handCards.filter(filterCardsByColor(firstCardOfTrick.getCardColor())) : [];
         this.trumpCards = handCards.filter(filterCardsByColor(trump));
         this.otherCards = handCards.filter((card: ICard) =>
             !this.colorCards
@@ -92,7 +91,7 @@ export const possibleCards = (trump: string, currentPlayer: Player, cardsPlayed:
         const firstCardOfTheTrick = cardsPlayed[0];
         const isTrump = firstCardOfTheTrick.color === trump;
         const highestCardOfTrick = getHighestCard(cardsPlayed, trump, firstCardOfTheTrick.color);
-        const hand = new Hand(currentPlayer.cards, trump, firstCardOfTheTrick);
+        const hand = new Hand(currentPlayer.getCards().map(c => new Card(c)), trump, firstCardOfTheTrick);
         if (isTrump) {
             if (hand.getTrumpCards().length > 0) {
                 const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, highestCardOfTrick));
@@ -132,7 +131,7 @@ export const possibleCards = (trump: string, currentPlayer: Player, cardsPlayed:
         // I can't play a trump, so I discard
         return hand.getOtherCards();
     }
-    const hand = new Hand(currentPlayer.cards, trump);
+    const hand = new Hand(currentPlayer.getCards().map(c => new Card(c)), trump);
 
     return hand.getHandsCards();
 };

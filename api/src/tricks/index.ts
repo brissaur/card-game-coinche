@@ -4,7 +4,7 @@ import { getRoundsCollection } from '../rounds';
 import { getPlayersOnTable, getPlayersCollection } from '../players';
 import { dealCards } from '../players/business';
 import { DocumentSnapshot, QuerySnapshot } from '@google-cloud/firestore';
-import {ITrick} from "./types";
+import {ITrick} from "./model";
 import {IMessage} from "../websocket/types";
 
 const COLLECTION_NAME = 'tricks';

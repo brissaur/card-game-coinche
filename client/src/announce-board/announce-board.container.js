@@ -1,16 +1,19 @@
 import { connect } from 'react-redux';
 import AnnounceBoardView from './announce-board.view';
-import { isMyTurn, isGameModeAnnounce } from '../table/selectors';
+import { isMyTurn, isGameModeAnnounce, getTableId, getCurrentPlayerId } from '../table/selectors';
 import { announceAnnounced } from '../announce/ducks';
 
 const mapStateToProps = state => ({
     isMyTurn: isMyTurn(state),
     isAnnounce: isGameModeAnnounce(state),
+    tableId: getTableId(state),
+    playerId: getCurrentPlayerId(state)
 });
 
-const mapDispatchToProps = dispatch => ({
-    onAnnounce(announce) {
-        dispatch(announceAnnounced(announce));
+const mapDispatchToProps = (dispatch, ownProps) => ({
+    onAnnounce(announce, tableId, playerId) {
+        console.log('ownProps', ownProps);
+        dispatch(announceAnnounced(announce, tableId, playerId));
     },
 });
 

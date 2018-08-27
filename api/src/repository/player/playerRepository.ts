@@ -1,7 +1,7 @@
-import {AbstractRepository} from './AbstractRepository';
+import {AbstractRepository} from '../abstractRepository';
 import CollectionReference = FirebaseFirestore.CollectionReference;
-import { Player } from '../players/model';
-import {extract, hydrate} from "../hydrator/playerHydrator";
+import { Player } from '../../players/model';
+import {extract, hydrate} from './playerHydrator';
 
 const PLAYER_COLLECTION = 'players';
 
@@ -11,10 +11,11 @@ class PlayerRepository extends AbstractRepository{
         super();
         this.collection = this.connection.collection(PLAYER_COLLECTION);
     }
-    getCollection(){
+    getCollection(): CollectionReference{
         return this.collection;
     }
-    async savePlayer(player: Player){
+    async savePlayer(player: Player): Promise<Player>{
+        console.log('save player');
         const doc = await this.collection.add(extract(player));
 
         player = hydrate(await doc.get(), player);

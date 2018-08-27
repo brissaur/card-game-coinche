@@ -1,4 +1,4 @@
-import { IAnnounce } from "./types";
+import { IAnnounce } from "./model";
 
 export function announceIA() {
     return 'pass';

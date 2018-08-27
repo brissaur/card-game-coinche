@@ -1,4 +1,4 @@
-import {IPlayer} from "../players/types";
+import {IPlayer} from "../players/model";
 
 /**
  *

@@ -8,7 +8,7 @@ export const connection = new WebSocket.Server({
 });
 
 export const CARD_PLAYED_SERVER_WS = 'card/played';
-export const ANNOUNCE_SERVER_WS = 'announce/make';
+export const ANNOUNCE_MAKE_SERVER_WS = 'announce/make';
 export const PLAYER_INIT_SERVER_WS = 'player/init';
 export const PLAYER_JOIN_SERVER_WS = 'player/join';
 export const PLAYER_ACTIVE_SERVER_WS = 'player/active';
