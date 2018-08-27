@@ -1,8 +1,8 @@
 import { connection } from './websocket'
-const { formatMsgForWs, decodeMsgFromWs } = require('./websocket/helper');
+import { formatMsgForWs, decodeMsgFromWs } from './websocket/helper';
 import {actions as playerActions, onInit} from './players';
+import { actions as announceActions } from './announces';
 import {IMessage} from "./websocket/types";
-import {repository as playerRepository} from "./repository/PlayerRepository";
 import {createFakePlayer} from "./players/model";
 import {createTable, modeAnnounce} from "./tables/model";
 
@@ -19,7 +19,7 @@ connection.on('connection', function connection(ws) {
     global.console.log('New connection:');
 
     // Whenever the client send a message
-    ws.on('message', function incoming(message: IMessage) {
+    ws.on('message', function incoming(message: string) {
         let parsed = null;
         try {
             parsed = decodeMsgFromWs(message);
@@ -27,6 +27,10 @@ connection.on('connection', function connection(ws) {
             switch(params.controller){
                 case 'player':
                     playerActions[params.action](parsed, ws);
+                    break;
+                case 'announce':
+                    console.log('icccci');
+                    announceActions[params.action](parsed);
                     break;
             }
 
@@ -38,7 +42,7 @@ connection.on('connection', function connection(ws) {
     });
 
     const data = { message: 'Hello' };
-    ws.send(formatMsgForWs('hello', data));
+    ws.send(formatMsgForWs('hello', data, {}));
 
     onInit(ws);
 });

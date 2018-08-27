@@ -1,10 +1,11 @@
-import { emptyCollection } from '../common/collection';
 import { getTableById, nextPlayerPlusPlus } from '../tables';
 import { announceIA, shouldStopAnnounces, getBestAnnounce } from './business';
 import { QuerySnapshot } from "@google-cloud/firestore";
-import {IAnnounce} from "./types";
+import {IAnnounce} from "./model";
 import {IMessage} from "../websocket/types";
-import { ANNOUNCE_SERVER_WS, connection } from '../websocket';
+import { ANNOUNCE_MAKE_SERVER_WS, connection } from '../websocket';
+import {onInit} from "../players";
+import { repository as tableRepository } from '../repository/table/TableRepository';
 
 const COLLECTION_NAME = 'announces';
 
@@ -46,30 +47,33 @@ const onAnnounce = async (message: IMessage) => {
     const eventData = message.payload;
     const playerId = eventData.playerId;
 
+    const table = await tableRepository.getTableById(tableId);
+
+    console.log('table', table);
+
     // save announce in DB
-    await saveAnnounce(tableId, eventData);
-
-    // get back announces from DB
-    const announces = await getAnnounces(tableId);
-    if (shouldStopAnnounces(announces)) {
-        const fbTable = getTableById(tableId);
-        const firstPlayerId = await fbTable.get().then(doc => doc.data().firstPlayerId);
-
-        await emptyCollection(getAnnouncesCollection(tableId));
-
-        await fbTable.update(
-        {
-                currentPlayerId: firstPlayerId,
-                currentAnnounce: getBestAnnounce(announces),
-                mode: 'play',
-            }
-        );
-    } else {
-        await nextPlayerPlusPlus(tableId, playerId);
-    }
+    // await saveAnnounce(tableId, eventData);
+    //
+    // // get back announces from DB
+    // const announces = await getAnnounces(tableId);
+    // if (shouldStopAnnounces(announces)) {
+    //     const fbTable = getTableById(tableId);
+    //     const firstPlayerId = await fbTable.get().then(doc => doc.data().firstPlayerId);
+    //
+    //     await emptyCollection(getAnnouncesCollection(tableId));
+    //
+    //     await fbTable.update(
+    //     {
+    //             currentPlayerId: firstPlayerId,
+    //             currentAnnounce: getBestAnnounce(announces),
+    //             mode: 'play',
+    //         }
+    //     );
+    // } else {
+    //     await nextPlayerPlusPlus(tableId, playerId);
+    // }
 };
 
-connection.on(ANNOUNCE_SERVER_WS, (message: IMessage) => {
-    console.log('onAnnounce');
-    return onAnnounce(message);
-});
+export const actions: {[key: string]: any} = {
+    "make": onAnnounce
+};

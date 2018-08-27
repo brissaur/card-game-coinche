@@ -1,18 +1,31 @@
-import { Player } from '../players/model';
+import {IPlayerId, IPlayer} from '../players/model';
+import { IAnnounce } from '../announces/model';
 
 export const modeAnnounce = 'announce';
 export const modePlay = 'play';
 
-export class Table{
-    id: string;
-    currentPlayerId: string = null;
-    firstPlayerId: string = null;
+export type ITableId = string;
+
+export interface ITable{
+    id: ITableId;
+    currentPlayerId: IPlayerId;
+    firstPlayerId: IPlayerId;
+    mode: string;
+    players: IPlayer[];
+    announces: IAnnounce[];
+}
+
+export class Table implements ITable{
+    id: ITableId = null;
+    currentPlayerId: IPlayerId = null;
+    firstPlayerId: IPlayerId = null;
     mode: string = null;
-    players: Player[] = [];
-    setId(id: string){
+    players: IPlayer[] = [];
+    announces: IAnnounce[] = [];
+    setId(id: ITableId){
         this.id = id;
     }
-    getId(): string{
+    getId(): ITableId{
         return this.id;
     }
     setCurrentPlayerId(currentPlayerId: string){
@@ -31,17 +44,23 @@ export class Table{
         this.mode = mode;
     }
     getMode(): string{
-        return this.mode
+        return this.mode;
     }
-    setPlayers(players: Player[]){
+    setPlayers(players: IPlayer[]){
         this.players = players;
     }
-    getPlayers(): Player[]{
+    getPlayers(): IPlayer[]{
         return this.players;
+    }
+    setAnnounces(announces: IAnnounce[]){
+        this.announces = announces;
+    }
+    getAnnounces(): IAnnounce[]{
+        return this.announces;
     }
 }
 
 export const createTable = (): Table =>
 {
     return new Table();
-}
+};

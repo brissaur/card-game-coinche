@@ -5,6 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 **/build.properties.js
+**/build.properties.ts
 .idea/
 **/card-game-coinche-f9dad125fcc4.json
 
