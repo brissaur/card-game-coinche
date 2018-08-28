@@ -11,6 +11,8 @@ export const WS_DEAL_CARDS = withWsPrefix('cards/deal');
 export const WS_ACTIVE_PLAYER = withWsPrefix('player/active');
 export const WS_ROUND_MODE = withWsPrefix('round/mode');
 
+export const WS_CHAT_MESSAGE = withWsPrefix('chat/message');
+
 export function wsAction(wsMessage) {
     return {
         type: createActionTypeFromWsMessage(wsMessage),

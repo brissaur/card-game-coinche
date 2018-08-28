@@ -94,7 +94,7 @@ export function reducer(state = initialState, action) {
     case UPDATE_HAND:
         return {
             ...state,
-            ...action.hand,
+            hand: action.hand,
         };
     case UPDATE_GENERAL:
         return {

@@ -5,10 +5,10 @@ import Player from '../player/components/player.view';
 import AnnounceBoard from '../announce-board/announce-board.container';
 
 import styles from './styles';
+import Keyboard from '../chat/components/keyboard.view';
+import ChatArea from '../chat/components/chat-area';
 
 export default function Board({ children, trick, players = [] }) {
-    global.console.log('trick', trick);
-
     return (
         <div style={styles.board}>
             <div style={styles.players}>
@@ -31,6 +31,8 @@ export default function Board({ children, trick, players = [] }) {
             <h1 style={styles.mainTitle}> Welcome to this app coinche! </h1>
             <Hand />
             {children}
+            <ChatArea />
+            <Keyboard />
         </div>
     );
 }

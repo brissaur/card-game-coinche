@@ -30,7 +30,7 @@ export function getPlayerCards(state) {
 }
 
 export function getGeneral(state) {
-    return get(state, 'table', {});
+    return get(state, 'table.general', {});
 }
 
 export const getGameMode = createSelector(getGeneral, general => general.mode);

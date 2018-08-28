@@ -3,9 +3,11 @@ import { setPlayerName } from './duck';
 
 import { setAppLoaded } from '../bootstrap/duck';
 import { WS_PLAYER_CONNECTION } from '../technical/websocket/actions';
+import { setTableId } from '../table/ducks';
 
 function* connectPlayer({ payload }) {
-    yield put(setPlayerName(payload.playerId, payload.tableId));
+    yield put(setPlayerName(payload.playerName, payload.playerId));
+    yield put(setTableId(payload.tableId));
     yield put(setAppLoaded());
 }
 
