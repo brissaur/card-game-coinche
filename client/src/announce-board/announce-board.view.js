@@ -27,7 +27,7 @@ export default class AnnounceBoard extends React.Component {
 
         this.setState({ error: null });
 
-        return this.props.onAnnounce(this.input.value, this.props.tableId, this.props.playerId);
+        return this.props.onAnnounce(this.input.value);
     }
 
     render() {

@@ -30,8 +30,8 @@ export const sortCards = (isTrump: boolean) => (cardA: ICard, cardB: ICard) => {
  * @returns {function(*): boolean}
  */
 export const filterHigherCards = (isTrump: boolean, lastHighestCard: ICard) => (card: ICard) => {
-    const cardInDeck = deckOfThirtyTwoCards.find(c => c.id === card.id);
-    const lastHighestCardInDeck = deckOfThirtyTwoCards.find(c => c.id === lastHighestCard.id);
+    const cardInDeck = deckOfThirtyTwoCards.find(c => c.id === card.getCardId());
+    const lastHighestCardInDeck = deckOfThirtyTwoCards.find(c => c.id === lastHighestCard.getCardId());
     const trump = isTrump ? 'trump' : 'notrump';
 
     return cardInDeck.order[trump] < lastHighestCardInDeck.order[trump];
@@ -64,7 +64,7 @@ export class Hand {
         this.otherCards = handCards.filter((card: ICard) =>
             !this.colorCards
                 .concat(this.trumpCards)
-                .map((c: ICard) => c.id));
+                .map((c: ICard) => c.getCardId()));
                 //.includes(card.id));
         this.handCards = handCards;
     }

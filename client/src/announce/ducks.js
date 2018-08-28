@@ -1,12 +1,8 @@
 export const ANNOUNCE_ANNOUNCED = 'announce:announced';
 
-export function announceAnnounced(announce, tableId, playerId) {
+export function announceAnnounced(announce) {
     return {
         type: ANNOUNCE_ANNOUNCED,
-        meta: { tableId },
-        payload: {
-            announce,
-            playerId
-        }
+        announce
     };
 }

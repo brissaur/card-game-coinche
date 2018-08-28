@@ -3,9 +3,11 @@ import {ICardId} from "../cardsPlayed/model";
 export type ITrickId = string;
 
 export interface ITrick{
-    id: ITrickId;
+    documentId: ITrickId;
     cardId: string;
     playerId: string;
+    setDocumentId(documentId: ITrickId): void;
+    getDocumentId(): ITrickId;
     setCardId(id: ICardId): void;
     getCardId(): ICardId;
     setPlayerId(id: ICardId): void;
@@ -13,9 +15,15 @@ export interface ITrick{
 }
 
 export class Trick implements ITrick{
-    id: ITrickId;
+    documentId: ITrickId;
     cardId: string;
     playerId: string;
+    getDocumentId(): ITrickId{
+        return this.documentId;
+    }
+    setDocumentId(documentId: ITrickId){
+        this.documentId = documentId;
+    }
     setCardId(id: ICardId){
         this.cardId = id;
     }

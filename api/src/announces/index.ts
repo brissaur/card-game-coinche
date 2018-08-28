@@ -1,11 +1,12 @@
 import { getTableById, nextPlayerPlusPlus } from '../tables';
 import { announceIA, shouldStopAnnounces, getBestAnnounce } from './business';
 import { QuerySnapshot } from "@google-cloud/firestore";
-import {IAnnounce} from "./model";
+import {Announce, IAnnounce} from "./model";
 import {IMessage} from "../websocket/types";
 import { ANNOUNCE_MAKE_SERVER_WS, connection } from '../websocket';
 import {onInit} from "../players";
-import { repository as tableRepository } from '../repository/table/TableRepository';
+import { repository as tableRepository } from '../repository/table/tableRepository';
+import {ISession} from "../websocket/session";
 
 const COLLECTION_NAME = 'announces';
 
@@ -42,12 +43,17 @@ export async function performAnnounce(tableId: string, playerId: string) {
     });
 }
 
-const onAnnounce = async (message: IMessage) => {
-    const tableId = message.meta.tableId;
+const onAnnounce = async (message: IMessage, session: ISession) => {
     const eventData = message.payload;
-    const playerId = eventData.playerId;
 
-    const table = await tableRepository.getTableById(tableId);
+    const table = await tableRepository.getTableById(session.getTableDocumentId());
+
+    const announce = new Announce();
+    announce.setAnnounce(eventData.announce);
+    announce.setPlayerId(session.getPlayerDocumentId());
+    table.setAnnounces([announce]);
+
+    await tableRepository.upsertTable(table);
 
     console.log('table', table);
 

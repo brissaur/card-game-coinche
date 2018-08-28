@@ -14,6 +14,7 @@ import {
     PLAYER_ACTIVE_SERVER_WS
 } from '../websocket';
 import WebSocket from 'ws';
+import {ISession} from "../websocket/session";
 
 const COLLECTION_NAME = 'players';
 
@@ -50,24 +51,26 @@ export const getPlayersOnTable = async (tableId: string): Promise<Player[]> => {
     return players;
 };
 
-export const onInit = async (ws: WebSocket) => {
+export const onInit = async (ws: WebSocket, session: ISession) => {
     console.log('on init');
     let player = await playerRepository.savePlayer(createPlayer());
+
     let table = createTable();
 
     console.log('upsert table');
     table = await tableRepository.upsertTable(table);
 
-    console.log('on est la');
+    session.setPlayerDocumentId(player.getDocumentId());
+    session.setTableDocumentId(table.getDocumentId());
 
     ws.send(formatMsgForWs(PLAYER_INIT_SERVER_WS, {
-        playerId: player.getId(),
+        playerId: player.getDocumentId(),
         playerName: player.getFirstname(),
-        tableId: table.getId()
+        tableId: table.getDocumentId()
     }, {}));
     ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
         player: {
-            id: player.getId(),
+            id: player.getDocumentId(),
             pos: player.getPos()
         },
     }, {}));
@@ -82,19 +85,19 @@ export const onInit = async (ws: WebSocket) => {
 
     ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
         player: {
-            id: robot1.getId(),
+            id: robot1.getDocumentId(),
             pos: robot1.getPos()
         },
     }, {}));
     ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS,{
         player: {
-            id: robot2.getId(),
+            id: robot2.getDocumentId(),
             pos: robot2.getPos()
         },
     }, {}));
     ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
         player: {
-            id: robot3.getId(),
+            id: robot3.getDocumentId(),
             pos: robot3.getPos()
         },
     }, {}));
@@ -102,7 +105,7 @@ export const onInit = async (ws: WebSocket) => {
     if (table.getPlayers().length === 4) {
         table.setPlayers(dealCards(players));
 
-        const firstPlayerId = players.find(searchStartPlayer).id;
+        const firstPlayerId = players.find(searchStartPlayer).getDocumentId();
         table.setFirstPlayerId(firstPlayerId);
         table.setCurrentPlayerId(firstPlayerId);
         table.setMode(modeAnnounce);
@@ -121,7 +124,7 @@ export const onInit = async (ws: WebSocket) => {
         }, {}));
 
         ws.send(formatMsgForWs(PLAYER_ACTIVE_SERVER_WS, {
-            playerId: player.getId()
+            playerId: player.getDocumentId()
         }, {}));
 
     }

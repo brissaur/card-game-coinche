@@ -7,26 +7,28 @@ export const modePlay = 'play';
 export type ITableId = string;
 
 export interface ITable{
-    id: ITableId;
+    documentId: ITableId;
     currentPlayerId: IPlayerId;
     firstPlayerId: IPlayerId;
     mode: string;
     players: IPlayer[];
     announces: IAnnounce[];
+    getDocumentId(): ITableId;
+    setDocumentId(documentId: ITableId): void;
 }
 
 export class Table implements ITable{
-    id: ITableId = null;
+    documentId: ITableId = null;
     currentPlayerId: IPlayerId = null;
     firstPlayerId: IPlayerId = null;
     mode: string = null;
     players: IPlayer[] = [];
     announces: IAnnounce[] = [];
-    setId(id: ITableId){
-        this.id = id;
+    setDocumentId(id: ITableId){
+        this.documentId = id;
     }
-    getId(): ITableId{
-        return this.id;
+    getDocumentId(): ITableId{
+        return this.documentId;
     }
     setCurrentPlayerId(currentPlayerId: string){
         this.currentPlayerId = currentPlayerId;
