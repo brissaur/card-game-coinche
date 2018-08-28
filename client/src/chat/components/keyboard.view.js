@@ -1,25 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { sendChatMessage } from './ducks';
-import styles from './styles';
+import { sendChatMessage } from '../ducks';
+import KeyboardUI from './keyboard';
 
-function KeyboardUI({ active, onChange, value }) {
-    return active ? (
-        <div style={styles.keyboard}>
-            <input type="text" style={styles.input} autoFocus onChange={onChange} value={value} />
-        </div>
-    ) : null;
-}
-
-KeyboardUI.propTypes = {
-    active: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired,
-
-    value: PropTypes.string.isRequired,
-};
-
-class Keyboard extends React.Component {
+class KeyboardComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -40,11 +25,9 @@ class Keyboard extends React.Component {
 
     handleKeyDown(e) {
         if (e.key === 'Enter') {
-            if (this.state.active) {
+            if (this.state.active && this.state.message) {
                 this.props.sendMessage(this.state.message);
                 this.setState({ message: '' });
-            } else {
-                // this.inputRef.focus(); @todo
             }
             this.setState({ active: !this.state.active });
             // @todo: submit
@@ -64,15 +47,17 @@ class Keyboard extends React.Component {
     }
 }
 
-Keyboard.propTypes = {
+KeyboardComponent.propTypes = {
     sendMessage: PropTypes.func.isRequired,
 };
 
-export default connect(
+const Keyboard = connect(
     null,
     dispatch => ({
         sendMessage(message) {
             dispatch(sendChatMessage(message));
         },
     }),
-)(Keyboard);
+)(KeyboardComponent);
+
+export default Keyboard;

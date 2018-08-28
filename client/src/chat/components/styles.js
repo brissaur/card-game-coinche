@@ -9,8 +9,22 @@ export default {
         backgroundColor: 'red',
         display: 'flex',
     },
+    chatArea: {
+        position: 'fixed',
+        bottom: '50px',
+        // height: '50px',
+        width: '50%',
+        left: '15px',
+        backgroundColor: 'rgb(0, 0, 0, 0.2)',
+        padding: '15px',
+    },
     input: {
         flex: '1',
+    },
+    chatMessage: {
+        visibility: 'hidden',
+        opacity: 0,
+        transition: 'visibility 0s 2s, opacity 2s linear',
     },
 };
 
