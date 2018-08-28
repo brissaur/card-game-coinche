@@ -14,3 +14,4 @@ export async function wsSend(type, payload, meta) {
 
 export const CARD_PLAYED_SERVER_WS = 'card/play';
 export const ANNOUNCE_SERVER_WS = 'announce/make';
+export const CHAT_MESSAGE_WS = 'chat/message';
