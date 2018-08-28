@@ -8,6 +8,8 @@ import DocumentReference = FirebaseFirestore.DocumentReference;
 import WriteResult = FirebaseFirestore.WriteResult;
 
 const TABLE_COLLECTION = 'tables';
+export const PLAYER_SUBCOLLECTION = 'players';
+export const ANNOUNCE_SUBCOLLECTION = 'announces';
 
 class TableRepository extends AbstractRepository{
     collection: CollectionReference;
@@ -19,15 +21,15 @@ class TableRepository extends AbstractRepository{
         return this.collection;
     }
     async getTableById(tableId: string): Promise<Table>{
-        return hydrate(await this.collection.doc(tableId).get(), new Table());
+        return await hydrate(this.collection.doc(tableId), new Table());
     }
     async upsertTable(table: Table): Promise<Table>{
         console.log('upserTable', table);
         let doc: DocumentReference;
-        if(table.getId()){
+        if(table.getDocumentId()){
             // update main object
             console.log('update table');
-            doc = await this.collection.doc(table.getId());
+            doc = await this.collection.doc(table.getDocumentId());
             await doc.update(extract(table));
         }else{
             console.log('create table');
@@ -37,9 +39,10 @@ class TableRepository extends AbstractRepository{
 
         //upsert announces
         let promises: any[] = [];
+        console.log('announce from table', table.getAnnounces());
         table.getAnnounces().map(announce => {
-            if(announce.getId()){
-                promises.push(doc.collection('announces').doc(announce.getId()).update(extractAnnounce(announce)));
+            if(announce.getDocumentId()){
+                promises.push(doc.collection('announces').doc(announce.getDocumentId()).set(extractAnnounce(announce)));
             }else{
                 promises.push(doc.collection('announces').add(extractAnnounce(announce)));
             }
@@ -50,22 +53,16 @@ class TableRepository extends AbstractRepository{
         //upsert players
         promises = [];
         table.getPlayers().map(player => {
-            console.log('player', player.getId());
-            if(player.getId()){
-                console.log('should update ....');
-                // DO NO WHY, PROMISE NEVER RESOLVES
-                //promises.push(doc.collection('players').doc(player.getId()).update(extractPlayer(player)));
+            if(player.getDocumentId()){
+                promises.push(doc.collection('players').doc(player.getDocumentId()).set(extractPlayer(player)));
             }else{
-                let toto = extractPlayer(player);
-                console.log('extractPlayer', toto);
-                promises.push(doc.collection('players').add(toto));
+                promises.push(doc.collection('players').add(extractPlayer(player)));
             }
-
         });
-        console.log('before promises', promises);
+
         await Promise.all(promises);
 
-        table = hydrate(await doc.get(), table);
+        table = await hydrate(doc, table);
 
         return table;
     }

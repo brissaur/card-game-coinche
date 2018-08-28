@@ -5,6 +5,7 @@ import { actions as announceActions } from './announces';
 import {IMessage} from "./websocket/types";
 import {createFakePlayer} from "./players/model";
 import {createTable, modeAnnounce} from "./tables/model";
+import {Session} from "./websocket/session";
 
 const router = (route: string) => {
     const elements = route.split('/');
@@ -17,6 +18,7 @@ const router = (route: string) => {
 // When the client connect to the server
 connection.on('connection', function connection(ws) {
     global.console.log('New connection:');
+    const session = new Session();
 
     // Whenever the client send a message
     ws.on('message', function incoming(message: string) {
@@ -26,11 +28,11 @@ connection.on('connection', function connection(ws) {
             const params = router(parsed.type);
             switch(params.controller){
                 case 'player':
-                    playerActions[params.action](parsed, ws);
+                    playerActions[params.action](parsed, ws, session);
                     break;
                 case 'announce':
                     console.log('icccci');
-                    announceActions[params.action](parsed);
+                    announceActions[params.action](parsed, session);
                     break;
             }
 
@@ -44,5 +46,5 @@ connection.on('connection', function connection(ws) {
     const data = { message: 'Hello' };
     ws.send(formatMsgForWs('hello', data, {}));
 
-    onInit(ws);
+    onInit(ws, session);
 });

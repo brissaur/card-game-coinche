@@ -4,9 +4,9 @@ import { ANNOUNCE_ANNOUNCED } from './ducks';
 
 import { wsSend, ANNOUNCE_SERVER_WS } from '../technical/websocket';
 
-function* announceAnnounced({ payload, meta }) {
-    global.console.log('New announce announced', payload);
-    yield wsSend(ANNOUNCE_SERVER_WS, payload, meta );
+function* announceAnnounced({ announce }) {
+    global.console.log('New announce announced', announce);
+    yield wsSend(ANNOUNCE_SERVER_WS, { announce });
 }
 
 // eslint-disable-next-line import/prefer-default-export

@@ -5,11 +5,11 @@ import { IPlayerId } from '../players/model';
 export type IAnnounceId = string;
 
 export interface IAnnounce{
-    id: IAnnounceId;
+    documentId: IAnnounceId;
     announce: string;
     playerId: IPlayerId;
-    setId(id: IAnnounceId): void;
-    getId(): IAnnounceId;
+    setDocumentId(documentId: IAnnounceId): void;
+    getDocumentId(): IAnnounceId;
     getAnnounce(): string;
     setAnnounce(announce: string): void;
     getPlayerId(): string;
@@ -17,14 +17,14 @@ export interface IAnnounce{
 }
 
 export class Announce implements IAnnounce{
-    id: IAnnounceId;
+    documentId: IAnnounceId;
     announce: string;
     playerId: IPlayerId;
-    setId(id: IAnnounceId){
-        this.id = id;
+    setDocumentId(documentId: IAnnounceId){
+        this.documentId = documentId;
     }
-    getId(): IAnnounceId{
-        return this.id;
+    getDocumentId(): IAnnounceId{
+        return this.documentId;
     }
     setAnnounce(announce: string){
         this.announce = announce;

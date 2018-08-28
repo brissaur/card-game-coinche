@@ -3,13 +3,13 @@ import {ICardId} from "../cardsPlayed/model";
 export type IPlayerId = string;
 
 export interface IPlayer{
-    id: IPlayerId;
+    documentId: IPlayerId;
     firstname: string;
     isFakePlayer: boolean;
     pos: number;
     cards: ICardId[];
-    setId(id: IPlayerId): void;
-    getId(): IPlayerId;
+    setDocumentId(documentId: IPlayerId): void;
+    getDocumentId(): IPlayerId;
     setCards(cards: ICardId[]): void;
     getCards(): ICardId[];
     setFirstname(firstname: string): void;
@@ -21,20 +21,16 @@ export interface IPlayer{
 }
 
 export class Player implements IPlayer{
-    id: IPlayerId = null;
+    documentId: IPlayerId = null;
     firstname: string;
     isFakePlayer: boolean;
     pos: number;
     cards: ICardId[];
-    constructor(firstname: string, isFakePlayer: boolean){
-        this.firstname = firstname;
-        this.isFakePlayer = isFakePlayer;
+    setDocumentId(documemtId: IPlayerId){
+        this.documentId = documemtId;
     }
-    setId(id: IPlayerId){
-        this.id = id;
-    }
-    getId(): IPlayerId{
-        return this.id;
+    getDocumentId(): IPlayerId{
+        return this.documentId;
     }
     setFirstname(firstname: string){
         this.firstname = firstname;
@@ -63,13 +59,17 @@ export class Player implements IPlayer{
 }
 
 export const createFakePlayer = (pos: number): Player => {
-    let player = new Player('Robot '+pos, true);
+    let player = new Player();
+    player.setFirstname('Robot');
+    player.setIsFakePlayer(true);
     player.setPos(pos);
     return player;
 };
 
 export const createPlayer = (): Player => {
-    let player = new Player('Michelle', false);
+    let player = new Player();
+    player.setFirstname('Michelle');
+    player.setIsFakePlayer(false);
     player.setPos(0);
 
     return player;

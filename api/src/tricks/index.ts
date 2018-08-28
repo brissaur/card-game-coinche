@@ -70,7 +70,7 @@ const addTrick = async (message: IMessage) => {
         const playersRef = getPlayersCollection(tableId);
 
         await playersWithCards.forEach(async (player) => {
-            playersRef.doc(player.id).update({ cards: player.cards });
+            playersRef.doc(player.getDocumentId()).update({ cards: player.cards });
         });
         // update next player, dealer, mode
         const fbTableRef = getTableById(tableId);

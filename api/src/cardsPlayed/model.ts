@@ -1,31 +1,32 @@
 export type ICardId = string;
 
 export interface ICard{
-    id: ICardId;// object id in db
+    documentId: ICardId;// object id in db
     cardId: ICardId; //id of card (ex: 10J)
+    getDocumentId(): ICardId;
     getCardId(): ICardId;
     getCardColor(): string;
     getCardHeight(): string;
 }
 
 export class Card implements ICard{
-    id: ICardId;
+    documentId: ICardId;
     cardId: ICardId;
     color: string;
     height: string;
     constructor(cardId: ICardId) {
         this.cardId = cardId;
     }
-    getId(): ICardId{
-        return this.id;
+    getDocumentId(): ICardId{
+        return this.documentId;
     }
     getCardId(): ICardId{
-        return this.id;
+        return this.documentId;
     }
     getCardColor(): string{
-        return this.id.slice(-1);
+        return this.cardId.slice(-1);
     }
     getCardHeight(): string{
-        return this.id.slice(0, this.id.length - 1);
+        return this.cardId.slice(0, this.cardId.length - 1);
     }
 }

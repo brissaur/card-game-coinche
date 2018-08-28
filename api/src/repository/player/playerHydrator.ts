@@ -9,7 +9,7 @@ export const extract = (player: Player) => {
 };
 
 export const hydrate = (document: DocumentSnapshot, player: Player) => {
-    player.setId(document.id);
+    player.setDocumentId(document.id);
     player.setFirstname(document.get('firstname'));
     player.setIsFakePlayer(document.get('isFakePlayer'));
 

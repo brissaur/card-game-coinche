@@ -1,4 +1,4 @@
-import { firestore } from '../db';
+import { firestore } from '../db';;
 
 export class AbstractRepository{
     connection: any;
