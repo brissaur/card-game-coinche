@@ -1,9 +1,6 @@
 import {IPlayerId, IPlayer} from '../players/model';
 import { IAnnounce } from '../announces/model';
 
-export const modeAnnounce = 'announce';
-export const modePlay = 'play';
-
 export type ITableId = string;
 
 export interface ITable{
@@ -13,8 +10,15 @@ export interface ITable{
     mode: string;
     players: IPlayer[];
     announces: IAnnounce[];
+    currentAnnounce: IAnnounce;
     getDocumentId(): ITableId;
     setDocumentId(documentId: ITableId): void;
+    setCurrentAnnounce(announce: IAnnounce): void;
+    getCurrentAnnounce(): IAnnounce;
+    getPlayers(): IPlayer[];
+    setPlayers(players: IPlayer[]): void;
+    setCurrentPlayerId(currentPlayerId: IPlayerId): void;
+    getCurrentPlayerId(): IPlayerId;
 }
 
 export class Table implements ITable{
@@ -24,6 +28,7 @@ export class Table implements ITable{
     mode: string = null;
     players: IPlayer[] = [];
     announces: IAnnounce[] = [];
+    currentAnnounce: IAnnounce;
     setDocumentId(id: ITableId){
         this.documentId = id;
     }
@@ -59,6 +64,12 @@ export class Table implements ITable{
     }
     getAnnounces(): IAnnounce[]{
         return this.announces;
+    }
+    setCurrentAnnounce(announce: IAnnounce){
+        this.currentAnnounce = announce;
+    }
+    getCurrentAnnounce(): IAnnounce{
+        return this.currentAnnounce;
     }
 }
 

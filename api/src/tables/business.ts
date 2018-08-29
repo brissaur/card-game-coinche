@@ -3,11 +3,11 @@ import {IPlayer} from "../players/model";
 /**
  *
  * @param players
- * @param previousPlayerId
+ * @param currentPlayer
  */
-export const computeNextPlayerForTrick = (players: IPlayer[], previousPlayerId: string): IPlayer => {
-    const previousPlayer = players.find(player => previousPlayerId === player.documentId);
+export const computeNextPlayerForTrick = (players: IPlayer[], currentPlayer: IPlayer): IPlayer => {
+    const previousPlayer = players.find(player => currentPlayer.getDocumentId() === player.getDocumentId());
 
     // if previousPlayer was the last one, take the first one
-    return players.find(player => player.pos === (previousPlayer.pos + 1) % 4);
+    return players.find(player => player.getPos() === (previousPlayer.getPos() + 1) % 4);
 };

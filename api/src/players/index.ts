@@ -5,7 +5,7 @@ import {formatMsgForWs} from "../websocket/helper";
 import { repository as playerRepository } from '../repository/player/playerRepository';
 import { repository as tableRepository } from '../repository/table/tableRepository';
 import { Player, createPlayer, createFakePlayer } from './model';
-import { createTable, modeAnnounce } from '../tables/model';
+import { createTable } from '../tables/model';
 import {
     PLAYER_JOIN_SERVER_WS,
     GAME_START_SERVER_WS,
@@ -15,6 +15,7 @@ import {
 } from '../websocket';
 import WebSocket from 'ws';
 import {ISession} from "../websocket/session";
+import {modes} from "../announces/business";
 
 const COLLECTION_NAME = 'players';
 
@@ -108,7 +109,7 @@ export const onInit = async (ws: WebSocket, session: ISession) => {
         const firstPlayerId = players.find(searchStartPlayer).getDocumentId();
         table.setFirstPlayerId(firstPlayerId);
         table.setCurrentPlayerId(firstPlayerId);
-        table.setMode(modeAnnounce);
+        table.setMode(modes.ANNOUNCE);
 
         await tableRepository.upsertTable(table);
 
