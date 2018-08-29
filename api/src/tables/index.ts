@@ -8,6 +8,8 @@ import { DocumentReference, WriteResult } from "@google-cloud/firestore";
 import {IMessage} from "../websocket/types";
 import { connection } from "../websocket";
 import {ITable} from './model';
+import { repository } from '../repository/table/tableRepository';
+import {IPlayer} from "../players/model";
 
 export const COLLECTION_NAME = 'tables';
 
@@ -22,9 +24,12 @@ export const getTableById = (tableId: string): DocumentReference => {
 //     return getTableById(tableId).update(table);
 // };
 
-export async function nextPlayerPlusPlus(tableId: string, previousPlayerId: string) {
-    // const players = await getPlayersOnTable(tableId);
-    // const nextPlayer = computeNextPlayerForTrick(players, previousPlayerId);
+export async function nextPlayerPlusPlus(table: ITable, currentPlayer: IPlayer) {
+    const players = table.getPlayers();
+    const nextPlayer = computeNextPlayerForTrick(players, currentPlayer);
+
+    table.setCur
+
     // const tableRef = getTableById(tableId);
     // tableRef.update(
     //     {

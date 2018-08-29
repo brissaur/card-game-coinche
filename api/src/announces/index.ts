@@ -1,5 +1,5 @@
 import { getTableById, nextPlayerPlusPlus } from '../tables';
-import { announceIA, shouldStopAnnounces, getBestAnnounce } from './business';
+import {announceIA, shouldStopAnnounces, getBestAnnounce, modes} from './business';
 import { QuerySnapshot } from "@google-cloud/firestore";
 import {Announce, IAnnounce} from "./model";
 import {IMessage} from "../websocket/types";
@@ -51,33 +51,22 @@ const onAnnounce = async (message: IMessage, session: ISession) => {
     const announce = new Announce();
     announce.setAnnounce(eventData.announce);
     announce.setPlayerId(session.getPlayerDocumentId());
-    table.setAnnounces([announce]);
 
+    table.setAnnounces([announce]);
     await tableRepository.upsertTable(table);
 
-    console.log('table', table);
+    if (shouldStopAnnounces(table.getAnnounces())) {
+        const firstPlayerId = table.getFirstPlayerId();
+        await tableRepository.emptyCollection(tableRepository.getAnnouncesSubCollection(table));
 
-    // save announce in DB
-    // await saveAnnounce(tableId, eventData);
-    //
-    // // get back announces from DB
-    // const announces = await getAnnounces(tableId);
-    // if (shouldStopAnnounces(announces)) {
-    //     const fbTable = getTableById(tableId);
-    //     const firstPlayerId = await fbTable.get().then(doc => doc.data().firstPlayerId);
-    //
-    //     await emptyCollection(getAnnouncesCollection(tableId));
-    //
-    //     await fbTable.update(
-    //     {
-    //             currentPlayerId: firstPlayerId,
-    //             currentAnnounce: getBestAnnounce(announces),
-    //             mode: 'play',
-    //         }
-    //     );
-    // } else {
-    //     await nextPlayerPlusPlus(tableId, playerId);
-    // }
+        table.setCurrentPlayerId(firstPlayerId);
+        table.setCurrentAnnounce(getBestAnnounce(table.getAnnounces()));
+        table.setMode(modes.PLAY);
+        await tableRepository.upsertTable(table);
+    } else {
+        await nextPlayerPlusPlus(table, table.getPlayers()
+            .filter(p => p.getDocumentId() === announce.getPlayerId())[0]);
+    }
 };
 
 export const actions: {[key: string]: any} = {

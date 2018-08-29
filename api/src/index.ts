@@ -4,7 +4,7 @@ import {actions as playerActions, onInit} from './players';
 import { actions as announceActions } from './announces';
 import {IMessage} from "./websocket/types";
 import {createFakePlayer} from "./players/model";
-import {createTable, modeAnnounce} from "./tables/model";
+import {createTable} from "./tables/model";
 import {Session} from "./websocket/session";
 
 const router = (route: string) => {

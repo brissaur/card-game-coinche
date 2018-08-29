@@ -1,5 +1,5 @@
 import {AbstractRepository} from '../abstractRepository';
-import {Table} from "../../tables/model";
+import {ITable, Table} from "../../tables/model";
 import CollectionReference = FirebaseFirestore.CollectionReference;
 import {extract, hydrate, extractAnnounce, extractPlayer} from './tableHydrator';
 import {IPlayer} from "../../players/model";
@@ -19,6 +19,9 @@ class TableRepository extends AbstractRepository{
     }
     getCollection(): CollectionReference{
         return this.collection;
+    }
+    getAnnouncesSubCollection(table: ITable): CollectionReference{
+        return this.collection.doc(table.getDocumentId()).collection('announces');
     }
     async getTableById(tableId: string): Promise<Table>{
         return await hydrate(this.collection.doc(tableId), new Table());
