@@ -12,28 +12,50 @@ export const extract = (table: Table) => {
     return {
         currentPlayerId: table.getCurrentPlayerId(),
         firstPlayerId: table.getFirstPlayerId(),
+        currentAnnounce: table.getCurrentAnnounce() ? extractAnnounce(table.getCurrentAnnounce()) : null,
         mode: table.getMode()
     };
 };
 
-export const hydrate = async (document: DocumentReference, table: Table) => {
+export const hydrate = async (document: DocumentReference, table: Table): Promise<void> => {
     const documentData: DocumentSnapshot = await document.get();
     table.setDocumentId(documentData.id);
     table.setCurrentPlayerId(documentData.get('currentPlayerId'));
     table.setFirstPlayerId(documentData.get('firstPlayerId'));
     table.setMode(documentData.get('mode'));
+
+    // retrieve players / announces collection ?
     const playersData = await document.collection(PLAYER_SUBCOLLECTION).get()
-        .then((q) => q.docs.map(q => q.data()));
-    // how to retrieve players / announces collection ?
-    table.setPlayers(playersData.map(p => hydratePlayer(p, new Player())));
+        .then((q) => q.docs.map(
+            q => document.collection(PLAYER_SUBCOLLECTION).doc(q.id)
+        ));
 
-    const announcesData = await document.collection(ANNOUNCE_SUBCOLLECTION).get()
-        .then((q) => q.docs.map(q => q.data()));
-    table.setAnnounces(announcesData.map(a => hydrateAnnounces(a, new Announce())));
+    const players = await Promise.all(playersData.map(async (p) => {
+        const player = new Player();
+        await hydratePlayer(p, player);
+        return player;
+    }));
 
-    console.log('hydrate table after hydration', table);
+    table.setPlayers(players);
 
-    return table;
+    // const announcesData = await document.collection(ANNOUNCE_SUBCOLLECTION).get()
+    //     .then((q) => q.docs.map(q => q.data()));
+    //table.setAnnounces(announcesData.map(a => hydrateAnnounce(a, new Announce())));
+
+    // trying
+    const announcesDocuments = await document.collection(ANNOUNCE_SUBCOLLECTION).get()
+        .then((q) => q.docs.map(
+            q => document.collection(ANNOUNCE_SUBCOLLECTION).doc(q.id)
+        ));
+
+    const announces = await Promise.all(announcesDocuments.map(async (a) => {
+        console.log('a', a);
+        const announce = new Announce();
+        await hydrateAnnounce(a, announce);
+        return announce;
+    }));
+
+    table.setAnnounces(announces);
 };
 
 // extract player to be saved in table
@@ -47,22 +69,20 @@ export const extractPlayer = (player: IPlayer) => {
     }
 };
 
-const hydratePlayer = (data: DocumentData, player: IPlayer): IPlayer => {
-    player.setCards(data.cards);
-    player.setPos(data.pos);
-    player.setFirstname(data.firstname);
-    player.setDocumentId(data.id);
-    player.setIsFakePlayer(data.isFakePlayer);
-
-    return player;
+const hydratePlayer = async (document: DocumentReference, player: IPlayer): Promise<void> => {
+    const documentData: DocumentSnapshot = await document.get();
+    player.setDocumentId(document.id);
+    player.setCards(documentData.get('cards'));
+    player.setPos(documentData.get('pos'));
+    player.setFirstname(documentData.get('firstname'));
+    player.setIsFakePlayer(documentData.get('isFakePlayer'));
 };
 
-const hydrateAnnounces = (data: DocumentData, announce: IAnnounce): IAnnounce => {
-    announce.setDocumentId(data.id);
-    announce.setAnnounce(data.announce);
-    announce.setPlayerId(data.playerId);
-
-    return announce;
+const hydrateAnnounce = async (document: DocumentReference, announce: IAnnounce): Promise<void> => {
+    const documentData: DocumentSnapshot = await document.get();
+    announce.setDocumentId(document.id);
+    announce.setAnnounce(documentData.get('announce'));
+    announce.setPlayerId(documentData.get('playerId'));
 };
 
 export const extractAnnounce = (announce: IAnnounce) => {

@@ -16,7 +16,6 @@ class PlayerRepository extends AbstractRepository{
     //     return this.collection.doc(documentId);
     // }
     async savePlayer(player: Player): Promise<Player>{
-        console.log('save player');
         const doc = await this.collection.add(extract(player));
 
         player = hydrate(await doc.get(), player);

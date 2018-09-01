@@ -22,6 +22,8 @@ function* onNewAnnounce({ payload }) {
     const announces = yield select(getAnnounces);
     const res = announces.concat([payload.announce]);
 
+    console.log('onNewAnnounce res', res);
+
     yield put(updateAnnounces(res));
 }
 

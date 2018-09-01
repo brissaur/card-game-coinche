@@ -3,10 +3,14 @@ import {announceIA, shouldStopAnnounces, getBestAnnounce, modes} from './busines
 import { QuerySnapshot } from "@google-cloud/firestore";
 import {Announce, IAnnounce} from "./model";
 import {IMessage} from "../websocket/types";
-import { ANNOUNCE_MAKE_SERVER_WS, connection } from '../websocket';
+import {ANNOUNCE_MADE_SERVER_WS, ANNOUNCE_MAKE_SERVER_WS, connection, GAME_START_SERVER_WS} from '../websocket';
 import {onInit} from "../players";
 import { repository as tableRepository } from '../repository/table/tableRepository';
 import {ISession} from "../websocket/session";
+import {computeNextPlayerForTrick} from "../tables/business";
+import {formatMsgForWs} from "../websocket/helper";
+import WebSocket from 'ws';
+import {extractAnnounce} from "../repository/table/tableHydrator";
 
 const COLLECTION_NAME = 'announces';
 
@@ -43,19 +47,34 @@ export async function performAnnounce(tableId: string, playerId: string) {
     });
 }
 
-const onAnnounce = async (message: IMessage, session: ISession) => {
+const onAnnounce = async (ws: WebSocket, session: ISession, message: IMessage) => {
     const eventData = message.payload;
 
-    const table = await tableRepository.getTableById(session.getTableDocumentId());
+    console.log('eventData', eventData);
+
+    let table = await tableRepository.getTableById(session.getTableDocumentId());
+    console.log('session', session);
+    const playerId = eventData.playerId ? eventData.playerId : session.getPlayerDocumentId();
+    let player = table.getPlayers()
+        .filter(p => p.getDocumentId() === playerId)[0];
+
+    console.log('player found', player);
 
     const announce = new Announce();
     announce.setAnnounce(eventData.announce);
-    announce.setPlayerId(session.getPlayerDocumentId());
+    // in case of robot, we get its playerId, otherwise get it from session
+    announce.setPlayerId(player.getIsFakePlayer() ? eventData.playerId : session.getPlayerDocumentId());
 
-    table.setAnnounces([announce]);
+    table.setAnnounces([...table.getAnnounces(), announce]);
+    table.setCurrentAnnounce(announce);
     await tableRepository.upsertTable(table);
 
+    ws.send(formatMsgForWs(ANNOUNCE_MADE_SERVER_WS, {
+        announce: extractAnnounce(table.getCurrentAnnounce()),
+    }, {}));
+
     if (shouldStopAnnounces(table.getAnnounces())) {
+        console.log('stop announce');
         const firstPlayerId = table.getFirstPlayerId();
         await tableRepository.emptyCollection(tableRepository.getAnnouncesSubCollection(table));
 
@@ -63,9 +82,27 @@ const onAnnounce = async (message: IMessage, session: ISession) => {
         table.setCurrentAnnounce(getBestAnnounce(table.getAnnounces()));
         table.setMode(modes.PLAY);
         await tableRepository.upsertTable(table);
+
+        // should start game !
+        ws.send(formatMsgForWs(ANNOUNCE_MADE_SERVER_WS, {
+            announce: extractAnnounce(table.getCurrentAnnounce()),
+        }, {}));
     } else {
-        await nextPlayerPlusPlus(table, table.getPlayers()
-            .filter(p => p.getDocumentId() === announce.getPlayerId())[0]);
+        console.log('next player announce');
+        const currentPlayer = table.getPlayers().filter(p => p.getDocumentId() === announce.getPlayerId())[0];
+        const nextPlayer = computeNextPlayerForTrick(table.getPlayers(), currentPlayer);
+
+        const message = {
+            payload: {
+                announce: 'pass',
+                playerId: nextPlayer.getDocumentId()
+            },
+            meta: {},
+            type: {}
+        };
+        // call onAnnounce again to fake robot's played
+        onAnnounce(ws, session, message);
+
     }
 };
 

@@ -24,38 +24,40 @@ class TableRepository extends AbstractRepository{
         return this.collection.doc(table.getDocumentId()).collection('announces');
     }
     async getTableById(tableId: string): Promise<Table>{
-        return await hydrate(this.collection.doc(tableId), new Table());
+        const table = new Table();
+        await hydrate(this.collection.doc(tableId), table);
+        return table;
     }
-    async upsertTable(table: Table): Promise<Table>{
-        console.log('upserTable', table);
+    async upsertTable(table: Table): Promise<void>{
         let doc: DocumentReference;
         if(table.getDocumentId()){
-            // update main object
             console.log('update table');
+            // update main object
             doc = await this.collection.doc(table.getDocumentId());
             await doc.update(extract(table));
         }else{
-            console.log('create table');
             // create
             doc = await this.collection.add(extract(table));
         }
 
         //upsert announces
         let promises: any[] = [];
-        console.log('announce from table', table.getAnnounces());
         table.getAnnounces().map(announce => {
+            // console.log('upsert annonuces', announce);
             if(announce.getDocumentId()){
+                console.log('announce exists');
                 promises.push(doc.collection('announces').doc(announce.getDocumentId()).set(extractAnnounce(announce)));
             }else{
+                console.log('announce DO NOT exists', announce);
                 promises.push(doc.collection('announces').add(extractAnnounce(announce)));
             }
-
         });
         await Promise.all(promises);
 
         //upsert players
         promises = [];
         table.getPlayers().map(player => {
+            console.log('upsert players');
             if(player.getDocumentId()){
                 promises.push(doc.collection('players').doc(player.getDocumentId()).set(extractPlayer(player)));
             }else{
@@ -65,9 +67,7 @@ class TableRepository extends AbstractRepository{
 
         await Promise.all(promises);
 
-        table = await hydrate(doc, table);
-
-        return table;
+        await hydrate(doc, table);
     }
 }
 
