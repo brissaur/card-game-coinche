@@ -1,5 +1,8 @@
-import {IPlayerId, IPlayer} from '../players/model';
-import { IAnnounce } from '../announces/model';
+import {IPlayerId, IPlayer, Player} from '../players/model';
+import {Announce, IAnnounce} from '../announces/model';
+import DocumentReference = FirebaseFirestore.DocumentReference;
+import {DocumentData} from "@google-cloud/firestore";
+import DocumentSnapshot = FirebaseFirestore.DocumentSnapshot;
 
 export type ITableId = string;
 
@@ -77,3 +80,67 @@ export const createTable = (): Table =>
 {
     return new Table();
 };
+
+
+// const hydratePlayer = (data: DocumentSnapshot, player: IPlayer): IPlayer => {
+//     player.setDocumentId(data.id);
+//     player.setCards(data.get('cards'));
+//     player.setPos(data.get('pos'));
+//     player.setFirstname(data.get('firstname'));
+//     player.setIsFakePlayer(data.get('isFakePlayer'));
+//
+//     return player;
+// };
+//
+// const hydrateAnnounces = (data: DocumentSnapshot, announce: IAnnounce): IAnnounce => {
+//     announce.setDocumentId(data.id);
+//     announce.setAnnounce(data.get('announce'));
+//     announce.setPlayerId(data.get('playerId'));
+//
+//     return announce;
+// };
+
+
+
+// class TableModel{
+//     document: DocumentReference;
+//     players: IPlayer[];
+//     constructor(document: DocumentReference){
+//         this.document = document;
+//     }
+//     save(){
+//         this.document.update();
+//     }
+//     async getCurrentPlayer(): Promise<IPlayer>{
+//         const currentPlayerId = await this.document.get().then(d => d.get('currentPlayerId'));
+//         return this.players.filter(p => p.getDocumentId() === currentPlayerId)[0];
+//     }
+//     async getPlayers(){
+//         const players: Player[] = [];
+//         await this.document.collection('players').get()
+//             .then((snapshot) => {
+//                 snapshot.forEach((p) => {
+//                     players.push(hydratePlayer(p, new Player()));
+//                 });
+//             })
+//             .catch((err) => {
+//                 // eslint-disable-next-line no-console
+//                 console.log('Error getting documents', err);
+//             });
+//         return players;
+//     }
+//     async getAnnounce(){
+//         const announces: Announce[] = [];
+//         await this.document.collection('announces').get()
+//             .then((snapshot) => {
+//                 snapshot.forEach((a) => {
+//                     announces.push(hydrateAnnounce(a, new Announce()));
+//                 });
+//             })
+//             .catch((err) => {
+//                 // eslint-disable-next-line no-console
+//                 console.log('Error getting documents', err);
+//             });
+//         return players;
+//     }
+// }

@@ -31,8 +31,7 @@ connection.on('connection', function connection(ws) {
                     playerActions[params.action](parsed, ws, session);
                     break;
                 case 'announce':
-                    console.log('icccci');
-                    announceActions[params.action](parsed, session);
+                    announceActions[params.action](ws, session, parsed);
                     break;
             }
 

@@ -26,16 +26,7 @@ export const getTableById = (tableId: string): DocumentReference => {
 
 export async function nextPlayerPlusPlus(table: ITable, currentPlayer: IPlayer) {
     const players = table.getPlayers();
-    const nextPlayer = computeNextPlayerForTrick(players, currentPlayer);
-
-    table.setCur
-
-    // const tableRef = getTableById(tableId);
-    // tableRef.update(
-    //     {
-    //         currentPlayerId: nextPlayer.id
-    //     },
-    // );
+    return ;
 }
 
 // const onUpdateTable = async (message: IMessage) => {

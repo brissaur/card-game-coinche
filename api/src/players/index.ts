@@ -53,13 +53,11 @@ export const getPlayersOnTable = async (tableId: string): Promise<Player[]> => {
 };
 
 export const onInit = async (ws: WebSocket, session: ISession) => {
-    console.log('on init');
     let player = await playerRepository.savePlayer(createPlayer());
 
     let table = createTable();
 
-    console.log('upsert table');
-    table = await tableRepository.upsertTable(table);
+    await tableRepository.upsertTable(table);
 
     session.setPlayerDocumentId(player.getDocumentId());
     session.setTableDocumentId(table.getDocumentId());
