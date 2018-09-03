@@ -1,10 +1,9 @@
-import { getTableById, nextPlayerPlusPlus } from '../tables';
+import { getTableById } from '../tables';
 import {announceIA, shouldStopAnnounces, getBestAnnounce, modes} from './business';
 import { QuerySnapshot } from "@google-cloud/firestore";
 import {Announce, IAnnounce} from "./model";
 import {IMessage} from "../websocket/types";
-import {ANNOUNCE_MADE_SERVER_WS, ANNOUNCE_MAKE_SERVER_WS, connection, GAME_START_SERVER_WS} from '../websocket';
-import {onInit} from "../players";
+import { ANNOUNCE_MADE_SERVER_WS } from '../websocket';
 import { repository as tableRepository } from '../repository/table/tableRepository';
 import {ISession} from "../websocket/session";
 import {computeNextPlayerForTrick} from "../tables/business";

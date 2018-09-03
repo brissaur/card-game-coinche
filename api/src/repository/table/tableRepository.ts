@@ -2,10 +2,7 @@ import {AbstractRepository} from '../abstractRepository';
 import {ITable, Table} from "../../tables/model";
 import CollectionReference = FirebaseFirestore.CollectionReference;
 import {extract, hydrate, extractAnnounce, extractPlayer} from './tableHydrator';
-import {IPlayer} from "../../players/model";
-import {IAnnounce} from "../../announces/model";
 import DocumentReference = FirebaseFirestore.DocumentReference;
-import WriteResult = FirebaseFirestore.WriteResult;
 
 const TABLE_COLLECTION = 'tables';
 export const PLAYER_SUBCOLLECTION = 'players';

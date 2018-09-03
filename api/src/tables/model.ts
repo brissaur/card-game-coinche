@@ -1,8 +1,5 @@
-import {IPlayerId, IPlayer, Player} from '../players/model';
-import {Announce, IAnnounce} from '../announces/model';
-import DocumentReference = FirebaseFirestore.DocumentReference;
-import {DocumentData} from "@google-cloud/firestore";
-import DocumentSnapshot = FirebaseFirestore.DocumentSnapshot;
+import {IPlayerId, IPlayer } from '../players/model';
+import {IAnnounce} from '../announces/model';
 
 export type ITableId = string;
 

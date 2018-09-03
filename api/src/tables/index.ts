@@ -1,14 +1,6 @@
-import { getPlayersOnTable, getPlayersCollection } from '../players';
-import { getCardsPlayedCollection, getCardsPlayedOnTable } from '../cardsPlayed';
-import { performAnnounce } from '../announces';
-import { computeNextPlayerForTrick } from './business';
-import { possibleCards } from '../common/';
 import { firestore } from '../db';
 import { DocumentReference, WriteResult } from "@google-cloud/firestore";
-import {IMessage} from "../websocket/types";
-import { connection } from "../websocket";
 import {ITable} from './model';
-import { repository } from '../repository/table/tableRepository';
 import {IPlayer} from "../players/model";
 
 export const COLLECTION_NAME = 'tables';

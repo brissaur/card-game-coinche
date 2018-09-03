@@ -1,6 +1,6 @@
 import {getTableById} from '../tables';
 import { dealCards, searchStartPlayer } from './business';
-import { CollectionReference, DocumentReference, QuerySnapshot, QueryDocumentSnapshot } from "@google-cloud/firestore";
+import { CollectionReference, QuerySnapshot, QueryDocumentSnapshot } from "@google-cloud/firestore";
 import {formatMsgForWs} from "../websocket/helper";
 import { repository as playerRepository } from '../repository/player/playerRepository';
 import { repository as tableRepository } from '../repository/table/tableRepository';

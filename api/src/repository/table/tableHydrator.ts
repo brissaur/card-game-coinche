@@ -1,12 +1,9 @@
 import { Table } from '../../tables/model';
 import {IPlayer, Player} from '../../players/model';
-import { DocumentData, DocumentSnapshot } from "@google-cloud/firestore";
+import { DocumentSnapshot } from "@google-cloud/firestore";
 import {Announce, IAnnounce} from "../../announces/model";
 import DocumentReference = FirebaseFirestore.DocumentReference;
 import {ANNOUNCE_SUBCOLLECTION, PLAYER_SUBCOLLECTION} from "./tableRepository";
-import QuerySnapshot = FirebaseFirestore.QuerySnapshot;
-import QueryDocumentSnapshot = FirebaseFirestore.QueryDocumentSnapshot;
-import placeholder = require("lodash/fp/placeholder");
 
 export const extract = (table: Table) => {
     return {

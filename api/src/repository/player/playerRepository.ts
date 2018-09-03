@@ -2,7 +2,6 @@ import {AbstractRepository} from '../abstractRepository';
 import CollectionReference = FirebaseFirestore.CollectionReference;
 import { Player } from '../../players/model';
 import {extract, hydrate} from './playerHydrator';
-import DocumentReference = FirebaseFirestore.DocumentReference;
 
 const PLAYER_COLLECTION = 'players';
 

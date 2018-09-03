@@ -4,7 +4,6 @@ import { getTricksCollection } from '../tricks';
 import { ICard } from './model';
 import { QuerySnapshot } from '@google-cloud/firestore';
 import {IMessage} from "../websocket/types";
-import { connection } from "../websocket";
 
 const COLLECTION_NAME = 'cardsPlayed';
 

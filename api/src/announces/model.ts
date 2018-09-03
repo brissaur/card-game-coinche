@@ -1,7 +1,5 @@
 import { IPlayerId } from '../players/model';
 
-//export const ANNOUNCE_PASS = 'pass';
-
 export type IAnnounceId = string;
 
 export interface IAnnounce{
