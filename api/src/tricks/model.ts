@@ -1,39 +1,31 @@
-import {ICardId} from "../cardsPlayed/model";
+import {ICardId, ICardPlayed} from "../cardsPlayed/model";
 
 export type ITrickId = string;
 
 export interface ITrick{
     documentId: ITrickId;
-    cardId: string;
-    playerId: string;
+    cardsPlayed: ICardPlayed[];
     setDocumentId(documentId: ITrickId): void;
     getDocumentId(): ITrickId;
-    setCardId(id: ICardId): void;
-    getCardId(): ICardId;
-    setPlayerId(id: ICardId): void;
-    getPlayerId(): ICardId;
+    set(cardsPlayed: ICardPlayed[]): void;
+    get(): ICardPlayed[];
 }
 
-export class Trick implements ITrick{
+export class Trick implements ITrick {
     documentId: ITrickId;
-    cardId: string;
-    playerId: string;
-    getDocumentId(): ITrickId{
-        return this.documentId;
-    }
+    cardsPlayed: ICardPlayed[];
     setDocumentId(documentId: ITrickId){
         this.documentId = documentId;
     }
-    setCardId(id: ICardId){
-        this.cardId = id;
+    getDocumentId(): ITrickId
+    {
+        return this.documentId;
     }
-    getCardId(): ICardId{
-        return this.cardId;
+    set(cardsPlayed: ICardPlayed[]) {
+        this.cardsPlayed = cardsPlayed;
     }
-    setPlayerId(id: ICardId){
-        this.playerId = id;
-    }
-    getPlayerId(): ICardId{
-        return this.playerId;
+
+    get(): ICardPlayed[] {
+        return this.cardsPlayed;
     }
 }

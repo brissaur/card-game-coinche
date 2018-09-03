@@ -1,12 +1,14 @@
 import {AbstractRepository} from '../abstractRepository';
 import {ITable, Table} from "../../tables/model";
 import CollectionReference = FirebaseFirestore.CollectionReference;
-import {extract, hydrate, extractAnnounce, extractPlayer} from './tableHydrator';
+import {extract, hydrate, extractAnnounce, extractPlayer, extractTrick} from './tableHydrator';
 import DocumentReference = FirebaseFirestore.DocumentReference;
 
 const TABLE_COLLECTION = 'tables';
 export const PLAYER_SUBCOLLECTION = 'players';
 export const ANNOUNCE_SUBCOLLECTION = 'announces';
+export const TRICK_SUBCOLLECTION = 'tricks';
+const CARD_PLAYED_SUBCOLLECTION = 'cardsPlayed';
 
 class TableRepository extends AbstractRepository{
     collection: CollectionReference;
@@ -56,9 +58,33 @@ class TableRepository extends AbstractRepository{
         table.getPlayers().map(player => {
             console.log('upsert players');
             if(player.getDocumentId()){
-                promises.push(doc.collection('players').doc(player.getDocumentId()).set(extractPlayer(player)));
+                promises.push(doc.collection(PLAYER_SUBCOLLECTION).doc(player.getDocumentId()).set(extractPlayer(player)));
             }else{
-                promises.push(doc.collection('players').add(extractPlayer(player)));
+                promises.push(doc.collection(PLAYER_SUBCOLLECTION).add(extractPlayer(player)));
+            }
+        });
+
+        await Promise.all(promises);
+
+        //upsert tricks
+        promises = [];
+        table.getTricks().map(trick => {
+            console.log('upsert tricks');
+            if(trick.getDocumentId()){
+                promises.push(doc.collection(TRICK_SUBCOLLECTION).doc(trick.getDocumentId()).set(extractTrick(trick)));
+            }else{
+                promises.push(doc.collection(TRICK_SUBCOLLECTION).add(extractTrick(trick)));
+            }
+        });
+
+        //upsert cardsPlayed
+        promises = [];
+        table.getTricks().map(trick => {
+            console.log('upsert tricks');
+            if(trick.getDocumentId()){
+                promises.push(doc.collection(TRICK_SUBCOLLECTION).doc(trick.getDocumentId()).set(extractTrick(trick)));
+            }else{
+                promises.push(doc.collection(TRICK_SUBCOLLECTION).add(extractTrick(trick)));
             }
         });
 

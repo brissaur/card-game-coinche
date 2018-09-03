@@ -101,7 +101,6 @@ const onAnnounce = async (ws: WebSocket, session: ISession, message: IMessage) =
         };
         // call onAnnounce again to fake robot's played
         onAnnounce(ws, session, message);
-
     }
 };
 
