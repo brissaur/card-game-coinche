@@ -1,6 +1,6 @@
 import { deckOfThirtyTwoCards } from './constant';
 import {Player} from "../players/model";
-import { Card, ICard, ICardId } from "../cardsPlayed/model";
+import { Card, ICard } from "../cardsPlayed/model";
 
 const filterCardsByColor = (color: string) => (card: ICard) => card.getCardColor() === color;
 
