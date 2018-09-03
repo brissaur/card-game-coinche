@@ -4,6 +4,9 @@ import { DocumentSnapshot } from "@google-cloud/firestore";
 import {Announce, IAnnounce} from "../../announces/model";
 import DocumentReference = FirebaseFirestore.DocumentReference;
 import {ANNOUNCE_SUBCOLLECTION, PLAYER_SUBCOLLECTION} from "./tableRepository";
+import {ITrick} from "../../tricks/model";
+import {ICardPlayed} from "../../cardsPlayed/model";
+import {IRound} from "../../rounds/model";
 
 export const extract = (table: Table) => {
     return {
@@ -64,6 +67,21 @@ export const extractPlayer = (player: IPlayer) => {
         isFakePlayer: player.getIsFakePlayer(),
         pos: player.getPos()
     }
+};
+
+const extractCardsPlayed = (cardPlayed: ICardPlayed) => {
+    return {
+        cardId: cardPlayed.getCardId(),
+        playerId: cardPlayed.getPlayerId()
+    }
+};
+
+export const extractTrick = (trick: ITrick) => {
+    return trick.get().map(c => extractCardsPlayed(c));
+};
+
+export const extractRound = (round: IRound) => {
+    return round.get().map(t => extractTrick(t));
 };
 
 const hydratePlayer = async (document: DocumentReference, player: IPlayer): Promise<void> => {

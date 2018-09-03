@@ -1,5 +1,7 @@
 import {IPlayerId, IPlayer } from '../players/model';
 import {IAnnounce} from '../announces/model';
+import {ITrick} from "../tricks/model";
+import {ICard, ICardPlayed} from "../cardsPlayed/model";
 
 export type ITableId = string;
 
@@ -7,10 +9,12 @@ export interface ITable{
     documentId: ITableId;
     currentPlayerId: IPlayerId;
     firstPlayerId: IPlayerId;
+    currentAnnounce: IAnnounce;
     mode: string;
     players: IPlayer[];
     announces: IAnnounce[];
-    currentAnnounce: IAnnounce;
+    tricks: ITrick[];
+    cardsPlayed: ICardPlayed[];
     getDocumentId(): ITableId;
     setDocumentId(documentId: ITableId): void;
     setCurrentAnnounce(announce: IAnnounce): void;
@@ -19,16 +23,22 @@ export interface ITable{
     setPlayers(players: IPlayer[]): void;
     setCurrentPlayerId(currentPlayerId: IPlayerId): void;
     getCurrentPlayerId(): IPlayerId;
+    setTricks(tricks: ITrick[]): void;
+    getTricks(): ITrick[];
+    setCardsPlayed(cardsPlayed: ICardPlayed[]): void;
+    getCardsPlayed(): ICardPlayed[];
 }
 
 export class Table implements ITable{
     documentId: ITableId = null;
     currentPlayerId: IPlayerId = null;
     firstPlayerId: IPlayerId = null;
+    currentAnnounce: IAnnounce;
     mode: string = null;
     players: IPlayer[] = [];
     announces: IAnnounce[] = [];
-    currentAnnounce: IAnnounce;
+    tricks: ITrick[] = [];
+    cardsPlayed: ICardPlayed[];
     setDocumentId(id: ITableId){
         this.documentId = id;
     }
@@ -70,6 +80,20 @@ export class Table implements ITable{
     }
     getCurrentAnnounce(): IAnnounce{
         return this.currentAnnounce;
+    }
+    setTricks(tricks: ITrick[]): void{
+        this.tricks = tricks;
+    }
+    getTricks(): ITrick[]{
+        return this.tricks;
+    }
+    setCardsPlayed(cardsPlayed: ICardPlayed[]): void
+    {
+        this.cardsPlayed = cardsPlayed;
+    }
+    getCardsPlayed(): ICardPlayed[]
+    {
+        return this.cardsPlayed;
     }
 }
 
