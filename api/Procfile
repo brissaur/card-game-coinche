@@ -1,1 +1,1 @@
-web: npm run build && npm run start
+web: cp ./src/build.properties.env.ts ./src/build.properties.ts && npm run build && npm run start
