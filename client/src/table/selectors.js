@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 import { createSelector } from 'reselect';
-import { possibleCards, Card } from 'common';
+import { possibleCards, Card } from '../common-services';
 
 import { getPlayerId } from '../player/selectors';
 
