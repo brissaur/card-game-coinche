@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "common": "../functions/src/common",
     "eslint-config-airbnb": "^16.1.0",
     "firebase": "^4.5.2",
     "lodash": "^4.17.4",
