@@ -58,6 +58,6 @@ const onAddCardPlayed = async (message: IMessage) => {
     await nextPlayerPlusPlus(tableId, eventData.playerId);
 };
 
-// wss.on('', (message: IMessage) => {
-//     return onAddCardPlayed(message);
-//});
+export const actions: {[key: string]: any} = {
+    "played": onAddCardPlayed
+};

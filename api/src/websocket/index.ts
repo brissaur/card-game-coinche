@@ -15,3 +15,4 @@ export const PLAYER_JOIN_SERVER_WS = 'player/join';
 export const PLAYER_ACTIVE_SERVER_WS = 'player/active';
 export const GAME_START_SERVER_WS = 'game/start';
 export const CARDS_DEAL_SERVER_WS = 'cards/deal';
+export const ROUND_MODE = 'round/mode';

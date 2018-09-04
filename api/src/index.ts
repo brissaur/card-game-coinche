@@ -33,6 +33,9 @@ connection.on('connection', function connection(ws) {
                 case 'announce':
                     announceActions[params.action](ws, session, parsed);
                     break;
+                // case 'card':
+                    // cardActions[params.action](ws, session, parsed);
+                    // break;
             }
 
             global.console.log('received:', parsed);
