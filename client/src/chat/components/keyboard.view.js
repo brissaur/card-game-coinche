@@ -55,6 +55,7 @@ const Keyboard = connect(
     null,
     dispatch => ({
         sendMessage(message) {
+            console.log('robin');
             dispatch(sendChatMessage(message));
         },
     }),

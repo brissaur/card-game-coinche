@@ -4,6 +4,7 @@ import initAppSaga from './bootstrap/sagas';
 import { watchers as cardWatchers } from './card/sagas';
 import { watchers as announceWatchers } from './announce/sagas';
 import { watchers as tableWatchers } from './table/sagas';
+import { chatWatchers } from './chat/sagas';
 
 // example saga that logs an action
 // eslint-disable-next-line
@@ -17,6 +18,7 @@ export default function* rootSaga() {
         fork(cardWatchers),
         fork(announceWatchers),
         fork(tableWatchers),
+        fork(chatWatchers),
         call(initAppSaga),
     ]);
 }

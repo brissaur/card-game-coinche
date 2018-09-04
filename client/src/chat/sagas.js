@@ -17,7 +17,7 @@ function* messageReceived({ payload: { message } }) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export function* watchers() {
+export function* chatWatchers() {
     yield takeEvery(SEND_MESSAGE, sendMessage);
     yield takeEvery(WS_CHAT_MESSAGE, messageReceived);
 }

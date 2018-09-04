@@ -11,7 +11,7 @@ export default {
     },
     chatArea: {
         position: 'fixed',
-        bottom: '50px',
+        bottom: '175px',
         // height: '50px',
         width: '50%',
         left: '15px',
