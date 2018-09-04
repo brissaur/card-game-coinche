@@ -3,7 +3,7 @@ import {announceIA, shouldStopAnnounces, getBestAnnounce, modes} from './busines
 import { QuerySnapshot } from "@google-cloud/firestore";
 import {Announce, IAnnounce} from "./model";
 import {IMessage} from "../websocket/types";
-import { ANNOUNCE_MADE_SERVER_WS } from '../websocket';
+import {ANNOUNCE_MADE_SERVER_WS, PLAYER_ACTIVE_SERVER_WS, ROUND_MODE} from '../websocket';
 import { repository as tableRepository } from '../repository/table/tableRepository';
 import {ISession} from "../websocket/session";
 import {computeNextPlayerForTrick} from "../tables/business";
@@ -72,6 +72,10 @@ const onAnnounce = async (ws: WebSocket, session: ISession, message: IMessage) =
         announce: extractAnnounce(table.getCurrentAnnounce()),
     }, {}));
 
+    ws.send(formatMsgForWs(PLAYER_ACTIVE_SERVER_WS, {
+        playerId: player.getDocumentId()
+    }, {}));
+
     if (shouldStopAnnounces(table.getAnnounces())) {
         console.log('stop announce');
         const firstPlayerId = table.getFirstPlayerId();
@@ -83,8 +87,12 @@ const onAnnounce = async (ws: WebSocket, session: ISession, message: IMessage) =
         await tableRepository.upsertTable(table);
 
         // should start game !
-        ws.send(formatMsgForWs(ANNOUNCE_MADE_SERVER_WS, {
-            announce: extractAnnounce(table.getCurrentAnnounce()),
+        ws.send(formatMsgForWs(ROUND_MODE, {
+            mode: modes.PLAY,
+        }, {}));
+
+        ws.send(formatMsgForWs(PLAYER_ACTIVE_SERVER_WS, {
+            playerId: table.getCurrentPlayerId()
         }, {}));
     } else {
         console.log('next player announce');
