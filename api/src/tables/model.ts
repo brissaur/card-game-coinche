@@ -38,7 +38,7 @@ export class Table implements ITable{
     players: IPlayer[] = [];
     announces: IAnnounce[] = [];
     tricks: ITrick[] = [];
-    cardsPlayed: ICardPlayed[];
+    cardsPlayed: ICardPlayed[] = [];
     setDocumentId(id: ITableId){
         this.documentId = id;
     }
