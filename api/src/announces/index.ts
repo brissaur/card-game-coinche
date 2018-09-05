@@ -49,15 +49,15 @@ export async function performAnnounce(tableId: string, playerId: string) {
 const onAnnounce = async (ws: WebSocket, session: ISession, message: IMessage) => {
     const eventData = message.payload;
 
-    console.log('eventData', eventData);
+    //console.log('eventData', eventData);
 
     let table = await tableRepository.getTableById(session.getTableDocumentId());
-    console.log('session', session);
+    //console.log('session', session);
     const playerId = eventData.playerId ? eventData.playerId : session.getPlayerDocumentId();
     let player = table.getPlayers()
         .filter(p => p.getDocumentId() === playerId)[0];
 
-    console.log('player found', player);
+    // console.log('player found', player);
 
     const announce = new Announce();
     announce.setAnnounce(eventData.announce);

@@ -1,14 +1,14 @@
 import {AbstractRepository} from '../abstractRepository';
 import {ITable, Table} from "../../tables/model";
 import CollectionReference = FirebaseFirestore.CollectionReference;
-import {extract, hydrate, extractAnnounce, extractPlayer, extractTrick} from './tableHydrator';
+import {extract, hydrate, extractAnnounce, extractPlayer, extractTrick, extractCardPlayed} from './tableHydrator';
 import DocumentReference = FirebaseFirestore.DocumentReference;
 
 const TABLE_COLLECTION = 'tables';
 export const PLAYER_SUBCOLLECTION = 'players';
 export const ANNOUNCE_SUBCOLLECTION = 'announces';
 export const TRICK_SUBCOLLECTION = 'tricks';
-const CARD_PLAYED_SUBCOLLECTION = 'cardsPlayed';
+export const CARD_PLAYED_SUBCOLLECTION = 'cardsPlayed';
 
 class TableRepository extends AbstractRepository{
     collection: CollectionReference;
@@ -20,7 +20,10 @@ class TableRepository extends AbstractRepository{
         return this.collection;
     }
     getAnnouncesSubCollection(table: ITable): CollectionReference{
-        return this.collection.doc(table.getDocumentId()).collection('announces');
+        return this.collection.doc(table.getDocumentId()).collection(ANNOUNCE_SUBCOLLECTION);
+    }
+    getCardsPlayedSubCollection(table: ITable): CollectionReference{
+        return this.collection.doc(table.getDocumentId()).collection(CARD_PLAYED_SUBCOLLECTION);
     }
     async getTableById(tableId: string): Promise<Table>{
         const table = new Table();
@@ -33,7 +36,11 @@ class TableRepository extends AbstractRepository{
             console.log('update table');
             // update main object
             doc = await this.collection.doc(table.getDocumentId());
+            // console.log('extract table', extract(table));
             await doc.update(extract(table));
+
+            // console.log('table updated');
+
         }else{
             // create
             doc = await this.collection.add(extract(table));
@@ -44,10 +51,8 @@ class TableRepository extends AbstractRepository{
         table.getAnnounces().map(announce => {
             // console.log('upsert annonuces', announce);
             if(announce.getDocumentId()){
-                console.log('announce exists');
                 promises.push(doc.collection('announces').doc(announce.getDocumentId()).set(extractAnnounce(announce)));
             }else{
-                console.log('announce DO NOT exists', announce);
                 promises.push(doc.collection('announces').add(extractAnnounce(announce)));
             }
         });
@@ -55,8 +60,8 @@ class TableRepository extends AbstractRepository{
 
         //upsert players
         promises = [];
+        console.log('upsert players');
         table.getPlayers().map(player => {
-            console.log('upsert players');
             if(player.getDocumentId()){
                 promises.push(doc.collection(PLAYER_SUBCOLLECTION).doc(player.getDocumentId()).set(extractPlayer(player)));
             }else{
@@ -68,8 +73,8 @@ class TableRepository extends AbstractRepository{
 
         //upsert tricks
         promises = [];
+        console.log('upsert tricks');
         table.getTricks().map(trick => {
-            console.log('upsert tricks');
             if(trick.getDocumentId()){
                 promises.push(doc.collection(TRICK_SUBCOLLECTION).doc(trick.getDocumentId()).set(extractTrick(trick)));
             }else{
@@ -77,14 +82,13 @@ class TableRepository extends AbstractRepository{
             }
         });
 
-        //upsert cardsPlayed
         promises = [];
-        table.getTricks().map(trick => {
-            console.log('upsert tricks');
-            if(trick.getDocumentId()){
-                promises.push(doc.collection(TRICK_SUBCOLLECTION).doc(trick.getDocumentId()).set(extractTrick(trick)));
+        console.log('upsert cardsPlayed');
+        table.getCardsPlayed().map(cardPlayed => {
+            if(cardPlayed.getDocumentId()){
+                promises.push(doc.collection(CARD_PLAYED_SUBCOLLECTION).doc(cardPlayed.getDocumentId()).set(extractCardPlayed(cardPlayed)));
             }else{
-                promises.push(doc.collection(TRICK_SUBCOLLECTION).add(extractTrick(trick)));
+                promises.push(doc.collection(CARD_PLAYED_SUBCOLLECTION).add(extractCardPlayed(cardPlayed)));
             }
         });
 

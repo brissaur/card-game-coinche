@@ -7,6 +7,7 @@ export const connection = new WebSocket.Server({
     global.console.log('Server listening for WS on port ' + config.WEBSOCKET_PORT);
 });
 
+export const CARD_PLAY_SERVER_WS = 'card/play';
 export const CARD_PLAYED_SERVER_WS = 'card/played';
 export const ANNOUNCE_MAKE_SERVER_WS = 'announce/make';
 export const ANNOUNCE_MADE_SERVER_WS = 'announce/made';

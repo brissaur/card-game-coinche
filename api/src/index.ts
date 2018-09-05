@@ -1,12 +1,10 @@
 import { actions as announceActions } from './announces';
-import { IMessage } from './websocket/types';
-import { createFakePlayer } from './players/model';
-import { createTable } from './tables/model';
 import { Session } from './websocket/session';
 import { chatActions } from './chat/index';
 import { actions as playerActions, onInit } from './players';
 import { connection } from './websocket';
 import { decodeMsgFromWs, formatMsgForWs } from './websocket/helper';
+import {actions as cardActions} from './cardsPlayed';
 
 const router = (route: string) => {
     const elements = route.split('/');
@@ -37,6 +35,9 @@ connection.on('connection', (ws) => {
                 break;
             case 'chat':
                 chatActions[params.action as 'message'](parsed, connection);
+                break;
+            case 'card':
+                cardActions[params.action](ws, session, parsed);
                 break;
             }
 

@@ -89,8 +89,8 @@ export class Hand {
 export const possibleCards = (trump: string, currentPlayer: Player, cardsPlayed: Card[]): ICard[] => {
     if (cardsPlayed.length > 0) {
         const firstCardOfTheTrick = cardsPlayed[0];
-        const isTrump = firstCardOfTheTrick.color === trump;
-        const highestCardOfTrick = getHighestCard(cardsPlayed, trump, firstCardOfTheTrick.color);
+        const isTrump = firstCardOfTheTrick.getCardColor() === trump;
+        const highestCardOfTrick = getHighestCard(cardsPlayed, trump, firstCardOfTheTrick.getCardColor());
         const hand = new Hand(currentPlayer.getCards().map(c => new Card(c)), trump, firstCardOfTheTrick);
         if (isTrump) {
             if (hand.getTrumpCards().length > 0) {

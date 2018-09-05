@@ -3,9 +3,9 @@ import {IPlayer, Player} from '../../players/model';
 import { DocumentSnapshot } from "@google-cloud/firestore";
 import {Announce, IAnnounce} from "../../announces/model";
 import DocumentReference = FirebaseFirestore.DocumentReference;
-import {ANNOUNCE_SUBCOLLECTION, PLAYER_SUBCOLLECTION} from "./tableRepository";
+import {ANNOUNCE_SUBCOLLECTION, CARD_PLAYED_SUBCOLLECTION, PLAYER_SUBCOLLECTION} from "./tableRepository";
 import {ITrick} from "../../tricks/model";
-import {ICardPlayed} from "../../cardsPlayed/model";
+import {CardPlayed, ICardPlayed} from "../../cardsPlayed/model";
 import {IRound} from "../../rounds/model";
 
 export const extract = (table: Table) => {
@@ -22,6 +22,13 @@ export const hydrate = async (document: DocumentReference, table: Table): Promis
     table.setDocumentId(documentData.id);
     table.setCurrentPlayerId(documentData.get('currentPlayerId'));
     table.setFirstPlayerId(documentData.get('firstPlayerId'));
+    if(documentData.get('currentAnnounce')){
+        const announce = new Announce();
+        const data = documentData.get('currentAnnounce');
+        announce.setPlayerId(data.playerId);
+        announce.setAnnounce(data.announce);
+        table.setCurrentAnnounce(announce);
+    }
     table.setMode(documentData.get('mode'));
 
     // retrieve players / announces collection ?
@@ -38,24 +45,31 @@ export const hydrate = async (document: DocumentReference, table: Table): Promis
 
     table.setPlayers(players);
 
-    // const announcesData = await document.collection(ANNOUNCE_SUBCOLLECTION).get()
-    //     .then((q) => q.docs.map(q => q.data()));
-    //table.setAnnounces(announcesData.map(a => hydrateAnnounce(a, new Announce())));
-
-    // trying
     const announcesDocuments = await document.collection(ANNOUNCE_SUBCOLLECTION).get()
         .then((q) => q.docs.map(
             q => document.collection(ANNOUNCE_SUBCOLLECTION).doc(q.id)
         ));
 
     const announces = await Promise.all(announcesDocuments.map(async (a) => {
-        console.log('a', a);
         const announce = new Announce();
         await hydrateAnnounce(a, announce);
         return announce;
     }));
 
     table.setAnnounces(announces);
+
+    const cardsPlayedDocuments = await document.collection(CARD_PLAYED_SUBCOLLECTION).get()
+        .then((q) => q.docs.map(
+            q => document.collection(CARD_PLAYED_SUBCOLLECTION).doc(q.id)
+        ));
+
+    const cardsPlayed = await Promise.all(cardsPlayedDocuments.map(async (cp) => {
+        const cardPlayed = new CardPlayed();
+        await hydrateCardPlayed(cp, cardPlayed);
+        return cardPlayed;
+    }));
+
+    table.setCardsPlayed(cardsPlayed);
 };
 
 // extract player to be saved in table
@@ -69,7 +83,7 @@ export const extractPlayer = (player: IPlayer) => {
     }
 };
 
-const extractCardsPlayed = (cardPlayed: ICardPlayed) => {
+export const extractCardPlayed = (cardPlayed: ICardPlayed) => {
     return {
         cardId: cardPlayed.getCardId(),
         playerId: cardPlayed.getPlayerId()
@@ -77,7 +91,7 @@ const extractCardsPlayed = (cardPlayed: ICardPlayed) => {
 };
 
 export const extractTrick = (trick: ITrick) => {
-    return trick.get().map(c => extractCardsPlayed(c));
+    return trick.get().map(c => extractCardPlayed(c));
 };
 
 export const extractRound = (round: IRound) => {
@@ -105,4 +119,11 @@ export const extractAnnounce = (announce: IAnnounce) => {
         announce: announce.getAnnounce(),
         playerId: announce.getPlayerId()
     }
+};
+
+const hydrateCardPlayed = async (document: DocumentReference, cardsPlayed: ICardPlayed): Promise<void> => {
+    const documentData: DocumentSnapshot = await document.get();
+    cardsPlayed.setDocumentId(document.id);
+    cardsPlayed.setCardId(documentData.get('cardId'));
+    cardsPlayed.setPlayerId(documentData.get('playerId'));
 };
