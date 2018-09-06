@@ -46,7 +46,7 @@ class TableRepository extends AbstractRepository{
             doc = await this.collection.add(extract(table));
         }
 
-        //upsert announces
+        // upsert announces
         let promises: any[] = [];
         table.getAnnounces().map(announce => {
             // console.log('upsert annonuces', announce);
@@ -58,7 +58,7 @@ class TableRepository extends AbstractRepository{
         });
         await Promise.all(promises);
 
-        //upsert players
+        // upsert players
         promises = [];
         console.log('upsert players');
         table.getPlayers().map(player => {
@@ -71,7 +71,7 @@ class TableRepository extends AbstractRepository{
 
         await Promise.all(promises);
 
-        //upsert tricks
+        // upsert tricks
         promises = [];
         console.log('upsert tricks');
         table.getTricks().map(trick => {
@@ -82,6 +82,7 @@ class TableRepository extends AbstractRepository{
             }
         });
 
+        // upsert cardsPlayed
         promises = [];
         console.log('upsert cardsPlayed');
         table.getCardsPlayed().map(cardPlayed => {

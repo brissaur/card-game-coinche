@@ -13,7 +13,7 @@ import {
     CARDS_DEAL_SERVER_WS,
     PLAYER_ACTIVE_SERVER_WS
 } from '../websocket';
-import WebSocket from 'ws';
+import ws from 'ws';
 import {ISession} from "../websocket/session";
 import {modes} from "../announces/business";
 
@@ -53,9 +53,9 @@ export const getPlayersOnTable = async (tableId: string): Promise<Player[]> => {
 };
 
 export const onInit = async (ws: WebSocket, session: ISession) => {
-    let player = await playerRepository.savePlayer(createPlayer());
+    const player = await playerRepository.savePlayer(createPlayer());
 
-    let table = createTable();
+    const table = createTable();
 
     await tableRepository.upsertTable(table);
 
