@@ -1,4 +1,4 @@
-import WebSocket from 'ws';
+import ws from 'ws';
 import * as config from '../build.properties';
 
 export const connection = new WebSocket.Server({

@@ -12,9 +12,12 @@
         "start": "nodemon dist/index.js",
         "build": "tsc",
         "dev": "concurrently \"npm run build -- --watch\" \"npm run start\"",
-        "lint": "tslint -c tslint.json 'src/**/*.ts'"
+		"lint": "tslint -c tslint.json 'src/**/*.ts'",
+		"lint.fix": "tslint --fix -c tslint.json 'src/**/*.ts'",
+		"test": "jest --env=node"
     },
     "devDependencies": {
+		"@types/jest": "^23.3.1",
         "@types/lodash": "^4.14.115",
         "@types/ws": "^5.1.2",
         "concurrently": "^4.0.1",
@@ -23,10 +26,12 @@
         "eslint-plugin-import": "^2.13.0",
         "eslint-plugin-jsx-a11y": "^6.1.1",
         "eslint-plugin-react": "^7.10.0",
-        "jest": "^23.4.1",
+		"jest": "^23.5.0",
         "prettier-eslint": "^8.8.2",
-        "tslint": "^5.11.0",
-        "tslint-config-prettier": "^1.14.0",
+		"ts-jest": "^23.1.4",
+		"tslint": "^5.11.0",
+		"tslint-config-airbnb": "^5.11.0",
+		"tslint-config-prettier": "^1.15.0",
         "typescript": "^2.9.2"
     }
 }

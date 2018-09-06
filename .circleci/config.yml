@@ -16,8 +16,8 @@ jobs:
       - image: circleci/node:6.11.5
     steps:
       - checkout
-      - run: cd functions && yarn install && yarn lint
-      - run: cd functions && yarn install && yarn test
+      - run: cd api && yarn install && yarn lint
+      - run: cd api && yarn install && yarn test
 workflows:
   version: 2
   all_test:

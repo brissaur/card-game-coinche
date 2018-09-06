@@ -5,7 +5,7 @@ import {Announce, IAnnounce} from "../../announces/model";
 import DocumentReference = FirebaseFirestore.DocumentReference;
 import {ANNOUNCE_SUBCOLLECTION, CARD_PLAYED_SUBCOLLECTION, PLAYER_SUBCOLLECTION} from "./tableRepository";
 import {ITrick} from "../../tricks/model";
-import {CardPlayed, ICardPlayed} from "../../cardsPlayed/model";
+import {Card, CardPlayed, ICardPlayed} from "../../cardsPlayed/model";
 import {IRound} from "../../rounds/model";
 
 export const extract = (table: Table) => {
@@ -101,7 +101,7 @@ export const extractRound = (round: IRound) => {
 const hydratePlayer = async (document: DocumentReference, player: IPlayer): Promise<void> => {
     const documentData: DocumentSnapshot = await document.get();
     player.setDocumentId(document.id);
-    player.setCards(documentData.get('cards'));
+    player.setCards(documentData.get('cards').map((c: string) => new Card(c)));
     player.setPos(documentData.get('pos'));
     player.setFirstname(documentData.get('firstname'));
     player.setIsFakePlayer(documentData.get('isFakePlayer'));

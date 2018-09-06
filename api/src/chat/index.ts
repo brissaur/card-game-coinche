@@ -1,6 +1,6 @@
 import { formatMsgForWs } from './../websocket/helper';
 import { IMessage } from '../websocket/types';
-import WebSocket from 'ws';
+import ws from 'ws';
 
 const onMessage = async (message: IMessage, wss: WebSocket.Server) => {
     wss.clients.forEach(function each(client) {

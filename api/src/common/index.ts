@@ -64,8 +64,8 @@ export class Hand {
         this.otherCards = handCards.filter((card: ICard) =>
             !this.colorCards
                 .concat(this.trumpCards)
-                .map((c: ICard) => c.getCardId()));
-                //.includes(card.id));
+                .map((c: ICard) => c.getCardId())
+                .includes(card.getCardId()));
         this.handCards = handCards;
     }
 
@@ -91,7 +91,7 @@ export const possibleCards = (trump: string, currentPlayer: Player, cardsPlayed:
         const firstCardOfTheTrick = cardsPlayed[0];
         const isTrump = firstCardOfTheTrick.getCardColor() === trump;
         const highestCardOfTrick = getHighestCard(cardsPlayed, trump, firstCardOfTheTrick.getCardColor());
-        const hand = new Hand(currentPlayer.getCards().map(c => new Card(c)), trump, firstCardOfTheTrick);
+        const hand = new Hand(currentPlayer.getCards(), trump, firstCardOfTheTrick);
         if (isTrump) {
             if (hand.getTrumpCards().length > 0) {
                 const higherCardInHand = hand.getTrumpCards().filter(filterHigherCards(true, highestCardOfTrick));
@@ -131,7 +131,7 @@ export const possibleCards = (trump: string, currentPlayer: Player, cardsPlayed:
         // I can't play a trump, so I discard
         return hand.getOtherCards();
     }
-    const hand = new Hand(currentPlayer.getCards().map(c => new Card(c)), trump);
+    const hand = new Hand(currentPlayer.getCards(), trump);
 
     return hand.getHandsCards();
 };

@@ -4,7 +4,7 @@ export type ICardId = string;
 
 export interface ICard{
     documentId: ICardId;// object id in db
-    cardId: ICardId; //id of card (ex: 10J)
+    cardId: ICardId; // id of card (ex: 10J)
     setDocumentId(documentId: ICardId): void;
     getDocumentId(): ICardId;
     getCardId(): ICardId;
@@ -27,7 +27,7 @@ export class Card implements ICard{
         return this.documentId;
     }
     getCardId(): ICardId{
-        return this.documentId;
+        return this.cardId;
     }
     getCardColor(): string{
         return this.cardId.slice(-1);

@@ -1,5 +1,6 @@
 import { shuffle } from 'lodash';
 import {IPlayer, Player} from "./model";
+import {Card} from "../cardsPlayed/model";
 
 /**
  *
@@ -55,7 +56,7 @@ export const searchStartPlayer = (player: Player) => player.pos === 0;
 export const dealCards = (players: IPlayer[]) => {
     const shuffleCards = shuffle(cards);
     players.map(function(player, idx: number){
-        player.setCards(shuffleCards.slice(idx * 8, idx * 8 + 8))
+        player.setCards(shuffleCards.slice(idx * 8, idx * 8 + 8).map(c => new Card(c)))
     });
 
     return players;

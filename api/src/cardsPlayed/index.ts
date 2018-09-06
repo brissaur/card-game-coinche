@@ -4,7 +4,7 @@ import { getTricksCollection } from '../tricks';
 import {Card, CardPlayed, ICard} from './model';
 import { QuerySnapshot } from '@google-cloud/firestore';
 import {IMessage} from "../websocket/types";
-import WebSocket from "ws";
+import ws from "ws";
 import {ISession} from "../websocket/session";
 import {repository as tableRepository} from '../repository/table/tableRepository';
 import {computeNextPlayerForTrick} from "../tables/business";
