@@ -1,1 +1,1 @@
-web: cp ./src/build.properties.env.js ./src/build.properties.js && npm run start
+web: cp ./src/build.properties.env.js ./src/build.properties.js && bin/boot
