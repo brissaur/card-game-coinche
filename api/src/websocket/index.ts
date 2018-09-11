@@ -3,7 +3,7 @@ import * as config from "../build.properties";
 
 import express from "express";
 
-const PORT = +config.WEBSOCKET_PORT;
+const PORT = +config.PORT;
 
 const server = express()
     .use((req, res) => res.send("Hello World"))
@@ -15,7 +15,7 @@ export const connection = new WebSocket.Server(
     },
     () => {
         global.console.log(
-            `Server listening for WS on port ${config.WEBSOCKET_PORT}`
+            `Server listening for WS on port ${config.PORT}`
         );
     }
 );

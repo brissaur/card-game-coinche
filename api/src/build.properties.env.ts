@@ -6,4 +6,4 @@ export const FIREBASE_STORAGE_BUCKET = process.env.FIREBASE_STORAGE_BUCKET;
 export const FIREBASE_MESSAGING_SENDER_ID = process.env.FIREBASE_MESSAGING_SENDER_ID;
 export const GCLOUD_PRIVATE_KEY_FILE = process.env.GCLOUD_PRIVATE_KEY_FILE;
 export const WEBSOCKET_HOST = process.env.WEBSOCKET_HOST;
-export const WEBSOCKET_PORT = process.env.WEBSOCKET_PORT;
+export const PORT = process.env.PORT;
