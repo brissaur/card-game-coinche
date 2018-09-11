@@ -1,7 +1,9 @@
 import { formatMsgForWs } from './services';
-import * as config from '../../build.properties';
 
-const connection = new WebSocket(`ws://${config.WEBSOCKET_HOST}:${config.WEBSOCKET_PORT}`);
+const webSocketUrl = `ws://${process.env.REACT_APP_WEBSOCKET_HOST}:${
+    process.env.REACT_APP_WEBSOCKET_PORT
+}`;
+const connection = new WebSocket(webSocketUrl);
 
 export function getConnection() {
     return connection;
