@@ -119,7 +119,7 @@ export const onInit = async (ws: WebSocket, session: ISession) => {
         }, {}));
 
         ws.send(formatMsgForWs(CARDS_DEAL_SERVER_WS, {
-            cards: player.getCards()
+            cards: player.getCards().map(c => c.getCardId())
         }, {}));
 
         ws.send(formatMsgForWs(PLAYER_ACTIVE_SERVER_WS, {

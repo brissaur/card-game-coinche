@@ -7,15 +7,22 @@ import {
     WS_NEW_ANNOUNCE,
     WS_NEW_PLAYER,
     WS_ROUND_MODE,
+    WS_TRICK_END
 } from '../technical/websocket/actions';
 import { updateAnnounces, updateGeneral, updateHand, updatePlayers, updateTrick } from './ducks';
-import { getAnnounces, getPlayers, getTrick } from './selectors';
+import { getAnnounces, getPlayers, getTrick, getPlayerCards } from './selectors';
 
 function* onCardPlayed({ payload }) {
+    console.log('onCardPlayed');
     const trick = yield select(getTrick);
     const res = trick.concat([payload.card]);
 
     yield put(updateTrick(res));
+
+    // update hand
+    let playerCards = yield select(getPlayerCards);
+    playerCards = playerCards.filter(pc => pc !== payload.card.cardId);
+    yield put(updateHand(playerCards));
 }
 
 function* onNewAnnounce({ payload }) {
@@ -51,6 +58,10 @@ function* onSetRoundMode({ payload }) {
     yield put(updateGeneral({ mode: payload.mode }));
 }
 
+function* onTrickEnd() {
+    yield put(updateTrick([]));
+}
+
 export function* watchers() {
     yield takeEvery(WS_CARD_PLAYED, onCardPlayed);
     yield takeEvery(WS_NEW_ANNOUNCE, onNewAnnounce);
@@ -59,4 +70,5 @@ export function* watchers() {
     yield takeEvery(WS_DEAL_CARDS, onDealCards);
     yield takeEvery(WS_ACTIVE_PLAYER, onSetActivePlayer);
     yield takeEvery(WS_ROUND_MODE, onSetRoundMode);
+    yield takeEvery(WS_TRICK_END, onTrickEnd);
 }

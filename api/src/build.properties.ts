@@ -6,4 +6,4 @@ export const FIREBASE_STORAGE_BUCKET = '';
 export const FIREBASE_MESSAGING_SENDER_ID = '125766558847';
 export const GCLOUD_PRIVATE_KEY_FILE = './card-game-coinche-f9dad125fcc4.json';
 export const WEBSOCKET_HOST = 'localhost';
-export const WEBSOCKET_PORT = 8080;
+export const WEBSOCKET_PORT = 8081;
