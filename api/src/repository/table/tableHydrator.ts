@@ -62,7 +62,6 @@ export const hydrate = async (document: DocumentReference, table: Table): Promis
         .then((q) => q.docs.map(
             q => document.collection(CARD_PLAYED_SUBCOLLECTION).doc(q.id)
         ));
-
     const cardsPlayed = await Promise.all(cardsPlayedDocuments.map(async (cp) => {
         const cardPlayed = new CardPlayed();
         await hydrateCardPlayed(cp, cardPlayed);
@@ -75,7 +74,7 @@ export const hydrate = async (document: DocumentReference, table: Table): Promis
 // extract player to be saved in table
 export const extractPlayer = (player: IPlayer) => {
     return {
-        cards: player.getCards(),
+        cards: player.getCards().map(c => c.getCardId()),
         firstname: player.getFirstname(),
         id: player.getDocumentId(),
         isFakePlayer: player.getIsFakePlayer(),

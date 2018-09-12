@@ -1,4 +1,4 @@
-import ws from 'ws';
+import WebSocket from 'ws';
 import * as config from '../build.properties';
 
 export const connection = new WebSocket.Server({
@@ -17,3 +17,4 @@ export const PLAYER_ACTIVE_SERVER_WS = 'player/active';
 export const GAME_START_SERVER_WS = 'game/start';
 export const CARDS_DEAL_SERVER_WS = 'cards/deal';
 export const ROUND_MODE = 'round/mode';
+export const TRICK_END_SERVER_WS = 'trick/end';

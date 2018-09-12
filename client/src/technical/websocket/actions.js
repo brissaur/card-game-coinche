@@ -13,6 +13,8 @@ export const WS_ROUND_MODE = withWsPrefix('round/mode');
 
 export const WS_CHAT_MESSAGE = withWsPrefix('chat/message');
 
+export const WS_TRICK_END = withWsPrefix('trick/end');
+
 export function wsAction(wsMessage) {
     return {
         type: createActionTypeFromWsMessage(wsMessage),

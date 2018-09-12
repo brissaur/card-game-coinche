@@ -10,9 +10,17 @@ import {repository as tableRepository} from '../repository/table/tableRepository
 import {computeNextPlayerForTrick} from "../tables/business";
 import {Trick} from '../tricks/model';
 import {possibleCards} from "../common";
-import {CARD_PLAY_SERVER_WS, CARD_PLAYED_SERVER_WS, PLAYER_ACTIVE_SERVER_WS, ROUND_MODE} from "../websocket";
+import {
+    CARD_PLAY_SERVER_WS,
+    CARD_PLAYED_SERVER_WS,
+    PLAYER_ACTIVE_SERVER_WS,
+    ROUND_MODE,
+    TRICK_END_SERVER_WS
+} from "../websocket";
 import {formatMsgForWs} from "../websocket/helper";
 import {modes} from "../announces/business";
+import {dealCards} from "../players/business";
+import {Round} from "../rounds/model";
 
 const COLLECTION_NAME = 'cardsPlayed';
 
@@ -53,12 +61,25 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
     const cardPlayed = new CardPlayed();
     cardPlayed.setCardId(eventData.card.id);
     // in case of robot, we get its playerId, otherwise get it from session
-    cardPlayed.setPlayerId(eventData.playerId ? eventData.playerId : session.getPlayerDocumentId());
+    const playerId = eventData.playerId ? eventData.playerId : session.getPlayerDocumentId();
+    cardPlayed.setPlayerId(playerId);
     table.setCardsPlayed([...table.getCardsPlayed(), cardPlayed]);
+    // update card on player
+    table.setPlayers(table.getPlayers().map(p => {
+        if(p.getDocumentId() === playerId   ){
+            p.setCards(p.getCards().filter(c => c.getCardId() !== eventData.card.id));
+        }
+        return p;
+    }));
 
     await tableRepository.upsertTable(table);
 
-    console.log('cardsPlayed', table.getCardsPlayed());
+    ws.send(formatMsgForWs(CARD_PLAYED_SERVER_WS, {
+        card: {
+            cardId: cardPlayed.getCardId(),
+            playerId: cardPlayed.getPlayerId()
+        },
+    }, {}));
 
     if (table.getCardsPlayed().length === 4) {
         console.log('should create trick');
@@ -67,12 +88,50 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
         trick.set(table.getCardsPlayed());
         table.setTricks([...table.getTricks(), trick]);
 
-        tableRepository.emptyCollection(tableRepository.getCardsPlayedSubCollection(table));
-    }
+        await tableRepository.upsertTable(table);
 
-    ws.send(formatMsgForWs(CARD_PLAYED_SERVER_WS, {
-        card: cardPlayed.getCardId(),
-    }, {}));
+        await tableRepository.emptyCollection(tableRepository.getCardsPlayedSubCollection(table));
+
+        ws.send(formatMsgForWs(TRICK_END_SERVER_WS, {}, {}));
+
+
+        if (table.getTricks().length === 8) {
+            // add new round
+
+            const round = new Round();
+            round.set(table.getTricks());
+            table.setRounds([...table.getRounds(), round]);
+
+            await tableRepository.upsertTable(table);
+            // => remove tricks
+            await tableRepository.emptyCollection(tableRepository.getTricksSubCollection(table));
+
+            // => next round
+            // deal cards
+            table.setPlayers(dealCards(table.getPlayers()));
+            // const players = await getPlayersOnTable(tableId);
+            // const playersWithCards = dealCards(players);
+            // const playersRef = getPlayersCollection(tableId);
+
+            // await playersWithCards.forEach(async (player) => {
+            //     playersRef.doc(player.id).update({ cards: player.cards });
+            // });
+            // update next player, dealer, mode
+            // const fbTableRef = getTableById(tableId);
+            // const nextDealer = await fbTableRef.then(snapshot => snapshot.data().firstPlayerId);
+            const nextPlayer = await nextPlayerPlusPlus(table, table.getFirstPlayerId());
+            await fbTableRef.update(
+                {
+                    mode: 'announce',
+                    firstPlayerId: nextPlayer,
+                    currentPlayerId: nextPlayer,
+                },
+                { merge: true },
+            );
+            return;
+        }
+
+    }
 
     const currentPlayer = table.getPlayers().filter(p => p.getDocumentId() === cardPlayed.getPlayerId())[0];
     const nextPlayer = computeNextPlayerForTrick(table.getPlayers(), currentPlayer);
