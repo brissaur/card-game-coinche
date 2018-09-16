@@ -45,7 +45,6 @@ class TableRepository extends AbstractRepository{
     async upsertTable(table: Table): Promise<void>{
         let doc: DocumentReference;
         if(table.getDocumentId()){
-            console.log('update table');
             // update main object
             doc = await this.collection.doc(table.getDocumentId());
             // console.log('extract table', extract(table));
@@ -72,13 +71,10 @@ class TableRepository extends AbstractRepository{
 
         // upsert players
         promises = [];
-        console.log('upsert players');
         table.getPlayers().map(player => {
             if(player.getDocumentId()){
-                console.log('player exists');
                 promises.push(doc.collection(PLAYER_SUBCOLLECTION).doc(player.getDocumentId()).set(extractPlayer(player)));
             }else{
-                console.log('player do not exits');
                 promises.push(doc.collection(PLAYER_SUBCOLLECTION).add(extractPlayer(player)));
             }
         });
@@ -87,13 +83,10 @@ class TableRepository extends AbstractRepository{
 
         // upsert tricks
         promises = [];
-        console.log('upsert tricks');
         table.getTricks().map(trick => {
             if(trick.getDocumentId()){
-                console.log('trick exists');
                 promises.push(doc.collection(TRICK_SUBCOLLECTION).doc(trick.getDocumentId()).set({...extractTrick(trick)}));
             }else{
-                console.log('trick do not exists');
                 promises.push(doc.collection(TRICK_SUBCOLLECTION).add({...extractTrick(trick)}));
             }
         });
@@ -102,13 +95,10 @@ class TableRepository extends AbstractRepository{
 
         // upsert cardsPlayed
         promises = [];
-        console.log('upsert cardsPlayed', table.getCardsPlayed());
         table.getCardsPlayed().map(cardPlayed => {
             if(cardPlayed.getDocumentId()){
-                console.log('cards exists');
                 promises.push(doc.collection(CARD_PLAYED_SUBCOLLECTION).doc(cardPlayed.getDocumentId()).set(extractCardPlayed(cardPlayed)));
             }else{
-                console.log('card is new');
                 promises.push(doc.collection(CARD_PLAYED_SUBCOLLECTION).add(extractCardPlayed(cardPlayed)));
             }
         });
@@ -117,20 +107,15 @@ class TableRepository extends AbstractRepository{
 
         // upsert rounds
         promises = [];
-        console.log('upsert rounds', table.getRounds());
         table.getRounds().map(round => {
             if(round.getDocumentId()){
-                console.log('rounds exists');
                 promises.push(doc.collection(ROUND_SUBCOLLECTION).doc(round.getDocumentId()).set({...extractRound(round)}));
             }else{
-                console.log('round is new');
                 promises.push(doc.collection(ROUND_SUBCOLLECTION).add({...extractRound(round)}));
             }
         });
 
         await Promise.all(promises);
-
-        console.log('hydrate');
 
         await hydrate(doc, table);
     }
