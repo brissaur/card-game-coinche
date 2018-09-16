@@ -1,10 +1,5 @@
-import { emptyCollection } from '../common/collection';
-import { getTableById, nextPlayerPlusPlus } from '../tables';
-import { getTricksCollection } from '../tricks';
-import {Card, CardPlayed, ICard} from './model';
-import { QuerySnapshot } from '@google-cloud/firestore';
+import {Card, CardPlayed} from './model';
 import {IMessage} from "../websocket/types";
-import ws from "ws";
 import {ISession} from "../websocket/session";
 import {repository as tableRepository} from '../repository/table/tableRepository';
 import {computeNextPlayerForTrick} from "../tables/business";
@@ -14,46 +9,17 @@ import {
     CARD_PLAY_SERVER_WS,
     CARD_PLAYED_SERVER_WS,
     PLAYER_ACTIVE_SERVER_WS,
-    ROUND_MODE,
     TRICK_END_SERVER_WS
 } from "../websocket";
 import {formatMsgForWs} from "../websocket/helper";
 import {modes} from "../announces/business";
 import {dealCards} from "../players/business";
 import {Round} from "../rounds/model";
+import {nextPlayerPlusPlus} from "../tables";
 
 const COLLECTION_NAME = 'cardsPlayed';
 
-export const getCardsPlayedCollection = (tableId: string) => {
-    const table = getTableById(tableId);
-
-    return table.collection(COLLECTION_NAME);
-};
-
-/**
- *
- * @param tableId
- */
-export const getCardsPlayedOnTable = async (tableId: string) => {
-    const cardsPlayed: ICard[] = [];
-    const cardsPlayedRef = getCardsPlayedCollection(tableId);
-    await cardsPlayedRef
-        .get()
-        .then((snapshot: QuerySnapshot) => {
-            snapshot.forEach((cardPlayed) => {
-                cardsPlayed.push(cardPlayed.data() as ICard);
-            });
-        })
-        .catch((err) => {
-            // eslint-disable-next-line no-console
-            console.log('Error getting documents', err);
-        });
-
-    return cardsPlayed;
-};
-
 const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessage) => {
-    console.log('onAddCardPlayed');
     const eventData = message.payload;
 
     const table = await tableRepository.getTableById(session.getTableDocumentId());
@@ -82,7 +48,6 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
     }, {}));
 
     if (table.getCardsPlayed().length === 4) {
-        console.log('should create trick');
         // add a trick with cardsPlayed
         const trick = new Trick();
         trick.set(table.getCardsPlayed());
@@ -94,10 +59,9 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
 
         ws.send(formatMsgForWs(TRICK_END_SERVER_WS, {}, {}));
 
-
         if (table.getTricks().length === 8) {
+            console.log('should create a round');
             // add new round
-
             const round = new Round();
             round.set(table.getTricks());
             table.setRounds([...table.getRounds(), round]);
@@ -109,25 +73,12 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
             // => next round
             // deal cards
             table.setPlayers(dealCards(table.getPlayers()));
-            // const players = await getPlayersOnTable(tableId);
-            // const playersWithCards = dealCards(players);
-            // const playersRef = getPlayersCollection(tableId);
+            console.log('after dealCards', table.getPlayers());
+            const currentPlayer = table.getPlayers().filter(p => p.getDocumentId() === table.getCurrentPlayerId())[0];
+            await nextPlayerPlusPlus(table, currentPlayer);
+            table.setMode(modes.ANNOUNCE);
+            await tableRepository.upsertTable(table);
 
-            // await playersWithCards.forEach(async (player) => {
-            //     playersRef.doc(player.id).update({ cards: player.cards });
-            // });
-            // update next player, dealer, mode
-            // const fbTableRef = getTableById(tableId);
-            // const nextDealer = await fbTableRef.then(snapshot => snapshot.data().firstPlayerId);
-            const nextPlayer = await nextPlayerPlusPlus(table, table.getFirstPlayerId());
-            await fbTableRef.update(
-                {
-                    mode: 'announce',
-                    firstPlayerId: nextPlayer,
-                    currentPlayerId: nextPlayer,
-                },
-                { merge: true },
-            );
             return;
         }
 
@@ -141,9 +92,7 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
     }, {}));
 
     if(nextPlayer.getIsFakePlayer()){
-        console.log('isFackPlayer', nextPlayer);
         const trump = table.getCurrentAnnounce().announce.slice(-1);
-        console.log('trump', trump);
         const cards = possibleCards(
             trump,
             nextPlayer,
@@ -161,7 +110,7 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
             meta: {}
         };
         // call onAnnounce again to fake robot's played
-        onAddCardPlayed(ws, session, message);
+        await onAddCardPlayed(ws, session, message);
     }
 
 };

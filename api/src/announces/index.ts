@@ -77,7 +77,6 @@ const onAnnounce = async (ws: WebSocket, session: ISession, message: IMessage) =
     }, {}));
 
     if (shouldStopAnnounces(table.getAnnounces())) {
-        console.log('stop announce');
         const firstPlayerId = table.getFirstPlayerId();
         await tableRepository.emptyCollection(tableRepository.getAnnouncesSubCollection(table));
 
@@ -95,7 +94,6 @@ const onAnnounce = async (ws: WebSocket, session: ISession, message: IMessage) =
             playerId: table.getCurrentPlayerId()
         }, {}));
     } else {
-        console.log('next player announce');
         const currentPlayer = table.getPlayers().filter(p => p.getDocumentId() === announce.getPlayerId())[0];
         const nextPlayer = computeNextPlayerForTrick(table.getPlayers(), currentPlayer);
 

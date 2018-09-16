@@ -19,12 +19,18 @@ export interface ITable{
     rounds: IRound[];
     getDocumentId(): ITableId;
     setDocumentId(documentId: ITableId): void;
+    setMode(mode: string): void;
+    getMode(): string;
     setCurrentAnnounce(announce: IAnnounce): void;
     getCurrentAnnounce(): IAnnounce;
     getPlayers(): IPlayer[];
     setPlayers(players: IPlayer[]): void;
     setCurrentPlayerId(currentPlayerId: IPlayerId): void;
     getCurrentPlayerId(): IPlayerId;
+    setFirstPlayerId(firstPlayerId: IPlayerId): void;
+    getFirstPlayerId(): IPlayerId;
+    setAnnounces(announces: IAnnounce[]): void;
+    getAnnounces(): IAnnounce[];
     setTricks(tricks: ITrick[]): void;
     getTricks(): ITrick[];
     setCardsPlayed(cardsPlayed: ICardPlayed[]): void;
@@ -56,10 +62,10 @@ export class Table implements ITable{
     getCurrentPlayerId(): string{
         return this.currentPlayerId;
     }
-    setFirstPlayerId(firstPlayerId: string){
+    setFirstPlayerId(firstPlayerId: IPlayerId): void{
         this.firstPlayerId = firstPlayerId;
     }
-    getFirstPlayerId(): string{
+    getFirstPlayerId(): IPlayerId{
         return this.firstPlayerId;
     }
     setMode(mode: string){
