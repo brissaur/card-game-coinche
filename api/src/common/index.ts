@@ -78,6 +78,8 @@ export class Hand {
     }
 
     getOtherCards() {
+        // console.log(', this.colorCards);
+        // console.log('trumpCard', this.trumpCards);
         return this.otherCards.sort(sortCards(false));
     }
 
@@ -115,18 +117,25 @@ export const possibleCards = (trump: string, currentPlayer: Player, cardsPlayed:
         }
         const trumpCards = cardsPlayed.filter(filterCardsByColor(trump));
         // At least one trump card was played, and I have trump cards
-        if (trumpCards.length > 0 && hand.getTrumpCards().length > 0) {
-            const higherCardInHand = hand
-                .getTrumpCards()
-                .filter(filterHigherCards(true, highestCardOfTrick))
-                .sort(sortCards(true));
-            // I have higher card
-            if (higherCardInHand.length > 0) {
-                return higherCardInHand;
-            }
+        if(hand.getTrumpCards().length > 0){
+            if (trumpCards.length > 0) {
+                const higherCardInHand = hand
+                    .getTrumpCards()
+                    .filter(filterHigherCards(true, highestCardOfTrick))
+                    .sort(sortCards(true));
+                // I have higher card
+                if (higherCardInHand.length > 0) {
+                    return higherCardInHand;
+                }
 
-            return hand.getTrumpCards();
+                return hand.getTrumpCards();
+            }else{
+                return hand.getTrumpCards();
+            }
         }
+
+
+        console.log('ressutersuteuristerusietir');
 
         // I can't play a trump, so I discard
         return hand.getOtherCards();

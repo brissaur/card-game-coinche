@@ -51,5 +51,5 @@ connection.on('connection', (ws) => {
     const data = { message: 'Hello' };
     ws.send(formatMsgForWs('hello', data, {}));
 
-    onInit(ws, session);
+    playerActions['init'](ws, session);
 });

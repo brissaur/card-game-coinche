@@ -20,6 +20,7 @@ import {nextPlayerPlusPlus} from "../tables";
 const COLLECTION_NAME = 'cardsPlayed';
 
 const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessage) => {
+    // console.log('onAddcardPlayed', message);
     const eventData = message.payload;
 
     const table = await tableRepository.getTableById(session.getTableDocumentId());
@@ -47,17 +48,23 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
         },
     }, {}));
 
+    // console.log('cardPlayed length', table.getCardsPlayed().length);
     if (table.getCardsPlayed().length === 4) {
         // add a trick with cardsPlayed
         const trick = new Trick();
         trick.set(table.getCardsPlayed());
+        console.log('before add trick',table.getTricks());
         table.setTricks([...table.getTricks(), trick]);
+
+        console.log('after compute tricks', table.getTricks());
 
         await tableRepository.upsertTable(table);
 
         await tableRepository.emptyCollection(tableRepository.getCardsPlayedSubCollection(table));
 
         ws.send(formatMsgForWs(TRICK_END_SERVER_WS, {}, {}));
+
+        console.log('tricks length', table.getTricks().length);
 
         if (table.getTricks().length === 8) {
             console.log('should create a round');
@@ -73,7 +80,7 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
             // => next round
             // deal cards
             table.setPlayers(dealCards(table.getPlayers()));
-            console.log('after dealCards', table.getPlayers());
+            // console.log('after dealCards', table.getPlayers());
             const currentPlayer = table.getPlayers().filter(p => p.getDocumentId() === table.getCurrentPlayerId())[0];
             await nextPlayerPlusPlus(table, currentPlayer);
             table.setMode(modes.ANNOUNCE);

@@ -3,7 +3,12 @@ import {IPlayer, Player} from '../../players/model';
 import { DocumentSnapshot } from "@google-cloud/firestore";
 import {Announce, IAnnounce} from "../../announces/model";
 import DocumentReference = FirebaseFirestore.DocumentReference;
-import {ANNOUNCE_SUBCOLLECTION, CARD_PLAYED_SUBCOLLECTION, PLAYER_SUBCOLLECTION} from "./tableRepository";
+import {
+    ANNOUNCE_SUBCOLLECTION,
+    CARD_PLAYED_SUBCOLLECTION,
+    PLAYER_SUBCOLLECTION,
+    TRICK_SUBCOLLECTION
+} from "./tableRepository";
 import {ITrick} from "../../tricks/model";
 import {Card, CardPlayed, ICardPlayed} from "../../cardsPlayed/model";
 import {IRound} from "../../rounds/model";
@@ -69,6 +74,18 @@ export const hydrate = async (document: DocumentReference, table: Table): Promis
     }));
 
     table.setCardsPlayed(cardsPlayed);
+
+    const tricksDocuments = await document.collection(TRICK_SUBCOLLECTION).get()
+        .then((q) => q.docs.map(
+            q => document.collection(TRICK_SUBCOLLECTION).doc(q.id)
+        ));
+    const tricks = await Promise.all(tricksDocuments.map(async (cp) => {
+        const trick = new Trick();
+        await hydrateTrick(t, trick);
+        return trick;
+    }));
+
+    table.setTricks(tricks);
 };
 
 // extract player to be saved in table
@@ -125,4 +142,11 @@ const hydrateCardPlayed = async (document: DocumentReference, cardsPlayed: ICard
     cardsPlayed.setDocumentId(document.id);
     cardsPlayed.setCardId(documentData.get('cardId'));
     cardsPlayed.setPlayerId(documentData.get('playerId'));
+};
+
+const hydrateTrick = async  (document: DocumentReference, trick: ITrick): Promise<void> => {
+    const documentData: DocumentSnapshot = await document.get();
+    trick.setDocumentId(document.id);
+    // todo
+    trick.set(hydrateCardPlayed(document.get('')));
 };
