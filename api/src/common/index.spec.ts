@@ -370,8 +370,30 @@ describe('test possibleCards', () => {
             },
             expected: ['8H', 'JH'],
         },
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: ['8C'].map(c => new Card(c)), // opponent played 9H
+                currentPlayer: {
+                    id: '3',
+                    cards: ['QH'].map(c => new Card(c)),
+                },
+            },
+            expected: ['QH'],
+        },
+        {
+            data: {
+                trump: 'H',
+                cardsPlayed: ['9D', 'JD', 'KD'].map(c => new Card(c)), // opponent played 9H
+                currentPlayer: {
+                    id: '3',
+                    cards: ['JS', '9S'].map(c => new Card(c)),
+                },
+            },
+            expected: ['JS', '9S'],
+        },
     ].forEach((data) => {
-        test('possibleCards', () => {
+        test.only('possibleCards', () => {
             const currentPlayer = new Player();
             currentPlayer.setDocumentId(data.data.currentPlayer.id);
             currentPlayer.setCards(data.data.currentPlayer.cards);

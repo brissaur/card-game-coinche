@@ -82,24 +82,14 @@ export const onInit = async (ws: WebSocket, session: ISession) => {
     const players = [player, robot1, robot2, robot3];
     table.setPlayers(players);
 
-    ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
-        player: {
-            id: robot1.getDocumentId(),
-            pos: robot1.getPos()
-        },
-    }, {}));
-    ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS,{
-        player: {
-            id: robot2.getDocumentId(),
-            pos: robot2.getPos()
-        },
-    }, {}));
-    ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
-        player: {
-            id: robot3.getDocumentId(),
-            pos: robot3.getPos()
-        },
-    }, {}));
+    [robot1, robot2, robot3].forEach((robot) => {
+        ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
+            player: {
+                id: robot.getDocumentId(),
+                pos: robot.getPos()
+            },
+        }, {}));
+    });
 
     if (table.getPlayers().length === 4) {
         table.setPlayers(dealCards(players));
@@ -127,6 +117,55 @@ export const onInit = async (ws: WebSocket, session: ISession) => {
         }, {}));
 
     }
+};
+
+const onInitFixtures = async (ws: WebSocket, session: ISession) => {
+    const table = await tableRepository.getTableById('2FhDoVaJ0HyjBeBjNR1p');
+
+    const player = table.getPlayers().filter(p => p.getIsFakePlayer() === false)[0];
+
+    console.log('table', table);
+
+    session.setPlayerDocumentId(player.getDocumentId());
+    session.setTableDocumentId(table.getDocumentId());
+
+    ws.send(formatMsgForWs(PLAYER_INIT_SERVER_WS, {
+        playerId: player.getDocumentId(),
+        playerName: player.getFirstname(),
+        tableId: table.getDocumentId()
+    }, {}));
+    ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
+        player: {
+            id: player.getDocumentId(),
+            pos: player.getPos()
+        },
+    }, {}));
+
+    table.getPlayers().filter(p => p.getIsFakePlayer() === true ).forEach((robot) => {
+        ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
+            player: {
+                id: robot.getDocumentId(),
+                pos: robot.getPos()
+            },
+        }, {}));
+    });
+
+    ws.send(formatMsgForWs(GAME_START_SERVER_WS, {
+        dealerId: table.getCurrentPlayerId(),
+        mode: table.getMode(),
+        firstPlayerId: table.getFirstPlayerId(),
+        currentPlayerId: table.getCurrentPlayerId(),
+    }, {}));
+
+    ws.send(formatMsgForWs(CARDS_DEAL_SERVER_WS, {
+        cards: player.getCards().map(c => c.getCardId())
+    }, {}));
+
+    ws.send(formatMsgForWs(PLAYER_ACTIVE_SERVER_WS, {
+        playerId: player.getDocumentId()
+    }, {}));
+
+
 };
 
 export const actions: {[key: string]: any} = {
