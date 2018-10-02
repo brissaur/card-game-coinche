@@ -9,9 +9,10 @@ import {
     PLAYER_SUBCOLLECTION,
     TRICK_SUBCOLLECTION
 } from "./tableRepository";
-import {ITrick} from "../../tricks/model";
+import {ITrick, Trick} from "../../tricks/model";
 import {Card, CardPlayed, ICardPlayed} from "../../cardsPlayed/model";
 import {IRound} from "../../rounds/model";
+import {cards} from "../../common/index.spec";
 
 export const extract = (table: Table) => {
     return {
@@ -79,7 +80,7 @@ export const hydrate = async (document: DocumentReference, table: Table): Promis
         .then((q) => q.docs.map(
             q => document.collection(TRICK_SUBCOLLECTION).doc(q.id)
         ));
-    const tricks = await Promise.all(tricksDocuments.map(async (cp) => {
+    const tricks = await Promise.all(tricksDocuments.map(async (t) => {
         const trick = new Trick();
         await hydrateTrick(t, trick);
         return trick;
@@ -146,7 +147,27 @@ const hydrateCardPlayed = async (document: DocumentReference, cardsPlayed: ICard
 
 const hydrateTrick = async  (document: DocumentReference, trick: ITrick): Promise<void> => {
     const documentData: DocumentSnapshot = await document.get();
+    console.log('trick document');
+    // console.log();
+    const cardsPlayedInTrick = Object.values(documentData.data()).map((cp) => {
+        const cardsPlayed = new CardPlayed();
+        cardsPlayed.setPlayerId(cp.playerId);
+        cardsPlayed.setCardId(cp.cardId);
+        return cardsPlayed;
+    });
     trick.setDocumentId(document.id);
-    // todo
-    trick.set(hydrateCardPlayed(document.get('')));
+    trick.set(cardsPlayedInTrick);
 };
+
+// const hydrateRound = async  (document: DocumentReference, round: IRound): Promise<void> => {
+//     const documentData: DocumentSnapshot = await document.get();
+//     console.log('round document');
+//     const tricksPlayedInRound = Object.values(documentData.data()).map((cp) => {
+//         const trick = new Trick();
+//         trick.set();
+//         cardsPlayed.setCardId(cp.cardId);
+//         return cardsPlayed;
+//     });
+//     trick.setDocumentId(document.id);
+//     trick.set(cardsPlayedInTrick);
+// };
