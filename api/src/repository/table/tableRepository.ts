@@ -107,6 +107,7 @@ class TableRepository extends AbstractRepository{
 
         // upsert rounds
         promises = [];
+        console.log('upserting round');
         table.getRounds().map(round => {
             if(round.getDocumentId()){
                 promises.push(doc.collection(ROUND_SUBCOLLECTION).doc(round.getDocumentId()).set({...extractRound(round)}));
@@ -116,6 +117,8 @@ class TableRepository extends AbstractRepository{
         });
 
         await Promise.all(promises);
+
+        console.log('round upserted');
 
         await hydrate(doc, table);
     }
