@@ -1,6 +1,6 @@
 import { actions as announceActions } from './announces';
 import { Session } from './websocket/session';
-import { chatActions } from './chat/index';
+import { chatActions } from './chat';
 import { actions as playerActions, onInit } from './players';
 import { connection } from './websocket';
 import { decodeMsgFromWs, formatMsgForWs } from './websocket/helper';

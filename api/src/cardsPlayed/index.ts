@@ -7,7 +7,7 @@ import {Trick} from '../tricks/model';
 import {possibleCards} from "../common";
 import {
     CARD_PLAY_SERVER_WS,
-    CARD_PLAYED_SERVER_WS,
+    CARD_PLAYED_SERVER_WS, CARDS_DEAL_SERVER_WS,
     PLAYER_ACTIVE_SERVER_WS, ROUND_MODE,
     TRICK_END_SERVER_WS
 } from "../websocket";
@@ -17,8 +17,6 @@ import {dealCards} from "../players/business";
 import {Round} from "../rounds/model";
 import {nextPlayerPlusPlus} from "../tables";
 import WebSocket = require("ws");
-
-const COLLECTION_NAME = 'cardsPlayed';
 
 const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessage) => {
     // console.log('onAddcardPlayed', message);
@@ -30,20 +28,19 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
     cardPlayed.setCardId(eventData.card.id);
     // in case of robot, we get its playerId, otherwise get it from session
     const playerId = eventData.playerId ? eventData.playerId : session.getPlayerDocumentId();
+    table.setCurrentPlayerId(playerId);
     cardPlayed.setPlayerId(playerId);
     table.setCardsPlayed([...table.getCardsPlayed(), cardPlayed]);
     // update card on player
-    console.log('robin1 ',table.getCurrentPlayerId());
     table.setPlayers(table.getPlayers().map(p => {
         if(p.getDocumentId() === playerId   ){
             p.setCards(p.getCards().filter(c => c.getCardId() !== eventData.card.id));
         }
         return p;
     }));
-    console.log('robin2 ',table.getCurrentPlayerId());
+    // set currentplayerId
     await tableRepository.upsertTable(table);
 
-    console.log('robin3 ',table.getCurrentPlayerId());
     ws.send(formatMsgForWs(CARD_PLAYED_SERVER_WS, {
         card: {
             cardId: cardPlayed.getCardId(),
@@ -56,10 +53,7 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
         // add a trick with cardsPlayed
         const trick = new Trick();
         trick.set(table.getCardsPlayed());
-        console.log('before add trick',table.getTricks());
         table.setTricks([...table.getTricks(), trick]);
-
-        console.log('after compute tricks', table.getTricks());
 
         await tableRepository.upsertTable(table);
 
@@ -67,10 +61,7 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
 
         ws.send(formatMsgForWs(TRICK_END_SERVER_WS, {}, {}));
 
-        console.log('tricks length', table.getTricks().length);
-
-        if (table.getTricks().length === 1) {
-            console.log('should create a round');
+        if (table.getTricks().length === 8) {
             // add new round
             const round = new Round();
             round.set(table.getTricks());
@@ -83,34 +74,32 @@ const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessa
             // => next round
             // deal cards
             table.setPlayers(dealCards(table.getPlayers()));
-            console.log('current player', table.getCurrentPlayerId());
-            const currentPlayer = table.getPlayers().filter(p => p.getDocumentId() === table.getCurrentPlayerId())[0];
-            console.log('current player', currentPlayer);
+            // select currentPlayer before nextPlayerPlusPlus
+            let currentPlayer = table.getPlayers().filter(p => p.getDocumentId() === table.getCurrentPlayerId())[0];
+
             await nextPlayerPlusPlus(table, currentPlayer);
+
+            // now retrieve the "real" currentPlayer
+            currentPlayer = table.getPlayers().filter(p => p.getDocumentId() === table.getCurrentPlayerId())[0];
+
+            ws.send(formatMsgForWs(CARDS_DEAL_SERVER_WS, {
+                cards: currentPlayer.getCards().map(c => c.getCardId())
+            }, {}));
+
             table.setMode(modes.ANNOUNCE);
             await tableRepository.upsertTable(table);
-
-            console.log('new player active');
 
             ws.send(formatMsgForWs(PLAYER_ACTIVE_SERVER_WS, {
                 playerId: table.getCurrentPlayerId()
             }, {}));
 
-            console.log('new round mode');
-
             ws.send(formatMsgForWs(ROUND_MODE, {
                 mode: modes.ANNOUNCE,
             }, {}));
 
-            console.log('should return');
-
             return;
         }
-        console.log('nope');
-
     }
-
-    console.log('nope 2');
 
     const currentPlayer = table.getPlayers().filter(p => p.getDocumentId() === cardPlayed.getPlayerId())[0];
     const nextPlayer = computeNextPlayerForTrick(table.getPlayers(), currentPlayer);
