@@ -15,7 +15,7 @@ import {
 } from '../websocket';
 import {ISession} from "../websocket/session";
 import {modes} from "../announces/business";
-import WebSocket = require("ws");
+import ws = require("ws");
 
 const COLLECTION_NAME = 'players';
 
@@ -52,7 +52,7 @@ export const getPlayersOnTable = async (tableId: string): Promise<Player[]> => {
     return players;
 };
 
-export const onInit = async (ws: WebSocket, session: ISession) => {
+export const onInit = async (ws: ws, session: ISession) => {
     const player = await playerRepository.savePlayer(createPlayer());
 
     const table = createTable();

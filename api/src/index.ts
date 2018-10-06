@@ -5,6 +5,7 @@ import { actions as playerActions, onInit } from './players';
 import { connection } from './websocket';
 import { decodeMsgFromWs, formatMsgForWs } from './websocket/helper';
 import {actions as cardActions} from './cardsPlayed';
+import ws = require("ws");
 
 const router = (route: string) => {
     const elements = route.split('/');
@@ -16,7 +17,7 @@ const router = (route: string) => {
 };
 
 // When the client connect to the server
-connection.on('connection', (ws) => {
+connection.on('connection', (ws: ws) => {
     global.console.log('New connection:');
     const session = new Session();
 
