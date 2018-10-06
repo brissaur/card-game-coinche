@@ -7,13 +7,12 @@ import {
     WS_NEW_ANNOUNCE,
     WS_NEW_PLAYER,
     WS_ROUND_MODE,
-    WS_TRICK_END
+    WS_TRICK_END,
 } from '../technical/websocket/actions';
 import { updateAnnounces, updateGeneral, updateHand, updatePlayers, updateTrick } from './ducks';
 import { getAnnounces, getPlayers, getTrick, getPlayerCards } from './selectors';
 
 function* onCardPlayed({ payload }) {
-    console.log('onCardPlayed');
     const trick = yield select(getTrick);
     const res = trick.concat([payload.card]);
 
@@ -28,8 +27,6 @@ function* onCardPlayed({ payload }) {
 function* onNewAnnounce({ payload }) {
     const announces = yield select(getAnnounces);
     const res = announces.concat([payload.announce]);
-
-    console.log('onNewAnnounce res', res);
 
     yield put(updateAnnounces(res));
 }

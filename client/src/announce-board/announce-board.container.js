@@ -10,7 +10,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     onAnnounce(announce) {
-        console.log('ownProps', ownProps);
         dispatch(announceAnnounced(announce));
     },
 });
