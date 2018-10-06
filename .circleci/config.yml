@@ -23,4 +23,4 @@ workflows:
   all_test:
     jobs:
       - client_test
-      - functions_test
+      - api_test
