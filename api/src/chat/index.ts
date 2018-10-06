@@ -1,10 +1,10 @@
-import { formatMsgForWs } from './../websocket/helper';
+import { formatMsgForWs } from '../websocket/helper';
 import { IMessage } from '../websocket/types';
-import WebSocket = require("ws");
+const websocket = require("ws");
 
-const onMessage = async (message: IMessage, wss: WebSocket.Server) => {
-    wss.clients.forEach(function each(client: any) {
-        if (client.readyState === WebSocket.OPEN) {
+const onMessage = async (message: IMessage, wss: websocket.Server) => {
+    wss.clients.forEach((client: any) => {
+        if (client.readyState === websocket.OPEN) {
           client.send(formatMsgForWs('chat/message', {message: message.payload.message}, {}));
         }
       });

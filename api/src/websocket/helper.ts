@@ -21,8 +21,7 @@ export const decodeMsgFromWs = function(message: string) {
 	}
 
 	if (!decoded.type) {
-		const errorMessage =
-			'message ' + decoded + ' doesn\'t have a valid type';
+		const errorMessage = `message ${decoded} doesn't have a valid type`;
 		global.console.error(errorMessage);
 		throw new Error(errorMessage);
 	}

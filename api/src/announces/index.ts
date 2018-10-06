@@ -8,9 +8,8 @@ import { repository as tableRepository } from '../repository/table/tableReposito
 import {ISession} from "../websocket/session";
 import {computeNextPlayerForTrick} from "../tables/business";
 import {formatMsgForWs} from "../websocket/helper";
-import ws from 'ws';
 import {extractAnnounce} from "../repository/table/tableHydrator";
-import WebSocket = require("ws");
+import ws = require("ws");
 
 const COLLECTION_NAME = 'announces';
 
@@ -33,11 +32,9 @@ const saveAnnounce = (tableId: string, announce: IAnnounce) => {
 };
 
 export async function getAnnounces(tableId: string) {
-    const announces = await getAnnouncesCollection(tableId)
+    return await getAnnouncesCollection(tableId)
         .get()
         .then(createAnnouncesFromSnapshot);
-
-    return announces;
 }
 
 export async function performAnnounce(tableId: string, playerId: string) {
@@ -47,7 +44,7 @@ export async function performAnnounce(tableId: string, playerId: string) {
     });
 }
 
-const onAnnounce = async (ws: WebSocket, session: ISession, message: IMessage) => {
+const onAnnounce = async (ws: ws, session: ISession, message: IMessage) => {
     const eventData = message.payload;
 
     // console.log('eventData', eventData);

@@ -16,9 +16,9 @@ import {modes} from "../announces/business";
 import {dealCards} from "../players/business";
 import {Round} from "../rounds/model";
 import {nextPlayerPlusPlus} from "../tables";
-import WebSocket = require("ws");
+const webSocket = require("ws");
 
-const onAddCardPlayed = async (ws: WebSocket, session: ISession, message: IMessage) => {
+const onAddCardPlayed = async (ws: webSocket, session: ISession, message: IMessage) => {
     // console.log('onAddcardPlayed', message);
     const eventData = message.payload;
 

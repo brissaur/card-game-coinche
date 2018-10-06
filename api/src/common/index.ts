@@ -129,9 +129,8 @@ export const possibleCards = (trump: string, currentPlayer: Player, cardsPlayed:
                 }
 
                 return hand.getTrumpCards();
-            }else{
-                return hand.getTrumpCards();
             }
+            return hand.getTrumpCards();
         }
 
 
