@@ -13,9 +13,9 @@ import {
     CARDS_DEAL_SERVER_WS,
     PLAYER_ACTIVE_SERVER_WS
 } from '../websocket';
-import ws from 'ws';
 import {ISession} from "../websocket/session";
 import {modes} from "../announces/business";
+import WebSocket = require("ws");
 
 const COLLECTION_NAME = 'players';
 
@@ -117,55 +117,6 @@ export const onInit = async (ws: WebSocket, session: ISession) => {
         }, {}));
 
     }
-};
-
-const onInitFixtures = async (ws: WebSocket, session: ISession) => {
-    const table = await tableRepository.getTableById('2FhDoVaJ0HyjBeBjNR1p');
-
-    const player = table.getPlayers().filter(p => p.getIsFakePlayer() === false)[0];
-
-    console.log('table', table);
-
-    session.setPlayerDocumentId(player.getDocumentId());
-    session.setTableDocumentId(table.getDocumentId());
-
-    ws.send(formatMsgForWs(PLAYER_INIT_SERVER_WS, {
-        playerId: player.getDocumentId(),
-        playerName: player.getFirstname(),
-        tableId: table.getDocumentId()
-    }, {}));
-    ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
-        player: {
-            id: player.getDocumentId(),
-            pos: player.getPos()
-        },
-    }, {}));
-
-    table.getPlayers().filter(p => p.getIsFakePlayer() === true ).forEach((robot) => {
-        ws.send(formatMsgForWs(PLAYER_JOIN_SERVER_WS, {
-            player: {
-                id: robot.getDocumentId(),
-                pos: robot.getPos()
-            },
-        }, {}));
-    });
-
-    ws.send(formatMsgForWs(GAME_START_SERVER_WS, {
-        dealerId: table.getCurrentPlayerId(),
-        mode: table.getMode(),
-        firstPlayerId: table.getFirstPlayerId(),
-        currentPlayerId: table.getCurrentPlayerId(),
-    }, {}));
-
-    ws.send(formatMsgForWs(CARDS_DEAL_SERVER_WS, {
-        cards: player.getCards().map(c => c.getCardId())
-    }, {}));
-
-    ws.send(formatMsgForWs(PLAYER_ACTIVE_SERVER_WS, {
-        playerId: player.getDocumentId()
-    }, {}));
-
-
 };
 
 export const actions: {[key: string]: any} = {

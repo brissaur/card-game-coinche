@@ -10,6 +10,7 @@ import {computeNextPlayerForTrick} from "../tables/business";
 import {formatMsgForWs} from "../websocket/helper";
 import ws from 'ws';
 import {extractAnnounce} from "../repository/table/tableHydrator";
+import WebSocket = require("ws");
 
 const COLLECTION_NAME = 'announces';
 
