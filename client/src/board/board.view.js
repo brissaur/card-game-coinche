@@ -8,7 +8,7 @@ import styles from './styles';
 import Keyboard from '../chat/components/keyboard.view';
 import ChatArea from '../chat/components/chat-area';
 
-export default function Board({ children, trick, players = [] }) {
+export default function Board({ children, players = [] }) {
     return (
         <div style={styles.board}>
             <div style={styles.players}>
@@ -40,10 +40,6 @@ export default function Board({ children, trick, players = [] }) {
 Board.propTypes = {
     children: PropTypes.node,
     handCards: PropTypes.arrayOf(PropTypes.string),
-    trick: PropTypes.arrayOf(PropTypes.shape({
-        playerId: PropTypes.string,
-        cardId: PropTypes.string,
-    })).isRequired,
     players: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.string.isRequided,
     })),
