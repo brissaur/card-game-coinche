@@ -3,6 +3,7 @@ import React from 'react';
 import styles from './styles';
 
 function KeyboardUI({ active, onChange, value }) {
+    /* eslint-disable jsx-a11y/no-autofocus */
     return active ? (
         <div style={styles.keyboard}>
             <input type="text" style={styles.input} autoFocus onChange={onChange} value={value} />
