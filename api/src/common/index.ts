@@ -78,8 +78,6 @@ export class Hand {
     }
 
     getOtherCards() {
-        // console.log(', this.colorCards);
-        // console.log('trumpCard', this.trumpCards);
         return this.otherCards.sort(sortCards(false));
     }
 
@@ -132,9 +130,6 @@ export const possibleCards = (trump: string, currentPlayer: Player, cardsPlayed:
             }
             return hand.getTrumpCards();
         }
-
-
-        console.log('ressutersuteuristerusietir');
 
         // I can't play a trump, so I discard
         return hand.getOtherCards();

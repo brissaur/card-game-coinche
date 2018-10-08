@@ -1,7 +1,7 @@
-const websocket = require('ws');
+import ws from 'ws';
 import * as config from '../build.properties';
 
-export const connection = new websocket.Server({
+export const connection = new ws.Server({
     port: config.WEBSOCKET_PORT
 }, () => {
     global.console.log(`Server listening for WS on port ${config.WEBSOCKET_PORT}`);
