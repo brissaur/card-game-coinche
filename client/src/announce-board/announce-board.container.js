@@ -8,7 +8,7 @@ const mapStateToProps = state => ({
     isAnnounce: isGameModeAnnounce(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
     onAnnounce(announce) {
         dispatch(announceAnnounced(announce));
     },
