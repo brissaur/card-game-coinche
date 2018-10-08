@@ -147,8 +147,6 @@ const hydrateCardPlayed = async (document: DocumentReference, cardsPlayed: ICard
 
 const hydrateTrick = async  (document: DocumentReference, trick: ITrick): Promise<void> => {
     const documentData: DocumentSnapshot = await document.get();
-    console.log('trick document');
-    // console.log();
     const cardsPlayedInTrick = Object.values(documentData.data()).map((cp) => {
         const cardsPlayed = new CardPlayed();
         cardsPlayed.setPlayerId(cp.playerId);
@@ -158,16 +156,3 @@ const hydrateTrick = async  (document: DocumentReference, trick: ITrick): Promis
     trick.setDocumentId(document.id);
     trick.set(cardsPlayedInTrick);
 };
-
-// const hydrateRound = async  (document: DocumentReference, round: IRound): Promise<void> => {
-//     const documentData: DocumentSnapshot = await document.get();
-//     console.log('round document');
-//     const tricksPlayedInRound = Object.values(documentData.data()).map((cp) => {
-//         const trick = new Trick();
-//         trick.set();
-//         cardsPlayed.setCardId(cp.cardId);
-//         return cardsPlayed;
-//     });
-//     trick.setDocumentId(document.id);
-//     trick.set(cardsPlayedInTrick);
-// };

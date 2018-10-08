@@ -1,4 +1,4 @@
-import {ICardId, ICardPlayed} from "../cardsPlayed/model";
+import {ICardPlayed} from "../cardsPlayed/model";
 
 export type ITrickId = string;
 

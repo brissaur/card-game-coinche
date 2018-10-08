@@ -16,10 +16,9 @@ import {modes} from "../announces/business";
 import {dealCards} from "../players/business";
 import {Round} from "../rounds/model";
 import {nextPlayerPlusPlus} from "../tables";
-const webSocket = require("ws");
+import ws from "ws";
 
-const onAddCardPlayed = async (ws: webSocket, session: ISession, message: IMessage) => {
-    // console.log('onAddcardPlayed', message);
+const onAddCardPlayed = async (ws: ws, session: ISession, message: IMessage) => {
     const eventData = message.payload;
 
     const table = await tableRepository.getTableById(session.getTableDocumentId());
@@ -48,7 +47,6 @@ const onAddCardPlayed = async (ws: webSocket, session: ISession, message: IMessa
         },
     }, {}));
 
-    // console.log('cardPlayed length', table.getCardsPlayed().length);
     if (table.getCardsPlayed().length === 4) {
         // add a trick with cardsPlayed
         const trick = new Trick();

@@ -5,7 +5,7 @@ import { actions as playerActions, onInit } from './players';
 import { connection } from './websocket';
 import { decodeMsgFromWs, formatMsgForWs } from './websocket/helper';
 import {actions as cardActions} from './cardsPlayed';
-import ws = require("ws");
+import ws from 'ws';
 
 const router = (route: string) => {
     const elements = route.split('/');

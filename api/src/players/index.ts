@@ -1,10 +1,8 @@
-import {getTableById} from '../tables';
 import { dealCards, searchStartPlayer } from './business';
-import { CollectionReference, QuerySnapshot, QueryDocumentSnapshot } from "@google-cloud/firestore";
 import {formatMsgForWs} from "../websocket/helper";
 import { repository as playerRepository } from '../repository/player/playerRepository';
 import { repository as tableRepository } from '../repository/table/tableRepository';
-import { Player, createPlayer, createFakePlayer } from './model';
+import { createPlayer, createFakePlayer } from './model';
 import { createTable } from '../tables/model';
 import {
     PLAYER_JOIN_SERVER_WS,
@@ -15,42 +13,7 @@ import {
 } from '../websocket';
 import {ISession} from "../websocket/session";
 import {modes} from "../announces/business";
-import ws = require("ws");
-
-const COLLECTION_NAME = 'players';
-
-/**
- *
- * @param tableId
- */
-export const getPlayersCollection = (tableId: string):CollectionReference  => {
-    const table = getTableById(tableId);
-
-    return table.collection(COLLECTION_NAME);
-};
-
-/**
- *
- * @param tableId
- * @returns {Promise<Array>}
- */
-export const getPlayersOnTable = async (tableId: string): Promise<Player[]> => {
-    const players: Player[] = [];
-    const playersRef = getPlayersCollection(tableId);
-    await playersRef
-        .get()
-        .then((snapshot: QuerySnapshot) => {
-            snapshot.forEach((player: QueryDocumentSnapshot) => {
-                players.push(player.data() as Player);
-            });
-        })
-        .catch((err) => {
-            // eslint-disable-next-line no-console
-            console.log('Error getting documents', err);
-        });
-
-    return players;
-};
+import ws from "ws";
 
 export const onInit = async (ws: ws, session: ISession) => {
     const player = await playerRepository.savePlayer(createPlayer());

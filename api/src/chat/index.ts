@@ -1,10 +1,10 @@
 import { formatMsgForWs } from '../websocket/helper';
 import { IMessage } from '../websocket/types';
-const websocket = require("ws");
+import ws from 'ws';
 
-const onMessage = async (message: IMessage, wss: websocket.Server) => {
-    wss.clients.forEach((client: any) => {
-        if (client.readyState === websocket.OPEN) {
+const onMessage = async (message: IMessage, wss: ws.Server) => {
+    wss.clients.forEach((client) => {
+        if (client.readyState === ws.OPEN) {
           client.send(formatMsgForWs('chat/message', {message: message.payload.message}, {}));
         }
       });
@@ -14,5 +14,3 @@ const onMessage = async (message: IMessage, wss: websocket.Server) => {
 export const chatActions = {
     message: onMessage,
 };
-
-

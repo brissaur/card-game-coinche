@@ -11,6 +11,7 @@ import {
     extractRound
 } from './tableHydrator';
 import DocumentReference = FirebaseFirestore.DocumentReference;
+import WriteResult = FirebaseFirestore.WriteResult;
 
 const TABLE_COLLECTION = 'tables';
 export const PLAYER_SUBCOLLECTION = 'players';
@@ -24,9 +25,6 @@ class TableRepository extends AbstractRepository{
     constructor(){
         super();
         this.collection = this.connection.collection(TABLE_COLLECTION);
-    }
-    getCollection(): CollectionReference{
-        return this.collection;
     }
     getAnnouncesSubCollection(table: ITable): CollectionReference{
         return this.collection.doc(table.getDocumentId()).collection(ANNOUNCE_SUBCOLLECTION);
@@ -47,10 +45,7 @@ class TableRepository extends AbstractRepository{
         if(table.getDocumentId()){
             // update main object
             doc = await this.collection.doc(table.getDocumentId());
-            // console.log('extract table', extract(table));
             await doc.update(extract(table));
-
-            // console.log('table updated');
 
         }else{
             // create
@@ -58,9 +53,8 @@ class TableRepository extends AbstractRepository{
         }
 
         // upsert announces
-        let promises: any[] = [];
+        let promises: Promise<WriteResult|DocumentReference>[] = [];
         table.getAnnounces().map(announce => {
-            // console.log('upsert annonuces', announce);
             if(announce.getDocumentId()){
                 promises.push(doc.collection('announces').doc(announce.getDocumentId()).set(extractAnnounce(announce)));
             }else{
@@ -107,7 +101,6 @@ class TableRepository extends AbstractRepository{
 
         // upsert rounds
         promises = [];
-        console.log('upserting round');
         table.getRounds().map(round => {
             if(round.getDocumentId()){
                 promises.push(doc.collection(ROUND_SUBCOLLECTION).doc(round.getDocumentId()).set({...extractRound(round)}));
@@ -117,8 +110,6 @@ class TableRepository extends AbstractRepository{
         });
 
         await Promise.all(promises);
-
-        console.log('round upserted');
 
         await hydrate(doc, table);
     }

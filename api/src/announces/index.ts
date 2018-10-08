@@ -9,7 +9,7 @@ import {ISession} from "../websocket/session";
 import {computeNextPlayerForTrick} from "../tables/business";
 import {formatMsgForWs} from "../websocket/helper";
 import {extractAnnounce} from "../repository/table/tableHydrator";
-import ws = require("ws");
+import ws from "ws";
 
 const COLLECTION_NAME = 'announces';
 
@@ -47,15 +47,10 @@ export async function performAnnounce(tableId: string, playerId: string) {
 const onAnnounce = async (ws: ws, session: ISession, message: IMessage) => {
     const eventData = message.payload;
 
-    // console.log('eventData', eventData);
-
     const table = await tableRepository.getTableById(session.getTableDocumentId());
-    // console.log('session', session);
     const playerId = eventData.playerId ? eventData.playerId : session.getPlayerDocumentId();
     const player = table.getPlayers()
         .filter(p => p.getDocumentId() === playerId)[0];
-
-    // console.log('player found', player);
 
     const announce = new Announce();
     announce.setAnnounce(eventData.announce);
