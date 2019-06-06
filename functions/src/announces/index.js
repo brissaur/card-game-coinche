@@ -48,6 +48,7 @@ exports.onAnnounce = functions.firestore
 
         const announces = await getAnnounces(tableId);
         if (shouldStopAnnounces(announces)) {
+            // @TODO: case 4 announce redistribute
             const fbTable = getTableById(tableId);
             const firstPlayerId = await fbTable.get().then(doc => doc.data().firstPlayerId);
 
